@@ -1,0 +1,40 @@
+name: Check packs
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Linux audio dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev pkg-config
+
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache Cargo artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: tools/check-packs
+
+      - name: Check formatting
+        run: cargo fmt --manifest-path tools/check-packs/Cargo.toml -- --check
+
+      - name: Run Clippy
+        run: cargo clippy --locked --manifest-path tools/check-packs/Cargo.toml --all-targets -- -D warnings
+
+      - name: Run checker tests
+        run: cargo test --locked --manifest-path tools/check-packs/Cargo.toml
+
+      - name: Validate packs
+        run: cargo run --locked --manifest-path tools/check-packs/Cargo.toml -- .

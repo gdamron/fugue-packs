@@ -1,0 +1,15 @@
+{
+  "id": "fugue.demo.pulse-agent",
+  "version": "0.1.0",
+  "kind": "agent",
+  "license": "CC0-1.0",
+  "authors": [{ "name": "Grant Damron", "url": "https://github.com/gdamron" }],
+  "description": "An illustrative agent definition for shaping a minimal pulse study.",
+  "homepage": "https://github.com/gdamron/fugue-packs",
+  "targets": ["in-graph-agent"],
+  "requires": {
+    "mcp-tools": ["fugue"],
+    "capabilities": ["random", "time"]
+  },
+  "entry": { "definition": "agent.json" }
+}
