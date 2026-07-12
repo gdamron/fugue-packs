@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "title": "Soft Pulse Voice",
+  "description": "A restrained sine voice for short rhythmic studies.",
+  "modules": [
+    {
+      "id": "osc",
+      "type": "oscillator",
+      "config": { "oscillator_type": "sine" }
+    },
+    {
+      "id": "env",
+      "type": "adsr",
+      "config": { "attack": 0.005, "decay": 0.08, "sustain": 0.25, "release": 0.15 }
+    },
+    { "id": "vca", "type": "vca" }
+  ],
+  "connections": [
+    { "from": "osc", "from_port": "audio", "to": "vca", "to_port": "audio" },
+    { "from": "env", "from_port": "envelope", "to": "vca", "to_port": "cv" }
+  ],
+  "inputs": [
+    { "name": "frequency", "to": "osc", "to_port": "frequency" },
+    { "name": "gate", "to": "env", "to_port": "gate" }
+  ],
+  "outputs": [
+    { "name": "audio", "from": "vca", "from_port": "audio" }
+  ]
+}

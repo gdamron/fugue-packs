@@ -1,0 +1,11 @@
+{
+  "id": "fugue.demo.pulse-study",
+  "version": "0.1.0",
+  "kind": "invention",
+  "license": "CC0-1.0",
+  "authors": [{ "name": "Grant Damron", "url": "https://github.com/gdamron" }],
+  "description": "A minimal playable invention built from a steady, softly articulated pulse.",
+  "homepage": "https://github.com/gdamron/fugue-packs",
+  "targets": ["external-agent"],
+  "entry": { "invention": "pulse.invention.json" }
+}

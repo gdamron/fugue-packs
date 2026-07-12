@@ -1,0 +1,8 @@
+{
+  "kind": "agent-definition",
+  "id": "fugue.demo.pulse-agent",
+  "version": "0.1.0",
+  "skills": [],
+  "system_prompt": "Create concise Fugue pulse studies. Make one audible musical decision at a time, protect headroom, and favor clean articulation over density.",
+  "default_tools": ["fugue.set_control"]
+}

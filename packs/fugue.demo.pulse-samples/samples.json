@@ -1,0 +1,15 @@
+{
+  "license": "CC0-1.0",
+  "attribution": [
+    { "name": "Grant Damron", "url": "https://github.com/gdamron" }
+  ],
+  "sample_rate": [48000],
+  "tags": { "instrument": "synthesized pulse", "character": "short" },
+  "files": [
+    {
+      "path": "samples/pulse.wav",
+      "sample_rate": 48000,
+      "license": "CC0-1.0"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "fugue.demo.pulse-development",
+  "version": "0.1.0",
+  "kind": "development",
+  "license": "CC0-1.0",
+  "authors": [{ "name": "Grant Damron", "url": "https://github.com/gdamron" }],
+  "description": "A reusable soft pulse voice with frequency and gate inputs.",
+  "homepage": "https://github.com/gdamron/fugue-packs",
+  "targets": ["external-agent", "in-graph-agent"],
+  "entry": { "development": "pulse.development.json" }
+}

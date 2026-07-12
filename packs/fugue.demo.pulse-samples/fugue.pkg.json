@@ -1,0 +1,12 @@
+{
+  "id": "fugue.demo.pulse-samples",
+  "version": "0.1.0",
+  "kind": "sample-pack",
+  "license": "CC0-1.0",
+  "authors": [{ "name": "Grant Damron", "url": "https://github.com/gdamron" }],
+  "description": "A generated one-shot pulse for sample-pack layout demonstrations.",
+  "homepage": "https://github.com/gdamron/fugue-packs",
+  "targets": ["external-agent", "in-graph-agent"],
+  "requires": { "capabilities": ["fs:read:samples/"] },
+  "entry": { "samples": "samples.json" }
+}

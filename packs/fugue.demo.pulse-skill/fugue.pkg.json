@@ -1,0 +1,12 @@
+{
+  "id": "fugue.demo.pulse-skill",
+  "version": "0.1.0",
+  "kind": "skill",
+  "license": "CC0-1.0",
+  "authors": [{ "name": "Grant Damron", "url": "https://github.com/gdamron" }],
+  "description": "A compact workflow for turning a pulse into a musical phrase.",
+  "homepage": "https://github.com/gdamron/fugue-packs",
+  "targets": ["external-agent"],
+  "requires": { "mcp-tools": ["fugue"] },
+  "entry": { "skill": "SKILL.md" }
+}
