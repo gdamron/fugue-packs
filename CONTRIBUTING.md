@@ -18,8 +18,10 @@ Package versions use semantic versioning. Entry paths must be relative, remain
 inside the package directory, and name a file. Skill entries must be named
 `SKILL.md`.
 
-Agent-definition and sample-index payloads are provisional. Until their
-kind-specific schemas land, keep those payloads minimal and mark assumptions in
+Sample-pack entries (`samples.json`) follow the schema documented in the
+`fugue` repository at `src/pkg/SAMPLE_PACK.md`; `fugue.demo.808-kit` is the
+reference pack. Agent-definition payloads are provisional. Until their
+kind-specific schema lands, keep those payloads minimal and mark assumptions in
 the package README or description.
 
 ## Before opening a pull request

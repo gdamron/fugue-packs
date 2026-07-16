@@ -1,0 +1,52 @@
+{
+  "license": "CC0-1.0",
+  "attribution": [
+    { "name": "Grant Damron", "url": "https://github.com/gdamron" }
+  ],
+  "sample_rate": [48000],
+  "tags": {
+    "genre": "electronic",
+    "instrument": "drum kit",
+    "character": "808-style synthesized"
+  },
+  "files": [
+    {
+      "path": "samples/kick.wav",
+      "tags": { "instrument": "kick drum" }
+    },
+    {
+      "path": "samples/snare.wav",
+      "tags": { "instrument": "snare drum" }
+    },
+    {
+      "path": "samples/clap.wav",
+      "tags": { "instrument": "hand clap" }
+    },
+    {
+      "path": "samples/hat-closed.wav",
+      "tags": { "instrument": "closed hi-hat" }
+    },
+    {
+      "path": "samples/hat-open.wav",
+      "tags": { "instrument": "open hi-hat" }
+    },
+    {
+      "path": "samples/cowbell.wav",
+      "tags": { "instrument": "cowbell" }
+    },
+    {
+      "path": "samples/loop.wav",
+      "tags": { "instrument": "drum loop", "bpm": "120", "meter": "4/4" },
+      "slices": [
+        { "start_frames": 0, "end_frames": 12000, "name": "beat-1" },
+        { "start_frames": 12000, "end_frames": 24000, "name": "and-1" },
+        { "start_frames": 24000, "end_frames": 36000, "name": "beat-2" },
+        { "start_frames": 36000, "end_frames": 48000, "name": "and-2" },
+        { "start_frames": 48000, "end_frames": 60000, "name": "beat-3" },
+        { "start_frames": 60000, "end_frames": 72000, "name": "and-3" },
+        { "start_frames": 72000, "end_frames": 84000, "name": "beat-4" },
+        { "start_frames": 84000, "end_frames": 96000, "name": "and-4" }
+      ]
+    }
+  ]
+}
