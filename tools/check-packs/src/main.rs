@@ -3,7 +3,7 @@ use std::env;
 use std::fs;
 use std::path::{Component, Path, PathBuf};
 
-use fugue::pkg::{self, EntrySpec, PackageManifest};
+use fugue::pkg::{self, sample_pack, EntrySpec, PackageManifest};
 use serde_json::Value;
 
 fn main() {
@@ -152,6 +152,35 @@ fn check_entry(pack_root: &Path, manifest: &PackageManifest) -> Result<(), Strin
             manifest.id
         ));
     }
+    if matches!(manifest.entry, EntrySpec::SamplePack { .. }) {
+        check_sample_pack_entry(pack_root, &canonical_root, &canonical_entry, manifest)?;
+    }
+    Ok(())
+}
+
+fn check_sample_pack_entry(
+    pack_root: &Path,
+    canonical_root: &Path,
+    entry_path: &Path,
+    manifest: &PackageManifest,
+) -> Result<(), String> {
+    let samples = sample_pack::parse_path(entry_path)
+        .map_err(|error| format!("{}: {}: {error}", manifest.id, entry_path.display()))?;
+    for file in &samples.files {
+        let file_path = pack_root.join(&file.path);
+        let canonical_file = file_path.canonicalize().map_err(|error| {
+            format!(
+                "{}: sample `{}` does not exist or cannot be read: {error}",
+                manifest.id, file.path
+            )
+        })?;
+        if !canonical_file.starts_with(canonical_root) || !canonical_file.is_file() {
+            return Err(format!(
+                "{}: sample `{}` must be a file inside the package",
+                manifest.id, file.path
+            ));
+        }
+    }
     Ok(())
 }
 
@@ -279,6 +308,65 @@ mod tests {
         assert!(check_repository(root.path())
             .unwrap_err()
             .contains("must be named SKILL.md"));
+    }
+
+    fn write_sample_pack(root: &Path, id: &str, samples_json: &str) {
+        let pack = root.join("packs").join(id);
+        fs::create_dir_all(pack.join("samples")).expect("pack directories");
+        let manifest = json!({
+            "id": id,
+            "version": "0.1.0",
+            "kind": "sample-pack",
+            "license": "CC0-1.0",
+            "authors": [{"name": "Test Author"}],
+            "targets": ["external-agent"],
+            "requires": {"capabilities": ["fs:read:samples/"]},
+            "entry": {"samples": "samples.json"}
+        });
+        fs::write(
+            pack.join("fugue.pkg.json"),
+            serde_json::to_vec_pretty(&manifest).expect("manifest JSON"),
+        )
+        .expect("manifest");
+        fs::write(pack.join("samples.json"), samples_json).expect("entry");
+        fs::write(pack.join("samples/pulse.wav"), b"RIFF").expect("sample file");
+    }
+
+    const VALID_SAMPLES: &str = r#"{
+        "license": "CC0-1.0",
+        "sample_rate": [48000],
+        "files": [{ "path": "samples/pulse.wav" }]
+    }"#;
+
+    #[test]
+    fn accepts_valid_sample_pack() {
+        let root = repository();
+        write_sample_pack(root.path(), "fugue.test.samples", VALID_SAMPLES);
+        assert_eq!(check_repository(root.path()).unwrap(), 1);
+    }
+
+    #[test]
+    fn rejects_sample_pack_entry_failing_schema() {
+        let root = repository();
+        let invalid = VALID_SAMPLES.replace("[48000]", "[]");
+        write_sample_pack(root.path(), "fugue.test.samples", &invalid);
+        assert!(check_repository(root.path())
+            .unwrap_err()
+            .contains("sample_rate must declare at least one rate"));
+    }
+
+    #[test]
+    fn rejects_sample_pack_with_missing_listed_file() {
+        let root = repository();
+        write_sample_pack(root.path(), "fugue.test.samples", VALID_SAMPLES);
+        fs::remove_file(
+            root.path()
+                .join("packs/fugue.test.samples/samples/pulse.wav"),
+        )
+        .unwrap();
+        assert!(check_repository(root.path())
+            .unwrap_err()
+            .contains("does not exist"));
     }
 
     #[test]
