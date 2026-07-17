@@ -1,0 +1,12 @@
+{
+  "id": "fugue.demo.808-kit",
+  "version": "0.1.0",
+  "kind": "sample-pack",
+  "license": "CC0-1.0",
+  "authors": [{ "name": "Grant Damron", "url": "https://github.com/gdamron" }],
+  "description": "A synthesized 808-style drum kit: six one-shots and a sliced one-bar loop.",
+  "homepage": "https://github.com/gdamron/fugue-packs",
+  "targets": ["external-agent", "in-graph-agent"],
+  "requires": { "capabilities": ["fs:read:samples/"] },
+  "entry": { "samples": "samples.json" }
+}
