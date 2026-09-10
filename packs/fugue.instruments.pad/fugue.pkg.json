@@ -1,0 +1,19 @@
+{
+  "id": "fugue.instruments.pad",
+  "version": "0.1.0",
+  "kind": "development",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "A slow, sustained pad with a soft lowpass body and gentle LFO motion in the filter.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "entry": {
+    "development": "voice.json"
+  }
+}

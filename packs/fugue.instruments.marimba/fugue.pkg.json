@@ -1,0 +1,19 @@
+{
+  "id": "fugue.instruments.marimba",
+  "version": "0.1.0",
+  "kind": "development",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "A short, woody struck voice built from a bright oscillator into a bandpass filter with a fast-decaying envelope sweep.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "entry": {
+    "development": "voice.json"
+  }
+}
