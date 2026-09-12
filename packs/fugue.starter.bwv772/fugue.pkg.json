@@ -1,0 +1,27 @@
+{
+  "id": "fugue.starter.bwv772",
+  "version": "0.1.0",
+  "kind": "invention",
+  "license": "CC-BY-SA-3.0",
+  "authors": [
+    {
+      "name": "Johann Sebastian Bach"
+    },
+    {
+      "name": "Jeff Covey",
+      "url": "https://www.mutopiaproject.org/"
+    }
+  ],
+  "description": "A playable two-part arrangement of Bach's Invention No. 1 in C major.",
+  "homepage": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=227",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "deps": [
+    "fugue.instruments.piano@=2026.9.0"
+  ],
+  "entry": {
+    "invention": "invention.json"
+  }
+}
