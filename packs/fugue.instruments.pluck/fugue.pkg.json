@@ -1,0 +1,19 @@
+{
+  "id": "fugue.instruments.pluck",
+  "version": "0.1.0",
+  "kind": "development",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "A sharp pluck with a very short envelope and an aggressive lowpass sweep to suggest a string-like snap.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "entry": {
+    "development": "voice.json"
+  }
+}

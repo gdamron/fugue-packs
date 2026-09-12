@@ -1,0 +1,19 @@
+{
+  "id": "fugue.instruments.vibraphone",
+  "version": "0.1.0",
+  "kind": "development",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "A mellow struck sine voice with a gentle tremolo and long ringing sustain.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "entry": {
+    "development": "voice.json"
+  }
+}

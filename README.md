@@ -47,3 +47,13 @@ installer can address individual packages in this monorepo.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a pack and
 [LICENSING.md](LICENSING.md) for the repository's licensing model.
+
+## Release instruments
+
+`fugue.instruments.piano`, `fugue.instruments.marimba`,
+`fugue.instruments.vibraphone`, `fugue.instruments.pluck`, and
+`fugue.instruments.pad` are the reusable instruments bundled with the daemon.
+Their canonical definitions and MIT license notices live here. The CLI release
+embeds a generated snapshot produced by its `scripts/prepare-instruments.py`
+script. Change package versions when changing content; installed versions are
+immutable. Bundling does not require publishing the registry index.
