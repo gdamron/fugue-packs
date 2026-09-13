@@ -48,13 +48,17 @@ installer can address individual packages in this monorepo.
 See [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a pack and
 [LICENSING.md](LICENSING.md) for the repository's licensing model.
 
-## Release instruments
+## Release musical content
 
 `fugue.instruments.piano`, `fugue.instruments.marimba`,
 `fugue.instruments.vibraphone`, `fugue.instruments.pluck`, and
 `fugue.instruments.pad` are the reusable instruments bundled with the daemon.
-Their canonical definitions and MIT license notices live here. The CLI release
-generates a hash-pinned snapshot from a pinned tag of this repository at build
-time and embeds it, so no copy of these definitions lives in the host repository.
-Change package versions when changing content; installed versions are immutable.
-Bundling does not require publishing the registry index.
+`fugue.starter.bwv772` is the bundled playable invention: its score remains a
+separate attributed asset and its arrangement depends on the exact piano
+package version. Their canonical definitions and license notices live here.
+
+The CLI release generates a hash-pinned snapshot from a pinned tag of this
+repository at build time and embeds it, so no copy of these definitions lives
+in the host repository. Change package versions when changing content;
+installed versions are immutable. Bundling does not require publishing the
+registry index.
