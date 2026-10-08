@@ -12,7 +12,7 @@
       "name": "piano",
       "ref": {
         "package": "fugue.instruments.piano",
-        "version": "2026.10.0"
+        "version": "2026.10.1"
       }
     }
   ],
@@ -170,9 +170,9 @@
     { "from": "upper_close_low_voice", "from_port": "audio", "to": "mixer", "to_port": "in3" },
     { "from": "lower_voice", "from_port": "audio", "to": "mixer", "to_port": "in4" },
     { "from": "lower_close_voice", "from_port": "audio", "to": "mixer", "to_port": "in5" },
-    { "from": "mixer", "from_port": "left", "to": "room", "to_port": "left" },
-    { "from": "mixer", "from_port": "right", "to": "room", "to_port": "right" },
-    { "from": "room", "from_port": "left", "to": "out", "to_port": "audio_left" },
-    { "from": "room", "from_port": "right", "to": "out", "to_port": "audio_right" }
+    { "from": "mixer", "from_port": "left", "to": "room", "to_port": "audio_left" },
+    { "from": "mixer", "from_port": "right", "to": "room", "to_port": "audio_right" },
+    { "from": "room", "from_port": "audio_left", "to": "out", "to_port": "audio_left" },
+    { "from": "room", "from_port": "audio_right", "to": "out", "to_port": "audio_right" }
   ]
 }
