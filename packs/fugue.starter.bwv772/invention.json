@@ -122,7 +122,7 @@
       "id": "mixer",
       "type": "mixer",
       "config": {
-        "channels": 5,
+        "channel_count": 5,
         "levels": [
           0.3,
           0.18,
@@ -165,13 +165,13 @@
     { "from": "lower", "from_port": "gate", "to": "lower_voice", "to_port": "gate" },
     { "from": "lower_close", "from_port": "frequency", "to": "lower_close_voice", "to_port": "frequency" },
     { "from": "lower_close", "from_port": "gate", "to": "lower_close_voice", "to_port": "gate" },
-    { "from": "upper_voice", "from_port": "audio", "to": "mixer", "to_port": "in1" },
-    { "from": "upper_close_high_voice", "from_port": "audio", "to": "mixer", "to_port": "in2" },
-    { "from": "upper_close_low_voice", "from_port": "audio", "to": "mixer", "to_port": "in3" },
-    { "from": "lower_voice", "from_port": "audio", "to": "mixer", "to_port": "in4" },
-    { "from": "lower_close_voice", "from_port": "audio", "to": "mixer", "to_port": "in5" },
-    { "from": "mixer", "from_port": "left", "to": "room", "to_port": "audio_left" },
-    { "from": "mixer", "from_port": "right", "to": "room", "to_port": "audio_right" },
+    { "from": "upper_voice", "from_port": "audio", "to": "mixer", "to_port": "audio.0" },
+    { "from": "upper_close_high_voice", "from_port": "audio", "to": "mixer", "to_port": "audio.1" },
+    { "from": "upper_close_low_voice", "from_port": "audio", "to": "mixer", "to_port": "audio.2" },
+    { "from": "lower_voice", "from_port": "audio", "to": "mixer", "to_port": "audio.3" },
+    { "from": "lower_close_voice", "from_port": "audio", "to": "mixer", "to_port": "audio.4" },
+    { "from": "mixer", "from_port": "audio_left", "to": "room", "to_port": "audio_left" },
+    { "from": "mixer", "from_port": "audio_right", "to": "room", "to_port": "audio_right" },
     { "from": "room", "from_port": "audio_left", "to": "out", "to_port": "audio_left" },
     { "from": "room", "from_port": "audio_right", "to": "out", "to_port": "audio_right" }
   ]
