@@ -1,6 +1,6 @@
 {
   "id": "fugue.demo.pulse-development",
-  "version": "0.1.0",
+  "version": "2026.10.0",
   "kind": "development",
   "license": "CC0-1.0",
   "authors": [{ "name": "Grant Damron", "url": "https://github.com/gdamron" }],
