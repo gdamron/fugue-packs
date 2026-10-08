@@ -7,7 +7,7 @@
       "id": "osc",
       "type": "oscillator",
       "config": {
-        "oscillator_type": "triangle"
+        "waveform": "triangle"
       }
     },
     {
@@ -56,7 +56,7 @@
       "from": "env",
       "from_port": "envelope",
       "to": "vca",
-      "to_port": "cv"
+      "to_port": "level"
     },
     {
       "from": "env",

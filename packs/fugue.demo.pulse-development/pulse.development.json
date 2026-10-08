@@ -6,7 +6,7 @@
     {
       "id": "osc",
       "type": "oscillator",
-      "config": { "oscillator_type": "sine" }
+      "config": { "waveform": "sine" }
     },
     {
       "id": "env",
@@ -17,7 +17,7 @@
   ],
   "connections": [
     { "from": "osc", "from_port": "audio", "to": "vca", "to_port": "audio" },
-    { "from": "env", "from_port": "envelope", "to": "vca", "to_port": "cv" }
+    { "from": "env", "from_port": "envelope", "to": "vca", "to_port": "level" }
   ],
   "inputs": [
     { "name": "frequency", "to": "osc", "to_port": "frequency" },

@@ -16,7 +16,7 @@
     {
       "id": "osc",
       "type": "oscillator",
-      "config": { "frequency": 110.0, "oscillator_type": "sine" }
+      "config": { "frequency": 110.0, "waveform": "sine" }
     },
     { "id": "vca", "type": "vca" },
     { "id": "dac", "type": "dac" }
@@ -24,7 +24,7 @@
   "connections": [
     { "from": "clock", "from_port": "gate", "to": "env", "to_port": "gate" },
     { "from": "osc", "from_port": "audio", "to": "vca", "to_port": "audio" },
-    { "from": "env", "from_port": "envelope", "to": "vca", "to_port": "cv" },
+    { "from": "env", "from_port": "envelope", "to": "vca", "to_port": "level" },
     { "from": "vca", "from_port": "audio", "to": "dac", "to_port": "audio" }
   ]
 }
