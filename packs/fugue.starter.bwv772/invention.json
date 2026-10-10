@@ -28,11 +28,11 @@
       "id": "upper",
       "type": "cell_sequencer",
       "config": {
-        "base_note": 60,
-        "steps": 704,
+        "root_note": 60,
+        "step_count": 704,
         "gate_length": 0.92,
-        "selected_sequence": 0,
-        "sequences": {
+        "start_cell": 0,
+        "cells": {
           "$asset": "score",
           "path": "/cells"
         }
@@ -46,11 +46,11 @@
       "id": "upper_close_high",
       "type": "cell_sequencer",
       "config": {
-        "base_note": 60,
-        "steps": 704,
+        "root_note": 60,
+        "step_count": 704,
         "gate_length": 0.92,
-        "selected_sequence": 1,
-        "sequences": {
+        "start_cell": 1,
+        "cells": {
           "$asset": "score",
           "path": "/cells"
         }
@@ -64,11 +64,11 @@
       "id": "upper_close_low",
       "type": "cell_sequencer",
       "config": {
-        "base_note": 60,
-        "steps": 704,
+        "root_note": 60,
+        "step_count": 704,
         "gate_length": 0.92,
-        "selected_sequence": 2,
-        "sequences": {
+        "start_cell": 2,
+        "cells": {
           "$asset": "score",
           "path": "/cells"
         }
@@ -82,11 +82,11 @@
       "id": "lower",
       "type": "cell_sequencer",
       "config": {
-        "base_note": 60,
-        "steps": 704,
+        "root_note": 60,
+        "step_count": 704,
         "gate_length": 0.92,
-        "selected_sequence": 3,
-        "sequences": {
+        "start_cell": 3,
+        "cells": {
           "$asset": "score",
           "path": "/cells"
         }
@@ -100,11 +100,11 @@
       "id": "lower_close",
       "type": "cell_sequencer",
       "config": {
-        "base_note": 60,
-        "steps": 704,
+        "root_note": 60,
+        "step_count": 704,
         "gate_length": 0.92,
-        "selected_sequence": 4,
-        "sequences": {
+        "start_cell": 4,
+        "cells": {
           "$asset": "score",
           "path": "/cells"
         }
@@ -146,11 +146,11 @@
     }
   ],
   "connections": [
-    { "from": "clock", "from_port": "beat_x4", "to": "upper", "to_port": "gate" },
-    { "from": "clock", "from_port": "beat_x4", "to": "upper_close_high", "to_port": "gate" },
-    { "from": "clock", "from_port": "beat_x4", "to": "upper_close_low", "to_port": "gate" },
-    { "from": "clock", "from_port": "beat_x4", "to": "lower", "to_port": "gate" },
-    { "from": "clock", "from_port": "beat_x4", "to": "lower_close", "to_port": "gate" },
+    { "from": "clock", "from_port": "beat_x4", "to": "upper", "to_port": "clock" },
+    { "from": "clock", "from_port": "beat_x4", "to": "upper_close_high", "to_port": "clock" },
+    { "from": "clock", "from_port": "beat_x4", "to": "upper_close_low", "to_port": "clock" },
+    { "from": "clock", "from_port": "beat_x4", "to": "lower", "to_port": "clock" },
+    { "from": "clock", "from_port": "beat_x4", "to": "lower_close", "to_port": "clock" },
     { "from": "upper", "from_port": "frequency", "to": "upper_voice", "to_port": "frequency" },
     { "from": "upper", "from_port": "gate", "to": "upper_voice", "to_port": "gate" },
     { "from": "upper_close_high", "from_port": "frequency", "to": "upper_close_high_voice", "to_port": "frequency" },
