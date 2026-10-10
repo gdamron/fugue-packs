@@ -1,6 +1,6 @@
 {
   "id": "fugue.demo.pulse-study",
-  "version": "2026.10.0",
+  "version": "2026.10.1",
   "kind": "invention",
   "license": "CC0-1.0",
   "authors": [{ "name": "Grant Damron", "url": "https://github.com/gdamron" }],
