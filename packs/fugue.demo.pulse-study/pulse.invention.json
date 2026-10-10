@@ -6,7 +6,7 @@
     {
       "id": "clock",
       "type": "clock",
-      "config": { "bpm": 96.0, "gate_duration": 0.35 }
+      "config": { "bpm": 96.0, "gate_length": 0.35 }
     },
     {
       "id": "env",
@@ -22,7 +22,7 @@
     { "id": "dac", "type": "dac" }
   ],
   "connections": [
-    { "from": "clock", "from_port": "gate", "to": "env", "to_port": "gate" },
+    { "from": "clock", "from_port": "beat", "to": "env", "to_port": "gate" },
     { "from": "osc", "from_port": "audio", "to": "vca", "to_port": "audio" },
     { "from": "env", "from_port": "envelope", "to": "vca", "to_port": "level" },
     { "from": "vca", "from_port": "audio", "to": "dac", "to_port": "audio" }
