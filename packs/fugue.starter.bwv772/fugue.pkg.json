@@ -1,6 +1,6 @@
 {
   "id": "fugue.starter.bwv772",
-  "version": "2026.10.5",
+  "version": "2026.10.6",
   "kind": "invention",
   "license": "CC-BY-SA-3.0",
   "authors": [
@@ -19,7 +19,7 @@
     "in-graph-agent"
   ],
   "deps": [
-    "fugue.instruments.piano@=2026.10.1"
+    "fugue.instruments.piano@=2026.10.2"
   ],
   "entry": {
     "invention": "invention.json"
