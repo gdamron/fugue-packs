@@ -1,4 +1,6 @@
 /tools/check-packs/target/
 .DS_Store
-# Created by the fugue resolver when FUGUE_PACKS_DIR points at packs/
+# Lock files the fugue resolver and installer create when FUGUE_PACKS_DIR
+# points at packs/
 /packs/.catalog.lock
+/packs/.install.lock
