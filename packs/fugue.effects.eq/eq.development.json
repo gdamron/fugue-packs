@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "title": "Parametric EQ",
-  "description": "A stereo parametric EQ: low and high cuts, low and high shelves and three bells in series on each side, every band moving both sides and crossfading in and out when bypassed. Flat by default.",
+  "description": "A stereo parametric EQ, flat by default. Bands in series on each side, every control moving both sides: low cut (highpass, 30 Hz), low shelf (100 Hz), bells .0, .1 and .2 (250 Hz, 1 kHz, 4 kHz), high shelf (8 kHz), high cut (lowpass, 18 kHz). The cuts start bypassed: set low_cut_bypass or high_cut_bypass false to engage them. Boosts are dB; a bypass crossfades over 10 ms. For mono, feed audio_left and take audio_left.",
   "modules": [
     {
       "id": "low_cut_left",
