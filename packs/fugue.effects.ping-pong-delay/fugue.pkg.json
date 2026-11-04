@@ -1,0 +1,19 @@
+{
+  "id": "fugue.effects.ping-pong-delay",
+  "version": "2026.11.0",
+  "kind": "development",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "A tempo-synced ping-pong delay whose echoes alternate left and right, with feedback, a lowpass tone control, dry/wet levels and hold.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "entry": {
+    "development": "delay.development.json"
+  }
+}
