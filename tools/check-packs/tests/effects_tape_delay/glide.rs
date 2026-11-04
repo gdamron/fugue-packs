@@ -16,7 +16,8 @@ const SETTLE: usize = 5 * SR as usize;
 
 /// Frequency of each `WINDOW` of `x`.
 fn pitch_track(x: &[f32]) -> Vec<f64> {
-    x.chunks_exact(WINDOW).map(frequency).collect()
+    let (windows, _) = x.as_chunks::<WINDOW>();
+    windows.iter().map(|w| frequency(w.as_slice())).collect()
 }
 
 /// Plays the sine with `time` at `from`, changes it to `to` once the echo
