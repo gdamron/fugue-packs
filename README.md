@@ -53,8 +53,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a pack and
 `fugue.instruments.piano`, `fugue.instruments.marimba`,
 `fugue.instruments.vibraphone`, `fugue.instruments.pluck`, and
 `fugue.instruments.pad` are the reusable instruments bundled with the daemon.
-`fugue.effects.stereo-delay` and `fugue.effects.ping-pong-delay` are the
-bundled delay effects, built from core's `delay` module.
+`fugue.effects.stereo-delay`, `fugue.effects.ping-pong-delay` and
+`fugue.effects.tape-delay` are the bundled delay effects, built from core's
+`delay` module (the tape delay adds `drive` saturation and wow and flutter).
 `fugue.starter.bwv772` is the bundled playable invention: its score remains a
 separate attributed asset and its arrangement depends on the exact piano
 package version. Their canonical definitions and license notices live here.
