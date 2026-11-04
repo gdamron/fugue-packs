@@ -1,0 +1,19 @@
+{
+  "id": "fugue.effects.eq",
+  "version": "2026.11.0",
+  "kind": "development",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "A stereo parametric EQ: low and high cuts at 12 or 24 dB/oct, low and high shelves and three bells, each band with its own bypass. Flat by default; every frequency, boost and q glides when automated.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "entry": {
+    "development": "eq.development.json"
+  }
+}

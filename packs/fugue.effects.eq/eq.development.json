@@ -1,0 +1,511 @@
+{
+  "version": "1.0.0",
+  "title": "Parametric EQ",
+  "description": "A stereo parametric EQ: low and high cuts, low and high shelves and three bells in series on each side, every band moving both sides and crossfading in and out when bypassed. Flat by default.",
+  "modules": [
+    {
+      "id": "low_cut_left",
+      "type": "filter",
+      "config": {
+        "filter_type": "highpass",
+        "cutoff": 30.0,
+        "resonance": 0.2929,
+        "slope": "12db",
+        "bypass": true
+      }
+    },
+    {
+      "id": "low_cut_right",
+      "type": "filter",
+      "config": {
+        "filter_type": "highpass",
+        "cutoff": 30.0,
+        "resonance": 0.2929,
+        "slope": "12db",
+        "bypass": true
+      }
+    },
+    {
+      "id": "low_shelf_left",
+      "type": "filter",
+      "config": {
+        "filter_type": "lowshelf",
+        "cutoff": 100.0,
+        "boost": 0.0,
+        "q": 0.7071
+      }
+    },
+    {
+      "id": "low_shelf_right",
+      "type": "filter",
+      "config": {
+        "filter_type": "lowshelf",
+        "cutoff": 100.0,
+        "boost": 0.0,
+        "q": 0.7071
+      }
+    },
+    {
+      "id": "bell_0_left",
+      "type": "filter",
+      "config": {
+        "filter_type": "bell",
+        "cutoff": 250.0,
+        "boost": 0.0,
+        "q": 1.0
+      }
+    },
+    {
+      "id": "bell_0_right",
+      "type": "filter",
+      "config": {
+        "filter_type": "bell",
+        "cutoff": 250.0,
+        "boost": 0.0,
+        "q": 1.0
+      }
+    },
+    {
+      "id": "bell_1_left",
+      "type": "filter",
+      "config": {
+        "filter_type": "bell",
+        "cutoff": 1000.0,
+        "boost": 0.0,
+        "q": 1.0
+      }
+    },
+    {
+      "id": "bell_1_right",
+      "type": "filter",
+      "config": {
+        "filter_type": "bell",
+        "cutoff": 1000.0,
+        "boost": 0.0,
+        "q": 1.0
+      }
+    },
+    {
+      "id": "bell_2_left",
+      "type": "filter",
+      "config": {
+        "filter_type": "bell",
+        "cutoff": 4000.0,
+        "boost": 0.0,
+        "q": 1.0
+      }
+    },
+    {
+      "id": "bell_2_right",
+      "type": "filter",
+      "config": {
+        "filter_type": "bell",
+        "cutoff": 4000.0,
+        "boost": 0.0,
+        "q": 1.0
+      }
+    },
+    {
+      "id": "high_shelf_left",
+      "type": "filter",
+      "config": {
+        "filter_type": "highshelf",
+        "cutoff": 8000.0,
+        "boost": 0.0,
+        "q": 0.7071
+      }
+    },
+    {
+      "id": "high_shelf_right",
+      "type": "filter",
+      "config": {
+        "filter_type": "highshelf",
+        "cutoff": 8000.0,
+        "boost": 0.0,
+        "q": 0.7071
+      }
+    },
+    {
+      "id": "high_cut_left",
+      "type": "filter",
+      "config": {
+        "filter_type": "lowpass",
+        "cutoff": 18000.0,
+        "resonance": 0.2929,
+        "slope": "12db",
+        "bypass": true
+      }
+    },
+    {
+      "id": "high_cut_right",
+      "type": "filter",
+      "config": {
+        "filter_type": "lowpass",
+        "cutoff": 18000.0,
+        "resonance": 0.2929,
+        "slope": "12db",
+        "bypass": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from": "low_cut_left",
+      "from_port": "audio",
+      "to": "low_shelf_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "low_shelf_left",
+      "from_port": "audio",
+      "to": "bell_0_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "bell_0_left",
+      "from_port": "audio",
+      "to": "bell_1_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "bell_1_left",
+      "from_port": "audio",
+      "to": "bell_2_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "bell_2_left",
+      "from_port": "audio",
+      "to": "high_shelf_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "high_shelf_left",
+      "from_port": "audio",
+      "to": "high_cut_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "low_cut_right",
+      "from_port": "audio",
+      "to": "low_shelf_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "low_shelf_right",
+      "from_port": "audio",
+      "to": "bell_0_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "bell_0_right",
+      "from_port": "audio",
+      "to": "bell_1_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "bell_1_right",
+      "from_port": "audio",
+      "to": "bell_2_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "bell_2_right",
+      "from_port": "audio",
+      "to": "high_shelf_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "high_shelf_right",
+      "from_port": "audio",
+      "to": "high_cut_right",
+      "to_port": "audio"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "audio_left",
+      "to": "low_cut_left",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_right",
+      "to": "low_cut_right",
+      "to_port": "audio"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "audio_left",
+      "from": "high_cut_left",
+      "from_port": "audio"
+    },
+    {
+      "name": "audio_right",
+      "from": "high_cut_right",
+      "from_port": "audio"
+    }
+  ],
+  "controls": [
+    {
+      "name": "low_cut_frequency",
+      "module": "low_cut_left",
+      "control": "cutoff"
+    },
+    {
+      "name": "low_cut_frequency",
+      "module": "low_cut_right",
+      "control": "cutoff"
+    },
+    {
+      "name": "low_cut_slope",
+      "module": "low_cut_left",
+      "control": "slope"
+    },
+    {
+      "name": "low_cut_slope",
+      "module": "low_cut_right",
+      "control": "slope"
+    },
+    {
+      "name": "low_cut_bypass",
+      "module": "low_cut_left",
+      "control": "bypass"
+    },
+    {
+      "name": "low_cut_bypass",
+      "module": "low_cut_right",
+      "control": "bypass"
+    },
+    {
+      "name": "low_shelf_frequency",
+      "module": "low_shelf_left",
+      "control": "cutoff"
+    },
+    {
+      "name": "low_shelf_frequency",
+      "module": "low_shelf_right",
+      "control": "cutoff"
+    },
+    {
+      "name": "low_shelf_boost",
+      "module": "low_shelf_left",
+      "control": "boost"
+    },
+    {
+      "name": "low_shelf_boost",
+      "module": "low_shelf_right",
+      "control": "boost"
+    },
+    {
+      "name": "low_shelf_q",
+      "module": "low_shelf_left",
+      "control": "q"
+    },
+    {
+      "name": "low_shelf_q",
+      "module": "low_shelf_right",
+      "control": "q"
+    },
+    {
+      "name": "low_shelf_bypass",
+      "module": "low_shelf_left",
+      "control": "bypass"
+    },
+    {
+      "name": "low_shelf_bypass",
+      "module": "low_shelf_right",
+      "control": "bypass"
+    },
+    {
+      "name": "bell_frequency.0",
+      "module": "bell_0_left",
+      "control": "cutoff"
+    },
+    {
+      "name": "bell_frequency.0",
+      "module": "bell_0_right",
+      "control": "cutoff"
+    },
+    {
+      "name": "bell_boost.0",
+      "module": "bell_0_left",
+      "control": "boost"
+    },
+    {
+      "name": "bell_boost.0",
+      "module": "bell_0_right",
+      "control": "boost"
+    },
+    {
+      "name": "bell_q.0",
+      "module": "bell_0_left",
+      "control": "q"
+    },
+    {
+      "name": "bell_q.0",
+      "module": "bell_0_right",
+      "control": "q"
+    },
+    {
+      "name": "bell_bypass.0",
+      "module": "bell_0_left",
+      "control": "bypass"
+    },
+    {
+      "name": "bell_bypass.0",
+      "module": "bell_0_right",
+      "control": "bypass"
+    },
+    {
+      "name": "bell_frequency.1",
+      "module": "bell_1_left",
+      "control": "cutoff"
+    },
+    {
+      "name": "bell_frequency.1",
+      "module": "bell_1_right",
+      "control": "cutoff"
+    },
+    {
+      "name": "bell_boost.1",
+      "module": "bell_1_left",
+      "control": "boost"
+    },
+    {
+      "name": "bell_boost.1",
+      "module": "bell_1_right",
+      "control": "boost"
+    },
+    {
+      "name": "bell_q.1",
+      "module": "bell_1_left",
+      "control": "q"
+    },
+    {
+      "name": "bell_q.1",
+      "module": "bell_1_right",
+      "control": "q"
+    },
+    {
+      "name": "bell_bypass.1",
+      "module": "bell_1_left",
+      "control": "bypass"
+    },
+    {
+      "name": "bell_bypass.1",
+      "module": "bell_1_right",
+      "control": "bypass"
+    },
+    {
+      "name": "bell_frequency.2",
+      "module": "bell_2_left",
+      "control": "cutoff"
+    },
+    {
+      "name": "bell_frequency.2",
+      "module": "bell_2_right",
+      "control": "cutoff"
+    },
+    {
+      "name": "bell_boost.2",
+      "module": "bell_2_left",
+      "control": "boost"
+    },
+    {
+      "name": "bell_boost.2",
+      "module": "bell_2_right",
+      "control": "boost"
+    },
+    {
+      "name": "bell_q.2",
+      "module": "bell_2_left",
+      "control": "q"
+    },
+    {
+      "name": "bell_q.2",
+      "module": "bell_2_right",
+      "control": "q"
+    },
+    {
+      "name": "bell_bypass.2",
+      "module": "bell_2_left",
+      "control": "bypass"
+    },
+    {
+      "name": "bell_bypass.2",
+      "module": "bell_2_right",
+      "control": "bypass"
+    },
+    {
+      "name": "high_shelf_frequency",
+      "module": "high_shelf_left",
+      "control": "cutoff"
+    },
+    {
+      "name": "high_shelf_frequency",
+      "module": "high_shelf_right",
+      "control": "cutoff"
+    },
+    {
+      "name": "high_shelf_boost",
+      "module": "high_shelf_left",
+      "control": "boost"
+    },
+    {
+      "name": "high_shelf_boost",
+      "module": "high_shelf_right",
+      "control": "boost"
+    },
+    {
+      "name": "high_shelf_q",
+      "module": "high_shelf_left",
+      "control": "q"
+    },
+    {
+      "name": "high_shelf_q",
+      "module": "high_shelf_right",
+      "control": "q"
+    },
+    {
+      "name": "high_shelf_bypass",
+      "module": "high_shelf_left",
+      "control": "bypass"
+    },
+    {
+      "name": "high_shelf_bypass",
+      "module": "high_shelf_right",
+      "control": "bypass"
+    },
+    {
+      "name": "high_cut_frequency",
+      "module": "high_cut_left",
+      "control": "cutoff"
+    },
+    {
+      "name": "high_cut_frequency",
+      "module": "high_cut_right",
+      "control": "cutoff"
+    },
+    {
+      "name": "high_cut_slope",
+      "module": "high_cut_left",
+      "control": "slope"
+    },
+    {
+      "name": "high_cut_slope",
+      "module": "high_cut_right",
+      "control": "slope"
+    },
+    {
+      "name": "high_cut_bypass",
+      "module": "high_cut_left",
+      "control": "bypass"
+    },
+    {
+      "name": "high_cut_bypass",
+      "module": "high_cut_right",
+      "control": "bypass"
+    }
+  ]
+}
