@@ -1,0 +1,288 @@
+{
+  "version": "1.0.0",
+  "title": "Ping-Pong Delay",
+  "description": "A tempo-synced delay whose echoes bounce left, right, left: two heads in a cross-feedback loop, each fed through a lowpass tone filter, mixed with the dry signal.",
+  "modules": [
+    {
+      "id": "send",
+      "type": "vca",
+      "config": {
+        "level": 0.5
+      }
+    },
+    {
+      "id": "delay_left",
+      "type": "delay",
+      "config": {
+        "max_time": 4.0,
+        "time": 0.25,
+        "division": "8th_note"
+      }
+    },
+    {
+      "id": "delay_right",
+      "type": "delay",
+      "config": {
+        "max_time": 4.0,
+        "time": 0.25,
+        "division": "8th_note"
+      }
+    },
+    {
+      "id": "tone_left",
+      "type": "filter",
+      "config": {
+        "filter_type": "lowpass",
+        "cutoff": 4000.0,
+        "resonance": 0.0
+      }
+    },
+    {
+      "id": "tone_right",
+      "type": "filter",
+      "config": {
+        "filter_type": "lowpass",
+        "cutoff": 4000.0,
+        "resonance": 0.0
+      }
+    },
+    {
+      "id": "feedback_left",
+      "type": "vca",
+      "config": {
+        "level": 0.35
+      }
+    },
+    {
+      "id": "feedback_right",
+      "type": "vca",
+      "config": {
+        "level": 0.35
+      }
+    },
+    {
+      "id": "mix_left",
+      "type": "mixer",
+      "config": {
+        "channel_count": 2,
+        "levels": [
+          1.0,
+          0.5
+        ],
+        "pans": [
+          -1.0,
+          -1.0
+        ],
+        "master": 1.0
+      }
+    },
+    {
+      "id": "mix_right",
+      "type": "mixer",
+      "config": {
+        "channel_count": 2,
+        "levels": [
+          1.0,
+          0.5
+        ],
+        "pans": [
+          1.0,
+          1.0
+        ],
+        "master": 1.0
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from": "send",
+      "from_port": "audio",
+      "to": "tone_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "tone_left",
+      "from_port": "audio",
+      "to": "delay_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "delay_left",
+      "from_port": "audio",
+      "to": "mix_left",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "delay_left",
+      "from_port": "audio",
+      "to": "feedback_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "feedback_right",
+      "from_port": "audio",
+      "to": "tone_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "tone_right",
+      "from_port": "audio",
+      "to": "delay_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "delay_right",
+      "from_port": "audio",
+      "to": "mix_right",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "delay_right",
+      "from_port": "audio",
+      "to": "feedback_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "feedback_left",
+      "from_port": "audio",
+      "to": "tone_left",
+      "to_port": "audio"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "audio_left",
+      "to": "send",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_left",
+      "to": "mix_left",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "audio_right",
+      "to": "send",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_right",
+      "to": "mix_right",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "bpm",
+      "to": "delay_left",
+      "to_port": "bpm"
+    },
+    {
+      "name": "bpm",
+      "to": "delay_right",
+      "to_port": "bpm"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "audio_left",
+      "from": "mix_left",
+      "from_port": "audio_left"
+    },
+    {
+      "name": "audio_right",
+      "from": "mix_right",
+      "from_port": "audio_right"
+    }
+  ],
+  "controls": [
+    {
+      "name": "time",
+      "module": "delay_left",
+      "control": "time"
+    },
+    {
+      "name": "time",
+      "module": "delay_right",
+      "control": "time"
+    },
+    {
+      "name": "division",
+      "module": "delay_left",
+      "control": "division"
+    },
+    {
+      "name": "division",
+      "module": "delay_right",
+      "control": "division"
+    },
+    {
+      "name": "bpm",
+      "module": "delay_left",
+      "control": "bpm"
+    },
+    {
+      "name": "bpm",
+      "module": "delay_right",
+      "control": "bpm"
+    },
+    {
+      "name": "feedback",
+      "module": "feedback_left",
+      "control": "level"
+    },
+    {
+      "name": "feedback",
+      "module": "feedback_right",
+      "control": "level"
+    },
+    {
+      "name": "tone",
+      "module": "tone_left",
+      "control": "cutoff"
+    },
+    {
+      "name": "tone",
+      "module": "tone_right",
+      "control": "cutoff"
+    },
+    {
+      "name": "dry",
+      "module": "mix_left",
+      "control": "level.0"
+    },
+    {
+      "name": "dry",
+      "module": "mix_right",
+      "control": "level.0"
+    },
+    {
+      "name": "wet",
+      "module": "mix_left",
+      "control": "level.1"
+    },
+    {
+      "name": "wet",
+      "module": "mix_right",
+      "control": "level.1"
+    },
+    {
+      "name": "glide",
+      "module": "delay_left",
+      "control": "glide"
+    },
+    {
+      "name": "glide",
+      "module": "delay_right",
+      "control": "glide"
+    },
+    {
+      "name": "hold",
+      "module": "delay_left",
+      "control": "hold"
+    },
+    {
+      "name": "hold",
+      "module": "delay_right",
+      "control": "hold"
+    }
+  ]
+}
