@@ -7,11 +7,11 @@ use serde_json::json;
 use super::rig::*;
 
 fn noise_rig() -> Rig {
-    Rig::new().noise("nl", 31).noise("nr", 32).feed("nl", "white", "audio_left").feed(
-        "nr",
-        "white",
-        "audio_right",
-    )
+    Rig::new()
+        .noise("nl", 31)
+        .noise("nr", 32)
+        .feed("nl", "white", "audio_left")
+        .feed("nr", "white", "audio_right")
 }
 
 /// "Before the first echo, the output is exactly the dry input", each input
@@ -89,7 +89,10 @@ fn expected(pack: &str) -> Vec<(&'static str, ControlValue)> {
             ("division_right", Choice("quarter_note".into())),
         ]);
     } else {
-        controls.extend([("time", Number(0.25)), ("division", Choice("8th_note".into()))]);
+        controls.extend([
+            ("time", Number(0.25)),
+            ("division", Choice("8th_note".into())),
+        ]);
     }
     controls
 }
@@ -100,9 +103,15 @@ fn controls_are_exposed_by_name_with_their_defaults() {
     for pack in BOTH {
         let engine = engine(&noise_rig().effect(pack, json!({}), 1.0));
         let listed = engine.list_controls(Some("fx")).expect("fx lists controls");
-        let keys: Vec<_> = listed.iter().flat_map(|(_, c)| c.iter().map(|m| &m.key)).collect();
+        let keys: Vec<_> = listed
+            .iter()
+            .flat_map(|(_, c)| c.iter().map(|m| &m.key))
+            .collect();
         for (key, default) in expected(pack) {
-            assert!(keys.iter().any(|k| *k == key), "{pack} lists {key}: {keys:?}");
+            assert!(
+                keys.iter().any(|k| *k == key),
+                "{pack} lists {key}: {keys:?}"
+            );
             let value = engine.get_control("fx", key).expect("readable");
             assert_eq!(value, default, "{pack}.{key} default");
         }
@@ -144,6 +153,9 @@ fn controls_set_by_name_change_what_is_heard() {
         let (left, right) = render(&mut fx, SR as usize);
         let half = SR as usize / 2;
         let tail = peak(&left[half..]).max(peak(&right[half..]));
-        assert!(tail <= EPS, "{pack}: dry and wet at 0 are silent, peak {tail}");
+        assert!(
+            tail <= EPS,
+            "{pack}: dry and wet at 0 are silent, peak {tail}"
+        );
     }
 }

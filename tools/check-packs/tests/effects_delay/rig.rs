@@ -17,7 +17,9 @@ pub const PULSE_LEN: usize = 480;
 pub const PULSE_AMP: f64 = 0.5;
 
 pub fn pack_dir(id: &str) -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../packs").join(id)
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../packs")
+        .join(id)
 }
 
 /// The pack's development file, as an absolute path.
@@ -55,7 +57,8 @@ impl Rig {
     }
 
     fn link(mut self, from: &str, port: &str, to: &str, input: &str) -> Self {
-        self.feeds.push((from.into(), port.into(), to.into(), input.into()));
+        self.feeds
+            .push((from.into(), port.into(), to.into(), input.into()));
         self
     }
 
@@ -65,23 +68,27 @@ impl Rig {
         let clk = format!("{id}_clk");
         let gate = PULSE_LEN as f64 / (f64::from(SR) * 3.0);
         let config = json!({ "bpm": 20.0, "gate_length": gate });
-        self.modules.push(json!({ "id": clk, "type": "clock", "config": config }));
+        self.modules
+            .push(json!({ "id": clk, "type": "clock", "config": config }));
         let config = json!({ "level": PULSE_AMP });
-        self.modules.push(json!({ "id": id, "type": "vca", "config": config }));
+        self.modules
+            .push(json!({ "id": id, "type": "vca", "config": config }));
         self.link(&clk, "beat", id, "audio")
     }
 
     /// Seeded full-scale white noise, output `<id>.white`.
     pub fn noise(mut self, id: &str, seed: u32) -> Self {
         let config = json!({ "seed": seed, "level": 1.0 });
-        self.modules.push(json!({ "id": id, "type": "noise", "config": config }));
+        self.modules
+            .push(json!({ "id": id, "type": "noise", "config": config }));
         self
     }
 
     /// A clock whose `bpm` output carries `bpm`, output `<id>.bpm`.
     pub fn tempo(mut self, id: &str, bpm: f64) -> Self {
         let config = json!({ "bpm": bpm });
-        self.modules.push(json!({ "id": id, "type": "clock", "config": config }));
+        self.modules
+            .push(json!({ "id": id, "type": "clock", "config": config }));
         self
     }
 
@@ -182,7 +189,10 @@ pub fn plateau(x: &[f32], start: usize) -> f32 {
 pub fn assert_same(what: &str, a: &[f32], b: &[f32], range: std::ops::Range<usize>) {
     let first = range.clone().find(|&n| a[n].to_bits() != b[n].to_bits());
     if let Some(n) = first {
-        panic!("{what}: sample {n} is {} where the dry input is {}", a[n], b[n]);
+        panic!(
+            "{what}: sample {n} is {} where the dry input is {}",
+            a[n], b[n]
+        );
     }
 }
 

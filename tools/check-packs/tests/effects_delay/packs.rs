@@ -32,7 +32,10 @@ fn manifests_declare_a_development_entry_under_mit_at_this_release() {
         let manifest: Value = serde_json::from_str(&text).expect("manifest is JSON");
         assert_eq!(manifest["id"], id);
         assert_eq!(manifest["kind"], "development", "{id}");
-        assert_eq!(manifest["entry"]["development"], "delay.development.json", "{id}");
+        assert_eq!(
+            manifest["entry"]["development"], "delay.development.json",
+            "{id}"
+        );
         assert_eq!(manifest["license"], "MIT", "{id}");
         assert_eq!(manifest["version"], "2026.11.0", "{id}");
         assert!(pack_dir(id).join("LICENSE").is_file(), "{id} has a LICENSE");

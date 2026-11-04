@@ -14,11 +14,23 @@ fn each_side_echoes_on_its_own_side_only_at_its_division() {
     for (input, delay) in [("audio_left", 18_000), ("audio_right", 24_000)] {
         let rig = Rig::new().pulse("p").feed("p", "audio", input);
         let (left, right) = render_doc(&rig.effect(STEREO, json!({}), 1.0), 30_000);
-        let (heard, other) = if input == "audio_left" { (left, right) } else { (right, left) };
+        let (heard, other) = if input == "audio_left" {
+            (left, right)
+        } else {
+            (right, left)
+        };
         let start = onset(&heard, 0).expect("the dry pulse is heard");
         let echo = onset(&heard, start + PULSE_LEN + 100);
-        assert_eq!(echo, Some(start + delay), "{input}: first echo, pulse at {start}");
-        assert!(peak(&other) <= EPS, "{input}: the other side is silent, peak {}", peak(&other));
+        assert_eq!(
+            echo,
+            Some(start + delay),
+            "{input}: first echo, pulse at {start}"
+        );
+        assert!(
+            peak(&other) <= EPS,
+            "{input}: the other side is silent, peak {}",
+            peak(&other)
+        );
     }
 }
 
@@ -58,8 +70,15 @@ fn the_bpm_input_and_control_retime_both_heads() {
     let rig = pulse_both();
     let patched = Rig::new().tempo("tempo", 100.0).feed("tempo", "bpm", "bpm");
     let cases = [
-        ("bpm input", rig.with(&patched).effect(STEREO, json!({ "bpm": 60.0 }), 1.0)),
-        ("bpm control", rig.effect(STEREO, json!({ "bpm": 100.0 }), 1.0)),
+        (
+            "bpm input",
+            rig.with(&patched)
+                .effect(STEREO, json!({ "bpm": 60.0 }), 1.0),
+        ),
+        (
+            "bpm control",
+            rig.effect(STEREO, json!({ "bpm": 100.0 }), 1.0),
+        ),
     ];
     for (what, doc) in cases {
         let (left, right) = render_doc(&doc, 32_000);
