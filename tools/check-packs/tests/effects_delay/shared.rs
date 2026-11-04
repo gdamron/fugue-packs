@@ -28,26 +28,27 @@ fn output_before_the_first_echo_is_exactly_the_dry_input() {
     }
 }
 
-/// "Output stays within +/-1.0 for inputs within +/-1.0 at any control
-/// setting": full-scale noise on both inputs, `feedback` 1.0, `wet` 1.0 and
-/// `dry` at its default 1.0, for 10 s, at the default `tone` and a bright
-/// one. The outputs reach the dac through a 0.5 tap so the dac cannot hide
-/// an overshoot.
+/// "The echoes stay within +/-1.0 at any `feedback` and `tone`", so "the
+/// output stays within +/-1.0 whenever `dry` + `wet` <= 1": full-scale noise
+/// on both inputs, `feedback` 1.0, for 10 s, at `dry` 0 / `wet` 1 (the
+/// echoes alone) and `dry` 0.5 / `wet` 0.5, at the default `tone` and a
+/// bright one. The outputs reach the dac through a 0.5 tap so the dac
+/// cannot hide an overshoot.
 #[test]
-fn output_stays_within_unity_at_full_feedback_and_wet() {
+fn output_stays_within_unity_at_full_feedback_when_dry_plus_wet_is_one() {
     for pack in BOTH {
-        for tone in [4_000.0, 20_000.0] {
-            let config = json!({ "feedback": 1.0, "wet": 1.0, "tone": tone });
-            let mut engine = engine(&noise_rig().effect(pack, config, 0.5));
-            for second in 0..10 {
-                let (left, right) = render(&mut engine, SR as usize);
-                for (side, x) in [("left", &left), ("right", &right)] {
-                    assert!(x.iter().all(|v| v.is_finite()), "{pack}: finite");
-                    let p = peak(x) * 2.0;
-                    assert!(
-                        p <= 1.0 + 1e-6,
-                        "{pack} tone {tone}: {side} peak {p} in second {second}"
-                    );
+        for (dry, wet) in [(0.0, 1.0), (0.5, 0.5)] {
+            for tone in [4_000.0, 20_000.0] {
+                let config = json!({ "feedback": 1.0, "dry": dry, "wet": wet, "tone": tone });
+                let mut engine = engine(&noise_rig().effect(pack, config, 0.5));
+                for second in 0..10 {
+                    let (left, right) = render(&mut engine, SR as usize);
+                    for (side, x) in [("left", &left), ("right", &right)] {
+                        assert!(x.iter().all(|v| v.is_finite()), "{pack}: finite");
+                        let p = peak(x) * 2.0;
+                        let at = format!("{pack} dry {dry} wet {wet} tone {tone}: {side}");
+                        assert!(p <= 1.0 + 1e-6, "{at} peak {p} in second {second}");
+                    }
                 }
             }
         }
