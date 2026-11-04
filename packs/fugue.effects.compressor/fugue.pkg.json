@@ -1,0 +1,19 @@
+{
+  "id": "fugue.effects.compressor",
+  "version": "2026.11.0",
+  "kind": "development",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "A stereo-linked compressor with a sidechain: threshold, ratio, soft knee, attack, release, makeup gain and a dry/wet mix, built from the follower, gain_curve and gain atoms.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "entry": {
+    "development": "compressor.development.json"
+  }
+}

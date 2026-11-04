@@ -1,0 +1,260 @@
+{
+  "version": "1.0.0",
+  "title": "Compressor",
+  "description": "A stereo-linked compressor: a follower tracks the louder side (or the sidechain), a gain curve turns that level into gain reduction, and a gain per side applies it with makeup. The mix blends the compressed signal with the dry one as dry + mix x (compressed - dry): 1 is fully compressed, below 1 is parallel compression. Use mix from 0 to 1; the control reports the mixer's 0 to 2 range, and above 1 it exaggerates the compression. A mono source can use audio_left alone (the right output is then silent). For bus use, a highpass of 60 to 120 Hz keeps the bass from pumping the detector.",
+  "modules": [
+    {
+      "id": "detector",
+      "type": "follower",
+      "config": {
+        "attack": 0.01,
+        "release": 0.1,
+        "sidechain_mix": 0.0,
+        "highpass": 0.0
+      }
+    },
+    {
+      "id": "curve",
+      "type": "gain_curve",
+      "config": {
+        "threshold": -20.0,
+        "ratio": 4.0,
+        "knee": 6.0
+      }
+    },
+    {
+      "id": "gain_left",
+      "type": "gain",
+      "config": {
+        "decibels": 0.0
+      }
+    },
+    {
+      "id": "dry_inverted_left",
+      "type": "gain",
+      "config": {
+        "invert": true
+      }
+    },
+    {
+      "id": "gain_right",
+      "type": "gain",
+      "config": {
+        "decibels": 0.0
+      }
+    },
+    {
+      "id": "dry_inverted_right",
+      "type": "gain",
+      "config": {
+        "invert": true
+      }
+    },
+    {
+      "id": "mix_left",
+      "type": "mixer",
+      "config": {
+        "channel_count": 3,
+        "levels": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "pans": [
+          -1.0,
+          -1.0,
+          -1.0
+        ],
+        "master": 1.0
+      }
+    },
+    {
+      "id": "mix_right",
+      "type": "mixer",
+      "config": {
+        "channel_count": 3,
+        "levels": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "pans": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "master": 1.0
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from": "detector",
+      "from_port": "level",
+      "to": "curve",
+      "to_port": "level"
+    },
+    {
+      "from": "curve",
+      "from_port": "decibels",
+      "to": "gain_left",
+      "to_port": "decibels_mod"
+    },
+    {
+      "from": "gain_left",
+      "from_port": "audio",
+      "to": "mix_left",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "dry_inverted_left",
+      "from_port": "audio",
+      "to": "mix_left",
+      "to_port": "audio.2"
+    },
+    {
+      "from": "curve",
+      "from_port": "decibels",
+      "to": "gain_right",
+      "to_port": "decibels_mod"
+    },
+    {
+      "from": "gain_right",
+      "from_port": "audio",
+      "to": "mix_right",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "dry_inverted_right",
+      "from_port": "audio",
+      "to": "mix_right",
+      "to_port": "audio.2"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "audio_left",
+      "to": "detector",
+      "to_port": "audio_left"
+    },
+    {
+      "name": "audio_left",
+      "to": "gain_left",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_left",
+      "to": "dry_inverted_left",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_left",
+      "to": "mix_left",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "audio_right",
+      "to": "detector",
+      "to_port": "audio_right"
+    },
+    {
+      "name": "audio_right",
+      "to": "gain_right",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_right",
+      "to": "dry_inverted_right",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_right",
+      "to": "mix_right",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "sidechain",
+      "to": "detector",
+      "to_port": "sidechain"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "audio_left",
+      "from": "mix_left",
+      "from_port": "audio_left"
+    },
+    {
+      "name": "audio_right",
+      "from": "mix_right",
+      "from_port": "audio_right"
+    }
+  ],
+  "controls": [
+    {
+      "name": "threshold",
+      "module": "curve",
+      "control": "threshold"
+    },
+    {
+      "name": "ratio",
+      "module": "curve",
+      "control": "ratio"
+    },
+    {
+      "name": "knee",
+      "module": "curve",
+      "control": "knee"
+    },
+    {
+      "name": "attack",
+      "module": "detector",
+      "control": "attack"
+    },
+    {
+      "name": "release",
+      "module": "detector",
+      "control": "release"
+    },
+    {
+      "name": "sidechain_mix",
+      "module": "detector",
+      "control": "sidechain_mix"
+    },
+    {
+      "name": "highpass",
+      "module": "detector",
+      "control": "highpass"
+    },
+    {
+      "name": "makeup",
+      "module": "gain_left",
+      "control": "decibels"
+    },
+    {
+      "name": "makeup",
+      "module": "gain_right",
+      "control": "decibels"
+    },
+    {
+      "name": "mix",
+      "module": "mix_left",
+      "control": "level.1"
+    },
+    {
+      "name": "mix",
+      "module": "mix_left",
+      "control": "level.2"
+    },
+    {
+      "name": "mix",
+      "module": "mix_right",
+      "control": "level.1"
+    },
+    {
+      "name": "mix",
+      "module": "mix_right",
+      "control": "level.2"
+    }
+  ]
+}
