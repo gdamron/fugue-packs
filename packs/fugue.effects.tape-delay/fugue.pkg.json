@@ -1,0 +1,19 @@
+{
+  "id": "fugue.effects.tape-delay",
+  "version": "2026.11.0",
+  "kind": "development",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "A tape echo: one head whose time changes bend the pitch, soft saturation and a lowpass tone filter in the loop, wow and flutter, feedback up to self-oscillation, dry/wet levels and hold.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "entry": {
+    "development": "delay.development.json"
+  }
+}

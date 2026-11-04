@@ -1,0 +1,304 @@
+{
+  "version": "1.0.0",
+  "title": "Tape Delay",
+  "description": "One tape head: both inputs, summed to mono, and the echoes fed back pass soft saturation and a lowpass tone filter into a delay whose time changes slew, bending the pitch. Slow wow and fast flutter wobble the delay time. The echo is heard on both sides, mixed with the dry signal.",
+  "modules": [
+    {
+      "id": "send",
+      "type": "vca",
+      "config": {
+        "level": 0.5
+      }
+    },
+    {
+      "id": "saturation",
+      "type": "drive",
+      "config": {
+        "shape": "soft",
+        "drive": 0.2,
+        "level": 0.72,
+        "mix": 1.0,
+        "auto_level": false,
+        "oversampling": 2
+      }
+    },
+    {
+      "id": "tone",
+      "type": "filter",
+      "config": {
+        "filter_type": "lowpass",
+        "cutoff": 3500.0,
+        "resonance": 0.0
+      }
+    },
+    {
+      "id": "head",
+      "type": "delay",
+      "config": {
+        "max_time": 4.0,
+        "time": 0.3,
+        "division": "off",
+        "glide": "slew",
+        "time_mod_depth": 0.004
+      }
+    },
+    {
+      "id": "feedback",
+      "type": "mixer",
+      "config": {
+        "channel_count": 1,
+        "levels": [
+          0.4
+        ],
+        "pans": [
+          -1.0
+        ],
+        "master": 1.0
+      }
+    },
+    {
+      "id": "wow_lfo",
+      "type": "lfo",
+      "config": {
+        "rate": 0.55,
+        "waveform": "sine"
+      }
+    },
+    {
+      "id": "wow",
+      "type": "vca",
+      "config": {
+        "level": 0.25
+      }
+    },
+    {
+      "id": "flutter_lfo",
+      "type": "lfo",
+      "config": {
+        "rate": 6.5,
+        "waveform": "sine"
+      }
+    },
+    {
+      "id": "flutter",
+      "type": "vca",
+      "config": {
+        "level": 0.2
+      }
+    },
+    {
+      "id": "flutter_range",
+      "type": "vca",
+      "config": {
+        "level": 0.1
+      }
+    },
+    {
+      "id": "mix_left",
+      "type": "mixer",
+      "config": {
+        "channel_count": 2,
+        "levels": [
+          1.0,
+          0.5
+        ],
+        "pans": [
+          -1.0,
+          -1.0
+        ],
+        "master": 1.0
+      }
+    },
+    {
+      "id": "mix_right",
+      "type": "mixer",
+      "config": {
+        "channel_count": 2,
+        "levels": [
+          1.0,
+          0.5
+        ],
+        "pans": [
+          1.0,
+          1.0
+        ],
+        "master": 1.0
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from": "send",
+      "from_port": "audio",
+      "to": "saturation",
+      "to_port": "audio"
+    },
+    {
+      "from": "saturation",
+      "from_port": "audio",
+      "to": "tone",
+      "to_port": "audio"
+    },
+    {
+      "from": "tone",
+      "from_port": "audio",
+      "to": "head",
+      "to_port": "audio"
+    },
+    {
+      "from": "head",
+      "from_port": "audio",
+      "to": "feedback",
+      "to_port": "audio.0"
+    },
+    {
+      "from": "feedback",
+      "from_port": "audio_left",
+      "to": "saturation",
+      "to_port": "audio"
+    },
+    {
+      "from": "head",
+      "from_port": "audio",
+      "to": "mix_left",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "head",
+      "from_port": "audio",
+      "to": "mix_right",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "wow_lfo",
+      "from_port": "bipolar",
+      "to": "wow",
+      "to_port": "audio"
+    },
+    {
+      "from": "wow",
+      "from_port": "audio",
+      "to": "head",
+      "to_port": "time_mod"
+    },
+    {
+      "from": "flutter_lfo",
+      "from_port": "bipolar",
+      "to": "flutter",
+      "to_port": "audio"
+    },
+    {
+      "from": "flutter",
+      "from_port": "audio",
+      "to": "flutter_range",
+      "to_port": "audio"
+    },
+    {
+      "from": "flutter_range",
+      "from_port": "audio",
+      "to": "head",
+      "to_port": "time_mod"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "audio_left",
+      "to": "send",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_left",
+      "to": "mix_left",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "audio_right",
+      "to": "send",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_right",
+      "to": "mix_right",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "bpm",
+      "to": "head",
+      "to_port": "bpm"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "audio_left",
+      "from": "mix_left",
+      "from_port": "audio_left"
+    },
+    {
+      "name": "audio_right",
+      "from": "mix_right",
+      "from_port": "audio_right"
+    }
+  ],
+  "controls": [
+    {
+      "name": "time",
+      "module": "head",
+      "control": "time"
+    },
+    {
+      "name": "division",
+      "module": "head",
+      "control": "division"
+    },
+    {
+      "name": "bpm",
+      "module": "head",
+      "control": "bpm"
+    },
+    {
+      "name": "feedback",
+      "module": "feedback",
+      "control": "level.0"
+    },
+    {
+      "name": "tone",
+      "module": "tone",
+      "control": "cutoff"
+    },
+    {
+      "name": "dry",
+      "module": "mix_left",
+      "control": "level.0"
+    },
+    {
+      "name": "dry",
+      "module": "mix_right",
+      "control": "level.0"
+    },
+    {
+      "name": "wet",
+      "module": "mix_left",
+      "control": "level.1"
+    },
+    {
+      "name": "wet",
+      "module": "mix_right",
+      "control": "level.1"
+    },
+    {
+      "name": "wow",
+      "module": "wow",
+      "control": "level"
+    },
+    {
+      "name": "flutter",
+      "module": "flutter",
+      "control": "level"
+    },
+    {
+      "name": "hold",
+      "module": "head",
+      "control": "hold"
+    }
+  ]
+}
