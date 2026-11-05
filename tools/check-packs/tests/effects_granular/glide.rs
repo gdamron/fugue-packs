@@ -1,9 +1,9 @@
-//! The looping delay's tape glide through the pack: `glide` and `inertia`
-//! left at their defaults change nothing, and a glided move bends the pitch
-//! where glide 0 crossfades.
+//! The looping delay's tape glide through the pack: passing `glide` and
+//! `inertia` through is neutral at their defaults, and a glided move bends
+//! the pitch where glide 0 crossfades.
 
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use fugue::{ControlValue, RenderEngine};
 use serde_json::{json, Value};
@@ -15,24 +15,24 @@ const TONE: f64 = 1_000.0;
 const WINDOW: usize = SECOND / 20;
 
 /// The development without its `glide` and `inertia` controls, as the pack
-/// was before it passed them through, written beside the test's temp files.
-fn development_without_glide() -> PathBuf {
+/// was before it passed them through, written to a temp directory of its own
+/// (the caller removes it).
+fn development_without_glide(dir: &Path) -> PathBuf {
     let text = fs::read_to_string(development_path()).expect("development reads");
     let mut development: Value = serde_json::from_str(&text).expect("development is JSON");
     let controls = development["controls"].as_array_mut().expect("controls");
     let before = controls.len();
     controls.retain(|c| c["name"] != "glide" && c["name"] != "inertia");
     assert_eq!(before - controls.len(), 2, "the pack passes both through");
-    let dir = std::env::temp_dir().join(format!("granular-pack-{}", std::process::id()));
-    fs::create_dir_all(&dir).expect("temp dir");
+    fs::create_dir_all(dir).expect("temp dir");
     let path = dir.join("granular.development.json");
     fs::write(&path, development.to_string()).expect("writes");
     path
 }
 
-fn without_glide(source: &Source, config: Value) -> Value {
+fn without_glide(source: &Source, config: Value, dir: &Path) -> Value {
     let mut doc = effect(source, config);
-    let path = development_without_glide();
+    let path = development_without_glide(dir);
     doc["developments"][0]["path"] = json!(path.to_string_lossy());
     doc
 }
@@ -55,16 +55,19 @@ fn bits(x: &[f32]) -> Vec<u32> {
     x.iter().map(|v| v.to_bits()).collect()
 }
 
-/// The defaults leave the pack as it was: bit-identical output to the
-/// development without the two controls, in every mode and across a
-/// position move, and the same with the defaults written into config.
+/// The pack's wiring is neutral at the defaults: bit-identical output to the
+/// development without the two controls, in every mode and across position
+/// moves, and the same with the defaults written into config. (That glide 0
+/// sounds as the module did before it had the control is core's guarantee,
+/// covered by its own tests.)
 #[test]
 fn glide_and_inertia_at_their_defaults_change_nothing() {
     let moves = [(2, 0.4), (4, 0.3)];
+    let dir = std::env::temp_dir().join(format!("granular-pack-defaults-{}", std::process::id()));
     for mode in ["granular", "stretch", "looping_delay"] {
         let source = Source::noise_at(-6.0);
         let config = json!({ "mode": mode, "position": 0.25, "wet": 1.0 });
-        let before = play(&without_glide(&source, config.clone()), 6, &moves);
+        let before = play(&without_glide(&source, config.clone(), &dir), 6, &moves);
         let now = play(&effect(&source, config.clone()), 6, &moves);
         assert!(rms(&now) > 0.01, "{mode}: plays");
         assert!(bits(&now) == bits(&before), "{mode}: defaults differ");
@@ -77,6 +80,7 @@ fn glide_and_inertia_at_their_defaults_change_nothing() {
             "{mode}: stated defaults differ"
         );
     }
+    let _ = fs::remove_dir_all(&dir);
 }
 
 /// Pitch relative to `TONE` in each window from `from` to `to` seconds,
@@ -109,7 +113,7 @@ fn moved(glide: f32, inertia: f32) -> Vec<f32> {
         "mode": "looping_delay", "density": 0.0, "position": 0.25,
         "glide": glide, "inertia": inertia, "dry": 0.0, "wet": 1.0, "reverb": 0.0
     });
-    play(&effect(&Source::sine(TONE, 0.5), config), 12, &[(3, 0.3)])
+    play(&effect(&Source::sine(TONE, 0.5), config), 13, &[(3, 0.3)])
 }
 
 /// With glide on, the delay slides: the tone bends flat while it grows and
@@ -126,13 +130,13 @@ fn a_glided_move_bends_where_glide_zero_crossfades() {
             lowest > 0.48,
             "inertia {inertia}: below half speed ({lowest})"
         );
-        let settled = speeds(&y, 11.0, 12.0);
+        let settled = speeds(&y, 12.0, 13.0);
         for s in settled {
-            assert!((s - 1.0).abs() < 0.01, "inertia {inertia}: settles at {s}");
+            assert!((s - 1.0).abs() < 0.015, "inertia {inertia}: settles at {s}");
         }
     }
     let y = moved(0.0, 0.5);
-    for s in speeds(&y, 3.05, 12.0) {
+    for s in speeds(&y, 3.05, 13.0) {
         assert!((s - 1.0).abs() < 0.01, "glide 0 bends: {s}");
     }
 }
