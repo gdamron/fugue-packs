@@ -6,12 +6,12 @@ use serde_json::json;
 use super::rig::*;
 
 /// "an impulse given to both inputs gives a first echo on the left only at
-/// 12,000 samples, the second on the right only at about 24,000 (+ up to a
-/// sample per outside-loop pass), the third on the left at about 36,000,
-/// each echo about x `feedback` from the one before", and "a signal patched
-/// to both inputs enters at unity" (the first echo is the pulse at the `wet`
-/// level, 0.5). Assumption: "about" is within 15% for levels, and within 2
-/// samples per pass for onsets.
+/// 12,000 samples, the second on the right only at 24,000, the third on the
+/// left at 36,000, each echo about x `feedback` from the one before", and "a
+/// signal patched to both inputs enters at unity" (the first echo is the pulse
+/// at the `wet` level, 0.5). Assumption: "about" is within 15% for levels,
+/// and later onsets fall within 2 samples of k x 12,000 (the lowpass may
+/// smear an onset).
 #[test]
 fn echoes_alternate_left_right_left_and_decay_by_feedback() {
     let (left, right) = render_doc(&pulse_both().effect(PING_PONG, json!({}), 1.0), 40_000);
@@ -28,7 +28,7 @@ fn echoes_alternate_left_right_left_and_decay_by_feedback() {
     );
     let third = onset(&left, first + 2_000).expect("a third echo on the left");
     assert!(
-        (start + 36_000..=start + 36_004).contains(&third),
+        (start + 36_000..=start + 36_002).contains(&third),
         "third echo at {third}"
     );
     // The onsets above leave each side silent between its echoes; the right
