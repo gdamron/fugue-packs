@@ -27,7 +27,12 @@ fn wet_and_reverb_at_zero_pass_the_input_untouched() {
 fn dry_and_reverb_at_zero_are_the_bare_granular_module() {
     let source = Source::sine(220.0, 0.5);
     for mode in ["granular", "stretch", "looping_delay"] {
-        let grains = json!({ "mode": mode, "pitch": 7.0, "spread": 0.6 });
+        // Every grain control away from its default and from the others, so
+        // a crossed alias shows.
+        let grains = json!({
+            "mode": mode, "position": 0.3, "size": 0.62, "pitch": 7.0,
+            "density": 0.85, "texture": 0.4, "spread": 0.6
+        });
         let (want_l, want_r) = render_doc(&bare(&source, grains.clone()), 3 * SECOND);
         let mut config = grains;
         config["dry"] = json!(0.0);
@@ -54,20 +59,27 @@ fn the_reverb_send_adds_a_tail_after_the_grains_stop() {
     assert_eq!(tail(0.0, 0.0), 0.0, "nothing at wet and reverb 0");
 }
 
+/// The larger of the two sides' largest steps.
+fn both((left, right): (Vec<f32>, Vec<f32>)) -> f32 {
+    max_step(&left).max(max_step(&right))
+}
+
 /// Each mix control jumped live from 0 to 1 and back glides: no step larger
-/// than 1.5 times the steady signal's on either side of the change.
+/// than 1.5 times the steady signal's on either side of the change. The
+/// sine's period does not divide the write times, so a step in `dry` would
+/// not hide at a zero crossing.
 #[test]
 fn mix_controls_glide_when_changed_live() {
     for key in ["dry", "wet", "reverb"] {
-        let mut fx = engine(&effect(&Source::sine(220.0, 0.25), json!({ key: 0.0 })));
+        let mut fx = engine(&effect(&Source::sine(233.0, 0.25), json!({ key: 0.0 })));
         render(&mut fx, 3 * SECOND);
-        let mut before = max_step(&render(&mut fx, SECOND / 2).0);
+        let mut before = both(render(&mut fx, SECOND / 2));
         for to in [1.0f32, 0.0] {
             set(&fx, key, to);
-            let (change, _) = render(&mut fx, SECOND / 10);
+            let change = render(&mut fx, SECOND / 10);
             render(&mut fx, SECOND);
-            let after = max_step(&render(&mut fx, SECOND / 2).0);
-            let step = max_step(&change);
+            let after = both(render(&mut fx, SECOND / 2));
+            let step = both(change);
             let bound = 1.5 * before.max(after);
             assert!(step <= bound, "{key} -> {to}: step {step} over {bound}");
             before = after;
