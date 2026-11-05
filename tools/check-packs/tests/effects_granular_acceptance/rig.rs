@@ -61,6 +61,21 @@ impl Feed {
         }
     }
 
+    /// The `noise_pair` brought `decibels` up with a `gain` module on each
+    /// side, so the input can run past full scale (noise levels stop at 1).
+    pub fn hot_noise_pair(level: f64, decibels: f64) -> Self {
+        let mut feed = Self::noise_pair(level);
+        for (side, source) in [("l", &mut feed.left), ("r", &mut feed.right)] {
+            let id = format!("hot_{side}");
+            let config = json!({ "decibels": decibels });
+            feed.modules
+                .push(json!({ "id": id, "type": "gain", "config": config }));
+            feed.wires.push(conn(&source.0, &source.1, &id, "audio"));
+            *source = (id, "audio".into());
+        }
+        feed
+    }
+
     /// One full-scale noise into both inputs.
     pub fn noise_both() -> Self {
         let source = ("n".to_string(), "white".to_string());
@@ -186,13 +201,26 @@ pub fn set(engine: &RenderEngine, key: &str, value: impl Into<ControlValue>) {
     set_on(engine, "fx", key, value);
 }
 
-/// Asserts `a` and `b` agree bit for bit over their length, naming the
-/// first difference.
-pub fn assert_same(what: &str, a: &[f32], b: &[f32]) {
+/// The pack's static soft limit on each output, in f32:
+/// `0.5469 * clamp(kg * x, -1, 1) + 0.453 * clamp(tg * x, -1, 1)` with
+/// `kg` +3.011048 dB and `tg` -6.0206 dB.
+pub fn limit(x: f32) -> f32 {
+    let gain = |decibels: f64| 10f64.powf(decibels / 20.0) as f32;
+    let (kg, tg) = (gain(3.011048), gain(-6.0206));
+    0.5469 * (kg * x).clamp(-1.0, 1.0) + 0.453 * (tg * x).clamp(-1.0, 1.0)
+}
+
+pub fn limited(x: &[f32]) -> Vec<f32> {
+    x.iter().map(|v| limit(*v)).collect()
+}
+
+/// Asserts `a` and `b` agree within `tolerance` per sample over their
+/// length, naming the first difference.
+pub fn assert_near(what: &str, a: &[f32], b: &[f32], tolerance: f32) {
     assert_eq!(a.len(), b.len(), "{what}: lengths");
-    if let Some(n) = (0..a.len()).find(|&n| a[n].to_bits() != b[n].to_bits()) {
+    if let Some(n) = (0..a.len()).find(|&n| (a[n] - b[n]).abs() > tolerance) {
         panic!(
-            "{what}: sample {n} is {} where the reference is {}",
+            "{what}: sample {n} is {} where the reference is {} (tolerance {tolerance})",
             a[n], b[n]
         );
     }

@@ -55,13 +55,13 @@ fn the_bound_holds_in_every_mode_and_with_busy_controls() {
 
 /// "With every level at 1 and the reverb at its largest and least damped
 /// (`reverb_size` 1, `reverb_decay` 1, `reverb_damping` 0), `feedback` 1,
-/// 60 s of 0 dBFS noise keeps both outputs finite and within ±16."
+/// 60 s of 0 dBFS noise keeps both outputs finite and within ±1.0."
 #[test]
-fn everything_at_the_top_for_a_minute_stays_finite_and_within_16() {
+fn everything_at_the_top_for_a_minute_stays_finite_and_within_unity() {
     let top = json!({ "dry": 1.0, "wet": 1.0, "reverb": 1.0, "reverb_size": 1.0,
         "reverb_decay": 1.0, "reverb_damping": 0.0, "feedback": 1.0 });
-    assert_bounded("granular", top.clone(), 60, 16.0, 32.0);
+    assert_bounded("granular", top.clone(), 60, 1.0, 4.0);
     for mode in ["stretch", "looping_delay"] {
-        assert_bounded(mode, with(&top, json!({ "mode": mode })), 20, 16.0, 32.0);
+        assert_bounded(mode, with(&top, json!({ "mode": mode })), 20, 1.0, 4.0);
     }
 }
