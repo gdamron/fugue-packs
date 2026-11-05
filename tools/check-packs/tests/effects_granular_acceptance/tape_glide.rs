@@ -66,15 +66,17 @@ fn settled_at(speeds: &[f64]) -> f64 {
 /// tone's pitch flat while the delay grows (its read speed dips below
 /// 0.97x, never below 0.5x), and then returns to pitch (... allow about 8 s
 /// after the move at `inertia` 1)". Returns the slowest speed and the
-/// settling time.
+/// settling time, the worse of the two sides.
 fn assert_bends_flat_and_returns(what: &str, config: Value) -> (f64, f64) {
     let mut fx = looping_delay(config);
     let (left, right) = move_speeds(&mut fx);
-    let mut dip = (f64::MAX, 0.0);
+    let mut worst = (f64::MAX, 0.0f64);
     for (side, speeds) in [("left", &left), ("right", &right)] {
         let slowest = speeds.iter().copied().fold(f64::MAX, f64::min);
-        assert!(slowest < 0.97, "{what} {side}: slowest speed {slowest}");
-        assert!(slowest >= 0.49, "{what} {side}: slowest speed {slowest}");
+        assert!(
+            (0.49..0.97).contains(&slowest),
+            "{what} {side}: slowest speed {slowest}"
+        );
         let settled = settled_at(speeds);
         assert!(
             settled <= 8.5,
@@ -85,9 +87,9 @@ fn assert_bends_flat_and_returns(what: &str, config: Value) -> (f64, f64) {
             end.iter().all(|s| (s - 1.0).abs() <= 0.015),
             "{what} {side}: speeds {end:?} in the last second"
         );
-        dip = (slowest, settled);
+        worst = (worst.0.min(slowest), worst.1.max(settled));
     }
-    dip
+    worst
 }
 
 #[test]
@@ -110,7 +112,7 @@ fn live_writes_of_glide_and_inertia_do_the_same_as_config() {
     set(&fx, "inertia", 1.0f32);
     let (left, _) = move_speeds(&mut fx);
     let slowest = left.iter().copied().fold(f64::MAX, f64::min);
-    assert!(slowest < 0.97 && slowest >= 0.49, "slowest speed {slowest}");
+    assert!((0.49..0.97).contains(&slowest), "slowest speed {slowest}");
     assert!(settled_at(&left) <= 8.5, "settles within about 8 s");
 }
 
