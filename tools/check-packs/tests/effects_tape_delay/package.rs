@@ -25,7 +25,7 @@ fn check_packs_validates_the_repository_with_the_tape_pack() {
 }
 
 /// "`fugue.pkg.json` (kind `development`, entry `delay.development.json`,
-/// MIT, version `2026.11.0`) and `LICENSE`".
+/// MIT, version `2026.11.1`) and `LICENSE`".
 #[test]
 fn manifest_declares_a_development_entry_under_mit_at_this_release() {
     let path = pack_dir(TAPE).join("fugue.pkg.json");
@@ -35,7 +35,7 @@ fn manifest_declares_a_development_entry_under_mit_at_this_release() {
     assert_eq!(manifest["kind"], "development");
     assert_eq!(manifest["entry"]["development"], "delay.development.json");
     assert_eq!(manifest["license"], "MIT");
-    assert_eq!(manifest["version"], "2026.11.0");
+    assert_eq!(manifest["version"], "2026.11.1");
     assert!(pack_dir(TAPE).join("LICENSE").is_file(), "has a LICENSE");
     fugue::pkg::parse_path(&path).unwrap_or_else(|e| panic!("fugue refuses it: {e}"));
 }
