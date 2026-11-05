@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "title": "Ping-Pong Delay",
-  "description": "A tempo-synced delay whose echoes bounce left, right, left: two heads in a cross-feedback loop, each fed through a lowpass tone filter, mixed with the dry signal.",
+  "description": "A tempo-synced delay whose echoes bounce left, right, left: two heads in a cross-feedback loop, each fed through a lowpass tone filter, mixed with the dry signal. Delay times shorter than 10 ms are held at 10 ms.",
   "modules": [
     {
       "id": "send",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "title": "Stereo Delay",
-  "description": "Two tempo-synced delay heads, one per side, each fed through a lowpass tone filter and back into itself, mixed with the dry signal.",
+  "description": "Two tempo-synced delay heads, one per side, each fed through a lowpass tone filter and back into itself, mixed with the dry signal. Delay times shorter than 10 ms are held at 10 ms.",
   "modules": [
     {
       "id": "delay_left",
