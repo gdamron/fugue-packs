@@ -8,6 +8,7 @@
       "type": "delay",
       "config": {
         "max_time": 4.0,
+        "min_time": 0.01,
         "time": 0.375,
         "division": "dotted_8th_note"
       }
@@ -17,6 +18,7 @@
       "type": "delay",
       "config": {
         "max_time": 4.0,
+        "min_time": 0.01,
         "time": 0.5,
         "division": "quarter_note"
       }
