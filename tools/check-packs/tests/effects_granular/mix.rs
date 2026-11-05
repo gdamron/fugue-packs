@@ -5,26 +5,40 @@ use serde_json::json;
 
 use super::rig::*;
 
-fn assert_same(what: &str, a: &[f32], b: &[f32]) {
-    if let Some(n) = (0..a.len()).find(|&n| a[n].to_bits() != b[n].to_bits()) {
-        panic!("{what}: sample {n} is {} where it should be {}", a[n], b[n]);
+/// Below the knee the limit passes the input: the dry end is the input to
+/// within rounding.
+#[test]
+fn wet_and_reverb_at_zero_pass_the_input_below_the_knee() {
+    let source = Source::noise_at(-3.2);
+    let (want_l, want_r) = render_doc(&dry(&source), SECOND);
+    let config = json!({ "wet": 0.0, "reverb": 0.0 });
+    let (l, r) = render_doc(&effect(&source, config), SECOND);
+    for (side, got, want) in [("left", &l, &want_l), ("right", &r, &want_r)] {
+        assert!(peak(want) > 0.68, "{side}: the input reaches the knee");
+        let off = got
+            .iter()
+            .zip(want.iter())
+            .fold(0.0f32, |m, (g, w)| m.max((g - w).abs()));
+        assert!(off <= 1e-6, "{side}: strays {off} from the input");
+        assert!(peak(got) > 0.68, "{side}: heard at the knee");
     }
 }
 
+/// A source 8 dB over full scale (peaks near 2.5), dry alone: every sample is the limit of
+/// the input's, with no delay, and nothing passes the ceiling.
 #[test]
-fn wet_and_reverb_at_zero_pass_the_input_untouched() {
-    let source = Source::noise();
+fn a_hot_input_follows_the_soft_limit_without_latency() {
+    let source = Source::noise_at(8.0);
     let (want_l, want_r) = render_doc(&dry(&source), SECOND);
-    let (l, r) = render_doc(
-        &effect(&source, json!({ "wet": 0.0, "reverb": 0.0 })),
-        SECOND,
-    );
-    assert_same("left", &l, &want_l);
-    assert_same("right", &r, &want_r);
+    let config = json!({ "wet": 0.0, "reverb": 0.0 });
+    let (l, r) = render_doc(&effect(&source, config), SECOND);
+    assert_limited("left", &l, &want_l);
+    assert_limited("right", &r, &want_r);
+    assert!(peak(&l).max(peak(&r)) < 1.0, "under the ceiling");
 }
 
 #[test]
-fn dry_and_reverb_at_zero_are_the_bare_granular_module() {
+fn dry_and_reverb_at_zero_are_the_bare_granular_module_limited() {
     let source = Source::sine(220.0, 0.5);
     for mode in ["granular", "stretch", "looping_delay"] {
         // Every grain control away from its default and from the others, so
@@ -39,8 +53,8 @@ fn dry_and_reverb_at_zero_are_the_bare_granular_module() {
         config["wet"] = json!(1.0);
         config["reverb"] = json!(0.0);
         let (l, r) = render_doc(&effect(&source, config), 3 * SECOND);
-        assert_same(&format!("{mode} left"), &l, &want_l);
-        assert_same(&format!("{mode} right"), &r, &want_r);
+        assert_limited(&format!("{mode} left"), &l, &want_l);
+        assert_limited(&format!("{mode} right"), &r, &want_r);
     }
 }
 

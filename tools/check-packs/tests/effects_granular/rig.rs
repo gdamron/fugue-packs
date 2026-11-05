@@ -64,6 +64,19 @@ impl Source {
         }
     }
 
+    /// That noise brought to `decibels` peak (dBFS) by a `gain` per side.
+    pub fn noise_at(decibels: f64) -> Self {
+        let mut source = Self::noise();
+        for (side, from) in [("gl", "nl"), ("gr", "nr")] {
+            let config = json!({ "decibels": decibels });
+            (source.modules).push(json!({ "id": side, "type": "gain", "config": config }));
+            (source.connections).push(conn(from, "white", side, "audio"));
+        }
+        source.left = ("gl".into(), "audio".into());
+        source.right = ("gr".into(), "audio".into());
+        source
+    }
+
     /// A 2 kHz sine burst at 0.5 peak for the first `frames` frames, gated
     /// by a 6 bpm clock, so it does not come back within 10 s.
     pub fn burst(frames: usize) -> Self {
@@ -122,6 +135,31 @@ pub fn bare(source: &Source, mut config: Value) -> Value {
     let (mut modules, connections) = source.into("fx");
     modules.push(json!({ "id": "fx", "type": "granular", "config": config }));
     invention(modules, connections, "fx")
+}
+
+/// The pack's output soft limit, as its interface states it: unchanged up
+/// to the knee at -3 dBFS, then rising at about a quarter of the rate to a
+/// ceiling just under 0 dBFS, reached at +6 dBFS.
+pub fn limit(x: f32) -> f32 {
+    let knee = 10f32.powf(3.011048 / 20.0);
+    let top = 10f32.powf(-6.0206 / 20.0);
+    0.5469 * (knee * x).clamp(-1.0, 1.0) + 0.453 * (top * x).clamp(-1.0, 1.0)
+}
+
+/// How far the limit may stray from its curve: float rounding only.
+pub const LIMIT_TOLERANCE: f32 = 1e-5;
+
+/// Asserts `got` is `want` through the soft limit, sample for sample.
+pub fn assert_limited(what: &str, got: &[f32], want: &[f32]) {
+    assert_eq!(got.len(), want.len(), "{what}: lengths");
+    for (n, (g, w)) in got.iter().zip(want).enumerate() {
+        let expected = limit(*w);
+        let off = (g - expected).abs();
+        assert!(
+            off <= LIMIT_TOLERANCE,
+            "{what}: sample {n} is {g}, the limit of {w} is {expected}"
+        );
+    }
 }
 
 /// The source straight to the dac.

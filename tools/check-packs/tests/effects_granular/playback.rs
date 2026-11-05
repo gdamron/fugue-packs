@@ -1,4 +1,4 @@
-//! Every mode plays, and the output stays bounded.
+//! Every mode plays, and the soft limit bounds the output.
 
 use serde_json::{json, Value};
 
@@ -30,25 +30,17 @@ fn loudest(config: Value, seconds: usize) -> f32 {
     loudest
 }
 
+/// Everything at its top, the reverb largest and least damped, 0 dBFS noise
+/// in: the soft limit holds every mode within unity.
 #[test]
-fn dry_plus_wet_at_most_one_stays_within_unity_at_full_feedback() {
-    for mode in ["granular", "stretch", "looping_delay"] {
+fn everything_at_its_top_stays_within_unity_in_every_mode() {
+    for (mode, seconds) in [("granular", 30), ("stretch", 10), ("looping_delay", 10)] {
         let config = json!({
-            "mode": mode, "dry": 0.5, "wet": 0.5, "reverb": 0.0,
-            "feedback": 1.0, "density": 1.0, "texture": 1.0, "spread": 1.0
+            "mode": mode, "dry": 1.0, "wet": 1.0, "reverb": 1.0, "feedback": 1.0,
+            "reverb_size": 1.0, "reverb_decay": 1.0, "reverb_damping": 0.0,
+            "density": 1.0, "texture": 1.0, "spread": 1.0
         });
-        let p = loudest(config, 20);
-        assert!(p <= 1.0, "{mode}: peak {p}");
+        let p = loudest(config, seconds);
+        assert!(p < 1.0, "{mode}: peak {p}");
     }
-}
-
-#[test]
-fn everything_at_its_top_stays_finite_and_does_not_run_away() {
-    let config = json!({
-        "dry": 1.0, "wet": 1.0, "reverb": 1.0, "feedback": 1.0,
-        "reverb_size": 1.0, "reverb_decay": 1.0, "reverb_damping": 0.0,
-        "density": 1.0, "texture": 1.0
-    });
-    let p = loudest(config, 30);
-    assert!(p <= 16.0, "peak {p}");
 }

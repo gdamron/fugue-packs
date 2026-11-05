@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "title": "Granular",
-  "description": "A granular texture processor: the granular module records both inputs into a 4 s buffer and plays it back as a cloud of grains, a time-stretch or a looping delay, and the result is mixed with the dry signal and sent to a reverb. dry and wet are the levels of the input and of the processed signal; reverb is the level of the reverb's return. The send is taken before wet, so with wet at 0 the grains are heard only through the reverb. reverb_size, reverb_decay and reverb_damping shape the reverb. Use dry and wet from 0 to 1; the controls report the mixer's 0 to 2 range. The processed signal stays within -1 to 1; with reverb at 0 and dry + wet at most 1 so does the output, while a raised reverb on dense full-scale material can peak well above its level. For a mono source, patch it into both inputs; otherwise the right side records silence. sync follows the clock input and needs a clock patched: in granular mode grains start on its divisions (with sync on and no clock, only trigger starts grains), and the looping delay takes its delay from the clock's period.",
+  "description": "A granular texture processor: the granular module records both inputs into a 4 s buffer and plays it back as a cloud of grains, a time-stretch or a looping delay, and the result is mixed with the dry signal and sent to a reverb. dry and wet are the levels of the input and of the processed signal; reverb is the level of the reverb's return. The send is taken before wet, so with wet at 0 the grains are heard only through the reverb. reverb_size, reverb_decay and reverb_damping shape the reverb. Use dry and wet from 0 to 1; the controls report the mixer's 0 to 2 range. A static soft limit on each output keeps the mix within -1 to 1 without latency or pumping: below -3 dBFS it passes the signal unchanged, above it the level rises at about a quarter of the rate, reaching its ceiling just under 0 dBFS at +6 dBFS in. For a mono source, patch it into both inputs; otherwise the right side records silence. sync follows the clock input and needs a clock patched: in granular mode grains start on its divisions (with sync on and no clock, only trigger starts grains), and the looping delay takes its delay from the clock's period.",
   "modules": [
     {
       "id": "grains",
@@ -58,6 +58,114 @@
         ],
         "master": 1.0
       }
+    },
+    {
+      "id": "knee_gain_left",
+      "type": "gain",
+      "config": {
+        "decibels": 3.011048
+      }
+    },
+    {
+      "id": "knee_clamp_left",
+      "type": "drive",
+      "config": {
+        "shape": "soft",
+        "drive": 0.0,
+        "level": 1.0,
+        "mix": 0.0,
+        "auto_level": false,
+        "oversampling": 1
+      }
+    },
+    {
+      "id": "top_gain_left",
+      "type": "gain",
+      "config": {
+        "decibels": -6.0206
+      }
+    },
+    {
+      "id": "top_clamp_left",
+      "type": "drive",
+      "config": {
+        "shape": "soft",
+        "drive": 0.0,
+        "level": 1.0,
+        "mix": 0.0,
+        "auto_level": false,
+        "oversampling": 1
+      }
+    },
+    {
+      "id": "limit_left",
+      "type": "mixer",
+      "config": {
+        "channel_count": 2,
+        "levels": [
+          0.5469,
+          0.453
+        ],
+        "pans": [
+          -1.0,
+          -1.0
+        ],
+        "master": 1.0
+      }
+    },
+    {
+      "id": "knee_gain_right",
+      "type": "gain",
+      "config": {
+        "decibels": 3.011048
+      }
+    },
+    {
+      "id": "knee_clamp_right",
+      "type": "drive",
+      "config": {
+        "shape": "soft",
+        "drive": 0.0,
+        "level": 1.0,
+        "mix": 0.0,
+        "auto_level": false,
+        "oversampling": 1
+      }
+    },
+    {
+      "id": "top_gain_right",
+      "type": "gain",
+      "config": {
+        "decibels": -6.0206
+      }
+    },
+    {
+      "id": "top_clamp_right",
+      "type": "drive",
+      "config": {
+        "shape": "soft",
+        "drive": 0.0,
+        "level": 1.0,
+        "mix": 0.0,
+        "auto_level": false,
+        "oversampling": 1
+      }
+    },
+    {
+      "id": "limit_right",
+      "type": "mixer",
+      "config": {
+        "channel_count": 2,
+        "levels": [
+          0.5469,
+          0.453
+        ],
+        "pans": [
+          1.0,
+          1.0
+        ],
+        "master": 1.0
+      }
     }
   ],
   "connections": [
@@ -96,6 +204,78 @@
       "from_port": "audio_right",
       "to": "mix_right",
       "to_port": "audio.2"
+    },
+    {
+      "from": "mix_left",
+      "from_port": "audio_left",
+      "to": "knee_gain_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "knee_gain_left",
+      "from_port": "audio",
+      "to": "knee_clamp_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "knee_clamp_left",
+      "from_port": "audio",
+      "to": "limit_left",
+      "to_port": "audio.0"
+    },
+    {
+      "from": "mix_left",
+      "from_port": "audio_left",
+      "to": "top_gain_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "top_gain_left",
+      "from_port": "audio",
+      "to": "top_clamp_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "top_clamp_left",
+      "from_port": "audio",
+      "to": "limit_left",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "mix_right",
+      "from_port": "audio_right",
+      "to": "knee_gain_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "knee_gain_right",
+      "from_port": "audio",
+      "to": "knee_clamp_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "knee_clamp_right",
+      "from_port": "audio",
+      "to": "limit_right",
+      "to_port": "audio.0"
+    },
+    {
+      "from": "mix_right",
+      "from_port": "audio_right",
+      "to": "top_gain_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "top_gain_right",
+      "from_port": "audio",
+      "to": "top_clamp_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "top_clamp_right",
+      "from_port": "audio",
+      "to": "limit_right",
+      "to_port": "audio.1"
     }
   ],
   "inputs": [
@@ -133,12 +313,12 @@
   "outputs": [
     {
       "name": "audio_left",
-      "from": "mix_left",
+      "from": "limit_left",
       "from_port": "audio_left"
     },
     {
       "name": "audio_right",
-      "from": "mix_right",
+      "from": "limit_right",
       "from_port": "audio_right"
     }
   ],
