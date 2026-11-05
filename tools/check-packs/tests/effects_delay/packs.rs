@@ -1,6 +1,6 @@
 //! "Both packs pass check-packs validation", and the manifest the interface
 //! pins: kind `development`, entry `delay.development.json`, license MIT,
-//! version 2026.11.0, a LICENSE file.
+//! version 2026.11.1, a LICENSE file.
 
 use std::fs;
 use std::process::Command;
@@ -37,7 +37,7 @@ fn manifests_declare_a_development_entry_under_mit_at_this_release() {
             "{id}"
         );
         assert_eq!(manifest["license"], "MIT", "{id}");
-        assert_eq!(manifest["version"], "2026.11.0", "{id}");
+        assert_eq!(manifest["version"], "2026.11.1", "{id}");
         assert!(pack_dir(id).join("LICENSE").is_file(), "{id} has a LICENSE");
         fugue::pkg::parse_path(&path).unwrap_or_else(|e| panic!("{id}: fugue refuses it: {e}"));
     }

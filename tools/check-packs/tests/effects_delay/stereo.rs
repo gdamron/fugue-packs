@@ -34,13 +34,13 @@ fn each_side_echoes_on_its_own_side_only_at_its_division() {
     }
 }
 
-/// "Echo k (k >= 1) on a side is at k x time + (k - 1) samples, each x
+/// "Echo k (k >= 1) on a side is at k x time samples, each x
 /// `feedback` from the one before ... with `tone` high an impulse's echoes
 /// decay by about `feedback` per repeat", heard at the `wet` level.
 /// Assumption: "about" is within 10%, and later onsets fall within 2 samples
-/// of k x time + (k - 1) (the lowpass may smear an onset).
+/// of k x time (the lowpass may smear an onset).
 #[test]
-fn repeats_are_spaced_time_plus_one_and_decay_by_feedback() {
+fn repeats_are_spaced_exactly_time_and_decay_by_feedback() {
     for (feedback, wet) in [(0.35f32, 0.8f32), (0.6, 1.0)] {
         let config = json!({ "feedback": feedback, "wet": wet, "tone": 20_000.0 });
         let rig = Rig::new().pulse("p").feed("p", "audio", "audio_left");
@@ -49,7 +49,7 @@ fn repeats_are_spaced_time_plus_one_and_decay_by_feedback() {
         let mut from = start + PULSE_LEN + 100;
         let mut want_level = plateau(&left, start) * wet;
         for k in 1..=4 {
-            let want = start + k * 18_000 + (k - 1);
+            let want = start + k * 18_000;
             let at = onset(&left, from).unwrap_or_else(|| panic!("echo {k} is heard"));
             let slack = if k == 1 { 0 } else { 2 };
             let msg = format!("feedback {feedback}: echo {k} at {at}, want {want}");
