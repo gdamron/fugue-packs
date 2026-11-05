@@ -60,6 +60,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a pack and
 sidechain input, built from core's `follower`, `gain_curve` and `gain` atoms.
 `fugue.effects.eq` is the bundled parametric EQ: low and high cuts, two
 shelves and three bells per side, each one of core's `filter` modes.
+`fugue.effects.granular` is the bundled granular texture processor, core's
+`granular` module with dry/wet levels and a send to core's `reverb`.
 `fugue.starter.bwv772` is the bundled playable invention: its score remains a
 separate attributed asset and its arrangement depends on the exact piano
 package version. Their canonical definitions and license notices live here.

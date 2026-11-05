@@ -1,0 +1,237 @@
+{
+  "version": "1.0.0",
+  "title": "Granular",
+  "description": "A granular texture processor: the granular module records both inputs into a 4 s buffer and plays it back as a cloud of grains, a time-stretch or a looping delay, and the result is mixed with the dry signal and sent to a reverb. dry and wet are the levels of the input and of the processed signal; reverb is the level of the reverb's return. The send is taken before wet, so with wet at 0 only the reverberated grains are heard. reverb_size, reverb_decay and reverb_damping shape the reverb. Use dry and wet from 0 to 1; the controls report the mixer's 0 to 2 range. For a mono source, patch it into both inputs. sync places grains on the clock input's divisions and needs a clock patched; with sync on and no clock, only trigger starts grains.",
+  "modules": [
+    {
+      "id": "grains",
+      "type": "granular",
+      "config": {
+        "buffer_length": 4.0,
+        "seed": 1
+      }
+    },
+    {
+      "id": "reverb",
+      "type": "reverb",
+      "config": {
+        "room_size": 0.7,
+        "decay": 0.7,
+        "damping": 0.5,
+        "wet": 0.25,
+        "dry": 0.0,
+        "width": 1.0
+      }
+    },
+    {
+      "id": "mix_left",
+      "type": "mixer",
+      "config": {
+        "channel_count": 3,
+        "levels": [
+          1.0,
+          0.5,
+          1.0
+        ],
+        "pans": [
+          -1.0,
+          -1.0,
+          -1.0
+        ],
+        "master": 1.0
+      }
+    },
+    {
+      "id": "mix_right",
+      "type": "mixer",
+      "config": {
+        "channel_count": 3,
+        "levels": [
+          1.0,
+          0.5,
+          1.0
+        ],
+        "pans": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "master": 1.0
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from": "grains",
+      "from_port": "audio_left",
+      "to": "mix_left",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "grains",
+      "from_port": "audio_right",
+      "to": "mix_right",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "grains",
+      "from_port": "audio_left",
+      "to": "reverb",
+      "to_port": "audio_left"
+    },
+    {
+      "from": "grains",
+      "from_port": "audio_right",
+      "to": "reverb",
+      "to_port": "audio_right"
+    },
+    {
+      "from": "reverb",
+      "from_port": "audio_left",
+      "to": "mix_left",
+      "to_port": "audio.2"
+    },
+    {
+      "from": "reverb",
+      "from_port": "audio_right",
+      "to": "mix_right",
+      "to_port": "audio.2"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "audio_left",
+      "to": "grains",
+      "to_port": "audio_left"
+    },
+    {
+      "name": "audio_left",
+      "to": "mix_left",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "audio_right",
+      "to": "grains",
+      "to_port": "audio_right"
+    },
+    {
+      "name": "audio_right",
+      "to": "mix_right",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "trigger",
+      "to": "grains",
+      "to_port": "trigger"
+    },
+    {
+      "name": "clock",
+      "to": "grains",
+      "to_port": "clock"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "audio_left",
+      "from": "mix_left",
+      "from_port": "audio_left"
+    },
+    {
+      "name": "audio_right",
+      "from": "mix_right",
+      "from_port": "audio_right"
+    }
+  ],
+  "controls": [
+    {
+      "name": "mode",
+      "module": "grains",
+      "control": "mode"
+    },
+    {
+      "name": "position",
+      "module": "grains",
+      "control": "position"
+    },
+    {
+      "name": "size",
+      "module": "grains",
+      "control": "size"
+    },
+    {
+      "name": "pitch",
+      "module": "grains",
+      "control": "pitch"
+    },
+    {
+      "name": "density",
+      "module": "grains",
+      "control": "density"
+    },
+    {
+      "name": "texture",
+      "module": "grains",
+      "control": "texture"
+    },
+    {
+      "name": "freeze",
+      "module": "grains",
+      "control": "freeze"
+    },
+    {
+      "name": "spread",
+      "module": "grains",
+      "control": "spread"
+    },
+    {
+      "name": "feedback",
+      "module": "grains",
+      "control": "feedback"
+    },
+    {
+      "name": "sync",
+      "module": "grains",
+      "control": "sync"
+    },
+    {
+      "name": "dry",
+      "module": "mix_left",
+      "control": "level.0"
+    },
+    {
+      "name": "dry",
+      "module": "mix_right",
+      "control": "level.0"
+    },
+    {
+      "name": "wet",
+      "module": "mix_left",
+      "control": "level.1"
+    },
+    {
+      "name": "wet",
+      "module": "mix_right",
+      "control": "level.1"
+    },
+    {
+      "name": "reverb",
+      "module": "reverb",
+      "control": "wet"
+    },
+    {
+      "name": "reverb_size",
+      "module": "reverb",
+      "control": "room_size"
+    },
+    {
+      "name": "reverb_decay",
+      "module": "reverb",
+      "control": "decay"
+    },
+    {
+      "name": "reverb_damping",
+      "module": "reverb",
+      "control": "damping"
+    }
+  ]
+}

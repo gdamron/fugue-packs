@@ -1,0 +1,76 @@
+//! The mix: dry and wet ends against the input and the bare module, and
+//! the reverb send's tail.
+
+use serde_json::json;
+
+use super::rig::*;
+
+fn assert_same(what: &str, a: &[f32], b: &[f32]) {
+    if let Some(n) = (0..a.len()).find(|&n| a[n].to_bits() != b[n].to_bits()) {
+        panic!("{what}: sample {n} is {} where it should be {}", a[n], b[n]);
+    }
+}
+
+#[test]
+fn wet_and_reverb_at_zero_pass_the_input_untouched() {
+    let source = Source::noise();
+    let (want_l, want_r) = render_doc(&dry(&source), SECOND);
+    let (l, r) = render_doc(
+        &effect(&source, json!({ "wet": 0.0, "reverb": 0.0 })),
+        SECOND,
+    );
+    assert_same("left", &l, &want_l);
+    assert_same("right", &r, &want_r);
+}
+
+#[test]
+fn dry_and_reverb_at_zero_are_the_bare_granular_module() {
+    let source = Source::sine(220.0, 0.5);
+    for mode in ["granular", "stretch", "looping_delay"] {
+        let grains = json!({ "mode": mode, "pitch": 7.0, "spread": 0.6 });
+        let (want_l, want_r) = render_doc(&bare(&source, grains.clone()), 3 * SECOND);
+        let mut config = grains;
+        config["dry"] = json!(0.0);
+        config["wet"] = json!(1.0);
+        config["reverb"] = json!(0.0);
+        let (l, r) = render_doc(&effect(&source, config), 3 * SECOND);
+        assert_same(&format!("{mode} left"), &l, &want_l);
+        assert_same(&format!("{mode} right"), &r, &want_r);
+    }
+}
+
+/// A 100 ms burst read at the newest audio: without the reverb the grains
+/// stop with it; the reverb return rings on, and is heard alone at `wet` 0.
+#[test]
+fn the_reverb_send_adds_a_tail_after_the_grains_stop() {
+    let tail = |wet: f64, reverb: f64| {
+        let config = json!({ "dry": 0.0, "wet": wet, "reverb": reverb, "position": 0.0 });
+        let (l, _) = render_doc(&effect(&Source::burst(4_800), config), 2 * SECOND);
+        rms(&l[SECOND / 2..SECOND])
+    };
+    assert_eq!(tail(1.0, 0.0), 0.0, "the grains stop with the burst");
+    assert!(tail(1.0, 0.5) > 0.02, "the reverb rings on");
+    assert!(tail(0.0, 0.5) > 0.02, "the return is heard alone");
+    assert_eq!(tail(0.0, 0.0), 0.0, "nothing at wet and reverb 0");
+}
+
+/// Each mix control jumped live from 0 to 1 and back glides: no step larger
+/// than 1.5 times the steady signal's on either side of the change.
+#[test]
+fn mix_controls_glide_when_changed_live() {
+    for key in ["dry", "wet", "reverb"] {
+        let mut fx = engine(&effect(&Source::sine(220.0, 0.25), json!({ key: 0.0 })));
+        render(&mut fx, 3 * SECOND);
+        let mut before = max_step(&render(&mut fx, SECOND / 2).0);
+        for to in [1.0f32, 0.0] {
+            set(&fx, key, to);
+            let (change, _) = render(&mut fx, SECOND / 10);
+            render(&mut fx, SECOND);
+            let after = max_step(&render(&mut fx, SECOND / 2).0);
+            let step = max_step(&change);
+            let bound = 1.5 * before.max(after);
+            assert!(step <= bound, "{key} -> {to}: step {step} over {bound}");
+            before = after;
+        }
+    }
+}
