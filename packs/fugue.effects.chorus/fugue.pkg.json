@@ -1,0 +1,19 @@
+{
+  "id": "fugue.effects.chorus",
+  "version": "2026.11.0",
+  "kind": "development",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "A stereo chorus: four delay voices swept by a sine lfo, two per side moving opposite ways, with rate or a tempo division, depth, spread between the sides, and dry/wet levels.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "entry": {
+    "development": "chorus.development.json"
+  }
+}

@@ -1,0 +1,362 @@
+{
+  "version": "1.0.0",
+  "title": "Chorus",
+  "description": "Four short delay voices, two per side, swept opposite ways around time by a sine lfo, so each side thickens without a pitch drift. The right side's sweep runs spread cycles ahead of the left's, and the sweep can follow a tempo by division. Each side reads its own input and mixes it with its voices. Times are held within 2 ms to 40 ms; depth moves each voice up to 4 ms either way.",
+  "modules": [
+    {
+      "id": "lfo_left",
+      "type": "lfo",
+      "config": {
+        "waveform": "sine",
+        "rate": 0.8,
+        "phase": 0.0
+      }
+    },
+    {
+      "id": "depth_left",
+      "type": "vca",
+      "config": {
+        "level": 0.5
+      }
+    },
+    {
+      "id": "flip_left",
+      "type": "gain",
+      "config": {
+        "invert": true
+      }
+    },
+    {
+      "id": "voice_left_a",
+      "type": "delay",
+      "config": {
+        "max_time": 0.045,
+        "min_time": 0.002,
+        "time": 0.012,
+        "division": "off",
+        "feedback": 0.0,
+        "time_mod_depth": 0.004
+      }
+    },
+    {
+      "id": "voice_left_b",
+      "type": "delay",
+      "config": {
+        "max_time": 0.045,
+        "min_time": 0.002,
+        "time": 0.012,
+        "division": "off",
+        "feedback": 0.0,
+        "time_mod_depth": 0.004
+      }
+    },
+    {
+      "id": "mix_left",
+      "type": "mixer",
+      "config": {
+        "channel_count": 3,
+        "levels": [
+          0.7,
+          0.5,
+          0.5
+        ],
+        "pans": [
+          -1.0,
+          -1.0,
+          -1.0
+        ],
+        "master": 1.0
+      }
+    },
+    {
+      "id": "lfo_right",
+      "type": "lfo",
+      "config": {
+        "waveform": "sine",
+        "rate": 0.8,
+        "phase": 0.25
+      }
+    },
+    {
+      "id": "depth_right",
+      "type": "vca",
+      "config": {
+        "level": 0.5
+      }
+    },
+    {
+      "id": "flip_right",
+      "type": "gain",
+      "config": {
+        "invert": true
+      }
+    },
+    {
+      "id": "voice_right_a",
+      "type": "delay",
+      "config": {
+        "max_time": 0.045,
+        "min_time": 0.002,
+        "time": 0.012,
+        "division": "off",
+        "feedback": 0.0,
+        "time_mod_depth": 0.004
+      }
+    },
+    {
+      "id": "voice_right_b",
+      "type": "delay",
+      "config": {
+        "max_time": 0.045,
+        "min_time": 0.002,
+        "time": 0.012,
+        "division": "off",
+        "feedback": 0.0,
+        "time_mod_depth": 0.004
+      }
+    },
+    {
+      "id": "mix_right",
+      "type": "mixer",
+      "config": {
+        "channel_count": 3,
+        "levels": [
+          0.7,
+          0.5,
+          0.5
+        ],
+        "pans": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "master": 1.0
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from": "lfo_left",
+      "from_port": "bipolar",
+      "to": "depth_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "depth_left",
+      "from_port": "audio",
+      "to": "voice_left_a",
+      "to_port": "time_mod"
+    },
+    {
+      "from": "depth_left",
+      "from_port": "audio",
+      "to": "flip_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "flip_left",
+      "from_port": "audio",
+      "to": "voice_left_b",
+      "to_port": "time_mod"
+    },
+    {
+      "from": "voice_left_a",
+      "from_port": "audio",
+      "to": "mix_left",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "voice_left_b",
+      "from_port": "audio",
+      "to": "mix_left",
+      "to_port": "audio.2"
+    },
+    {
+      "from": "lfo_right",
+      "from_port": "bipolar",
+      "to": "depth_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "depth_right",
+      "from_port": "audio",
+      "to": "voice_right_a",
+      "to_port": "time_mod"
+    },
+    {
+      "from": "depth_right",
+      "from_port": "audio",
+      "to": "flip_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "flip_right",
+      "from_port": "audio",
+      "to": "voice_right_b",
+      "to_port": "time_mod"
+    },
+    {
+      "from": "voice_right_a",
+      "from_port": "audio",
+      "to": "mix_right",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "voice_right_b",
+      "from_port": "audio",
+      "to": "mix_right",
+      "to_port": "audio.2"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "audio_left",
+      "to": "voice_left_a",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_left",
+      "to": "voice_left_b",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_left",
+      "to": "mix_left",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "audio_right",
+      "to": "voice_right_a",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_right",
+      "to": "voice_right_b",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_right",
+      "to": "mix_right",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "bpm",
+      "to": "lfo_left",
+      "to_port": "bpm"
+    },
+    {
+      "name": "bpm",
+      "to": "lfo_right",
+      "to_port": "bpm"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "audio_left",
+      "from": "mix_left",
+      "from_port": "audio_left"
+    },
+    {
+      "name": "audio_right",
+      "from": "mix_right",
+      "from_port": "audio_right"
+    }
+  ],
+  "controls": [
+    {
+      "name": "time",
+      "module": "voice_left_a",
+      "control": "time"
+    },
+    {
+      "name": "time",
+      "module": "voice_left_b",
+      "control": "time"
+    },
+    {
+      "name": "time",
+      "module": "voice_right_a",
+      "control": "time"
+    },
+    {
+      "name": "time",
+      "module": "voice_right_b",
+      "control": "time"
+    },
+    {
+      "name": "rate",
+      "module": "lfo_left",
+      "control": "rate"
+    },
+    {
+      "name": "rate",
+      "module": "lfo_right",
+      "control": "rate"
+    },
+    {
+      "name": "division",
+      "module": "lfo_left",
+      "control": "division"
+    },
+    {
+      "name": "division",
+      "module": "lfo_right",
+      "control": "division"
+    },
+    {
+      "name": "bpm",
+      "module": "lfo_left",
+      "control": "bpm"
+    },
+    {
+      "name": "bpm",
+      "module": "lfo_right",
+      "control": "bpm"
+    },
+    {
+      "name": "depth",
+      "module": "depth_left",
+      "control": "level"
+    },
+    {
+      "name": "depth",
+      "module": "depth_right",
+      "control": "level"
+    },
+    {
+      "name": "spread",
+      "module": "lfo_right",
+      "control": "phase"
+    },
+    {
+      "name": "dry",
+      "module": "mix_left",
+      "control": "level.0"
+    },
+    {
+      "name": "dry",
+      "module": "mix_right",
+      "control": "level.0"
+    },
+    {
+      "name": "wet",
+      "module": "mix_left",
+      "control": "level.1"
+    },
+    {
+      "name": "wet",
+      "module": "mix_left",
+      "control": "level.2"
+    },
+    {
+      "name": "wet",
+      "module": "mix_right",
+      "control": "level.1"
+    },
+    {
+      "name": "wet",
+      "module": "mix_right",
+      "control": "level.2"
+    }
+  ]
+}

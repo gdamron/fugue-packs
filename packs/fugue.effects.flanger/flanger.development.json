@@ -1,0 +1,338 @@
+{
+  "version": "1.0.0",
+  "title": "Flanger",
+  "description": "A very short delay per side, swept by a sine lfo and fed back on itself, mixed with the dry signal: the comb's notches glide up and down. negative_feedback inverts what is fed back, which hollows the sound and moves the peaks by half a step; the change crossfades. The right side's sweep runs stereo_phase cycles ahead of the left's, and the sweep can follow a tempo by division. Each side reads its own input. Times are held within 0.5 ms to 20 ms; depth moves the delay up to 1.5 ms either way, never below 0.5 ms. There is no through-zero flanging.",
+  "modules": [
+    {
+      "id": "lfo_left",
+      "type": "lfo",
+      "config": {
+        "waveform": "sine",
+        "rate": 0.25,
+        "phase": 0.0
+      }
+    },
+    {
+      "id": "depth_left",
+      "type": "vca",
+      "config": {
+        "level": 0.5
+      }
+    },
+    {
+      "id": "comb_left",
+      "type": "delay",
+      "config": {
+        "max_time": 0.0215,
+        "min_time": 0.0005,
+        "time": 0.002,
+        "division": "off",
+        "feedback": 0.0,
+        "time_mod_depth": 0.0015
+      }
+    },
+    {
+      "id": "feedback_left",
+      "type": "vca",
+      "config": {
+        "level": 0.5
+      }
+    },
+    {
+      "id": "polarity_left",
+      "type": "gain",
+      "config": {
+        "invert": false
+      }
+    },
+    {
+      "id": "mix_left",
+      "type": "mixer",
+      "config": {
+        "channel_count": 2,
+        "levels": [
+          0.5,
+          0.5
+        ],
+        "pans": [
+          -1.0,
+          -1.0
+        ],
+        "master": 1.0
+      }
+    },
+    {
+      "id": "lfo_right",
+      "type": "lfo",
+      "config": {
+        "waveform": "sine",
+        "rate": 0.25,
+        "phase": 0.25
+      }
+    },
+    {
+      "id": "depth_right",
+      "type": "vca",
+      "config": {
+        "level": 0.5
+      }
+    },
+    {
+      "id": "comb_right",
+      "type": "delay",
+      "config": {
+        "max_time": 0.0215,
+        "min_time": 0.0005,
+        "time": 0.002,
+        "division": "off",
+        "feedback": 0.0,
+        "time_mod_depth": 0.0015
+      }
+    },
+    {
+      "id": "feedback_right",
+      "type": "vca",
+      "config": {
+        "level": 0.5
+      }
+    },
+    {
+      "id": "polarity_right",
+      "type": "gain",
+      "config": {
+        "invert": false
+      }
+    },
+    {
+      "id": "mix_right",
+      "type": "mixer",
+      "config": {
+        "channel_count": 2,
+        "levels": [
+          0.5,
+          0.5
+        ],
+        "pans": [
+          1.0,
+          1.0
+        ],
+        "master": 1.0
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from": "lfo_left",
+      "from_port": "bipolar",
+      "to": "depth_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "depth_left",
+      "from_port": "audio",
+      "to": "comb_left",
+      "to_port": "time_mod"
+    },
+    {
+      "from": "comb_left",
+      "from_port": "audio",
+      "to": "feedback_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "feedback_left",
+      "from_port": "audio",
+      "to": "polarity_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "polarity_left",
+      "from_port": "audio",
+      "to": "comb_left",
+      "to_port": "audio"
+    },
+    {
+      "from": "comb_left",
+      "from_port": "audio",
+      "to": "mix_left",
+      "to_port": "audio.1"
+    },
+    {
+      "from": "lfo_right",
+      "from_port": "bipolar",
+      "to": "depth_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "depth_right",
+      "from_port": "audio",
+      "to": "comb_right",
+      "to_port": "time_mod"
+    },
+    {
+      "from": "comb_right",
+      "from_port": "audio",
+      "to": "feedback_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "feedback_right",
+      "from_port": "audio",
+      "to": "polarity_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "polarity_right",
+      "from_port": "audio",
+      "to": "comb_right",
+      "to_port": "audio"
+    },
+    {
+      "from": "comb_right",
+      "from_port": "audio",
+      "to": "mix_right",
+      "to_port": "audio.1"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "audio_left",
+      "to": "comb_left",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_left",
+      "to": "mix_left",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "audio_right",
+      "to": "comb_right",
+      "to_port": "audio"
+    },
+    {
+      "name": "audio_right",
+      "to": "mix_right",
+      "to_port": "audio.0"
+    },
+    {
+      "name": "bpm",
+      "to": "lfo_left",
+      "to_port": "bpm"
+    },
+    {
+      "name": "bpm",
+      "to": "lfo_right",
+      "to_port": "bpm"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "audio_left",
+      "from": "mix_left",
+      "from_port": "audio_left"
+    },
+    {
+      "name": "audio_right",
+      "from": "mix_right",
+      "from_port": "audio_right"
+    }
+  ],
+  "controls": [
+    {
+      "name": "time",
+      "module": "comb_left",
+      "control": "time"
+    },
+    {
+      "name": "time",
+      "module": "comb_right",
+      "control": "time"
+    },
+    {
+      "name": "rate",
+      "module": "lfo_left",
+      "control": "rate"
+    },
+    {
+      "name": "rate",
+      "module": "lfo_right",
+      "control": "rate"
+    },
+    {
+      "name": "division",
+      "module": "lfo_left",
+      "control": "division"
+    },
+    {
+      "name": "division",
+      "module": "lfo_right",
+      "control": "division"
+    },
+    {
+      "name": "bpm",
+      "module": "lfo_left",
+      "control": "bpm"
+    },
+    {
+      "name": "bpm",
+      "module": "lfo_right",
+      "control": "bpm"
+    },
+    {
+      "name": "depth",
+      "module": "depth_left",
+      "control": "level"
+    },
+    {
+      "name": "depth",
+      "module": "depth_right",
+      "control": "level"
+    },
+    {
+      "name": "feedback",
+      "module": "feedback_left",
+      "control": "level"
+    },
+    {
+      "name": "feedback",
+      "module": "feedback_right",
+      "control": "level"
+    },
+    {
+      "name": "negative_feedback",
+      "module": "polarity_left",
+      "control": "invert"
+    },
+    {
+      "name": "negative_feedback",
+      "module": "polarity_right",
+      "control": "invert"
+    },
+    {
+      "name": "stereo_phase",
+      "module": "lfo_right",
+      "control": "phase"
+    },
+    {
+      "name": "dry",
+      "module": "mix_left",
+      "control": "level.0"
+    },
+    {
+      "name": "dry",
+      "module": "mix_right",
+      "control": "level.0"
+    },
+    {
+      "name": "wet",
+      "module": "mix_left",
+      "control": "level.1"
+    },
+    {
+      "name": "wet",
+      "module": "mix_right",
+      "control": "level.1"
+    }
+  ]
+}
