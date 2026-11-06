@@ -14,8 +14,9 @@ match the `id` in its `fugue.pkg.json` manifest. Every package must include:
 - only assets that the contributor has the right to publish.
 
 Package IDs use lowercase reverse-DNS form such as `fugue.composing.harmony`.
-Package versions use semantic versioning. Entry paths must be relative, remain
-inside the package directory, and name a file. Skill entries must be named
+Package versions use semantic-version syntax. First-party packs number them
+by date, YYYY.M.P (for example 2026.11.1). Entry paths must be relative,
+remain inside the package directory, and name a file. Skill entries must be named
 `SKILL.md`.
 
 Sample-pack entries (`samples.json`) follow the schema documented in the

@@ -149,6 +149,35 @@ fn writes_outside_the_range_read_back_at_its_ends() {
     }
 }
 
+/// Renders 0.25 s of a saw through the pack (built with `config`), as
+/// (left, right).
+fn heard(ranged: &Ranged, config: Value) -> (Vec<f32>, Vec<f32>) {
+    let mut doc = doc(ranged.pack, ranged.kind, ranged.file, config);
+    let modules = doc["modules"].as_array_mut().unwrap();
+    modules.push(json!({ "id": "osc", "type": "oscillator",
+        "config": { "waveform": "saw", "frequency": 110.0 } }));
+    let connections = doc["connections"].as_array_mut().unwrap();
+    for side in ["audio_left", "audio_right"] {
+        connections
+            .push(json!({ "from": "osc", "from_port": "audio", "to": "fx", "to_port": side }));
+    }
+    let mut engine = engine(&doc);
+    let mut out = vec![0.0f32; SR as usize / 2];
+    engine.render_interleaved(&mut out).expect("renders");
+    let left = out.iter().step_by(2).copied().collect();
+    let right = out.iter().skip(1).step_by(2).copied().collect();
+    (left, right)
+}
+
+#[test]
+fn every_fanned_out_target_is_held_so_both_sides_sound_as_at_the_top() {
+    for ranged in &RANGED {
+        let over = heard(ranged, json!({ ranged.key: ranged.range.1 * 10.0 }));
+        let top = heard(ranged, json!({ ranged.key: ranged.range.1 }));
+        assert_eq!(over, top, "{} {} above its range", ranged.pack, ranged.key);
+    }
+}
+
 #[test]
 fn a_configured_value_outside_the_range_is_held_within_it() {
     for Ranged {
