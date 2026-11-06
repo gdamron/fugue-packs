@@ -34,7 +34,7 @@ fn speed(x: &[f32]) -> f64 {
 
 /// The speed in each 100 ms window.
 fn speeds(x: &[f32]) -> Vec<f64> {
-    x.chunks_exact(WINDOW).map(speed).collect()
+    x.as_chunks::<WINDOW>().0.iter().map(|w| speed(w)).collect()
 }
 
 /// The looping delay at `position` 0.25 with a steady tone in, only the
