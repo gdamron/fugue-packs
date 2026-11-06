@@ -1,6 +1,6 @@
 {
   "id": "fugue.effects.granular",
-  "version": "2026.11.0",
+  "version": "2026.11.1",
   "kind": "development",
   "license": "MIT",
   "authors": [
@@ -8,7 +8,7 @@
       "name": "Grant Damron"
     }
   ],
-  "description": "A granular texture processor: live audio recorded and replayed as a cloud of grains, a time-stretch or a looping delay, with freeze, pitch, spread and feedback, dry/wet levels and a reverb send.",
+  "description": "A granular texture processor: live audio recorded and replayed as a cloud of grains, a time-stretch or a looping delay, with freeze, pitch, spread, feedback and a tape-style glide for the delay, dry/wet levels and a reverb send.",
   "targets": [
     "external-agent",
     "in-graph-agent"

@@ -23,7 +23,7 @@ fn check_packs_validates_the_repository_with_the_granular_pack() {
     assert!(out.status.success(), "check-packs failed: {stdout}{stderr}");
 }
 
-/// "`id` `fugue.effects.granular`, `version` `2026.11.0`, `kind`
+/// "`id` `fugue.effects.granular`, `version` `2026.11.1`, `kind`
 /// `development`, `license` `MIT`, `entry.development`
 /// `granular.development.json`; it parses with `fugue::pkg::parse_path`", and
 /// the directory holds `LICENSE`.
@@ -33,7 +33,7 @@ fn manifest_declares_a_development_entry_under_mit_at_this_release() {
     let text = fs::read_to_string(&path).unwrap_or_else(|e| panic!("{}: {e}", path.display()));
     let manifest: Value = serde_json::from_str(&text).expect("manifest is JSON");
     assert_eq!(manifest["id"], GRANULAR);
-    assert_eq!(manifest["version"], "2026.11.0");
+    assert_eq!(manifest["version"], "2026.11.1");
     assert_eq!(manifest["kind"], "development");
     assert_eq!(manifest["license"], "MIT");
     assert_eq!(
@@ -58,7 +58,7 @@ fn number(engine: &fugue::RenderEngine, key: &str) -> f32 {
 }
 
 /// Every control with its default (the mixer-level controls are 0-1 in use).
-const NUMBERS: [(&str, f32); 12] = [
+const NUMBERS: [(&str, f32); 14] = [
     ("position", 0.5),
     ("size", 0.5),
     ("pitch", 0.0),
@@ -66,6 +66,8 @@ const NUMBERS: [(&str, f32); 12] = [
     ("texture", 0.5),
     ("spread", 0.0),
     ("feedback", 0.0),
+    ("glide", 0.0),
+    ("inertia", 0.5),
     ("dry", 1.0),
     ("wet", 0.5),
     ("reverb", 0.25),
@@ -105,6 +107,7 @@ fn every_control_can_start_from_the_config() {
     let engine = fx(json!({
         "mode": "stretch", "position": 0.25, "size": 0.75, "pitch": 7.0, "density": 0.3,
         "texture": 0.8, "freeze": true, "spread": 0.4, "feedback": 0.2, "sync": true,
+        "glide": 1.25, "inertia": 0.8,
         "dry": 0.3, "wet": 0.6, "reverb": 0.15, "reverb_size": 0.4, "reverb_decay": 0.9,
         "reverb_damping": 0.1
     }));
@@ -116,6 +119,8 @@ fn every_control_can_start_from_the_config() {
         ("texture", 0.8),
         ("spread", 0.4),
         ("feedback", 0.2),
+        ("glide", 1.25),
+        ("inertia", 0.8),
         ("dry", 0.3),
         ("wet", 0.6),
         ("reverb", 0.15),

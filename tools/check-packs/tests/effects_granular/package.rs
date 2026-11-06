@@ -32,7 +32,7 @@ fn manifest_declares_the_development_under_mit() {
         "granular.development.json"
     );
     assert_eq!(manifest["license"], "MIT");
-    assert_eq!(manifest["version"], "2026.11.0");
+    assert_eq!(manifest["version"], "2026.11.1");
     assert!(pack_dir().join("LICENSE").is_file(), "has a LICENSE");
     fugue::pkg::parse_path(&path).unwrap_or_else(|e| panic!("fugue refuses it: {e}"));
 }
@@ -52,6 +52,8 @@ fn controls_start_at_their_defaults() {
         ("spread", Number(0.0)),
         ("feedback", Number(0.0)),
         ("sync", Bool(false)),
+        ("glide", Number(0.0)),
+        ("inertia", Number(0.5)),
         ("dry", Number(1.0)),
         ("wet", Number(0.5)),
         ("reverb", Number(0.25)),

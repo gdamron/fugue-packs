@@ -20,3 +20,4 @@ mod glide;
 mod modes;
 mod package;
 mod reverb;
+mod tape_glide;
