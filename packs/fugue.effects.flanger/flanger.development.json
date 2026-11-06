@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "title": "Flanger",
-  "description": "A very short delay per side, swept by a sine lfo and fed back on itself, mixed with the dry signal: the comb's notches glide up and down. negative_feedback inverts what is fed back, which hollows the sound and moves the peaks by half a step; the change crossfades. The right side's sweep runs stereo_phase cycles ahead of the left's, and the sweep can follow a tempo by division. Each side reads its own input. Times are held within 0.5 ms to 20 ms; depth moves the delay up to 1.5 ms either way, never below 0.5 ms. There is no through-zero flanging.",
+  "description": "A very short delay per side, swept by a sine lfo and fed back on itself, mixed with the dry signal: the comb's notches glide up and down. negative_feedback inverts what is fed back, which swaps the comb's peaks and notches for a hollower sound; the change crossfades. The right side's sweep runs stereo_phase cycles ahead of the left's, and the sweep can follow a tempo by division. Each side reads its own input. time is held within 0.5 ms to 21.5 ms and glides when changed; depth moves the delay up to 1.5 ms either way, never below 0.5 ms. There is no through-zero flanging.",
   "modules": [
     {
       "id": "lfo_left",
@@ -27,6 +27,7 @@
         "min_time": 0.0005,
         "time": 0.002,
         "division": "off",
+        "glide": "slew",
         "feedback": 0.0,
         "time_mod_depth": 0.0015
       }
@@ -85,6 +86,7 @@
         "min_time": 0.0005,
         "time": 0.002,
         "division": "off",
+        "glide": "slew",
         "feedback": 0.0,
         "time_mod_depth": 0.0015
       }

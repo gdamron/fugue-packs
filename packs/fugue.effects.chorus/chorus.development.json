@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "title": "Chorus",
-  "description": "Four short delay voices, two per side, swept opposite ways around time by a sine lfo, so each side thickens without a pitch drift. The right side's sweep runs spread cycles ahead of the left's, and the sweep can follow a tempo by division. Each side reads its own input and mixes it with its voices. Times are held within 2 ms to 40 ms; depth moves each voice up to 4 ms either way.",
+  "description": "Four short delay voices, two per side, swept opposite ways around time by a sine lfo, so each side thickens with no net pitch shift. The right side's sweep runs spread cycles ahead of the left's, and the sweep can follow a tempo by division. Each side reads its own input and mixes it with its voices. time is held within 2 ms to 45 ms and glides when changed; depth moves each voice up to 4 ms either way, never below 2 ms.",
   "modules": [
     {
       "id": "lfo_left",
@@ -34,6 +34,7 @@
         "min_time": 0.002,
         "time": 0.012,
         "division": "off",
+        "glide": "slew",
         "feedback": 0.0,
         "time_mod_depth": 0.004
       }
@@ -46,6 +47,7 @@
         "min_time": 0.002,
         "time": 0.012,
         "division": "off",
+        "glide": "slew",
         "feedback": 0.0,
         "time_mod_depth": 0.004
       }
@@ -99,6 +101,7 @@
         "min_time": 0.002,
         "time": 0.012,
         "division": "off",
+        "glide": "slew",
         "feedback": 0.0,
         "time_mod_depth": 0.004
       }
@@ -111,6 +114,7 @@
         "min_time": 0.002,
         "time": 0.012,
         "division": "off",
+        "glide": "slew",
         "feedback": 0.0,
         "time_mod_depth": 0.004
       }
