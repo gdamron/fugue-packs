@@ -290,7 +290,8 @@
     {
       "name": "rate",
       "module": "lfo_left",
-      "control": "rate"
+      "control": "rate",
+      "range": { "min": 0.05, "max": 10.0 }
     },
     {
       "name": "rate",
