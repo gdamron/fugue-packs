@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "title": "Compressor",
-  "description": "A stereo-linked compressor: a follower tracks the louder side (or the sidechain), a gain curve turns that level into gain reduction, and a gain per side applies it with makeup. The mix blends the compressed signal with the dry one as dry + mix x (compressed - dry): 1 is fully compressed, below 1 is parallel compression. Use mix from 0 to 1; the control reports the mixer's 0 to 2 range, and above 1 it exaggerates the compression. A mono source can use audio_left alone (the right output is then silent). For bus use, a highpass of 60 to 120 Hz keeps the bass from pumping the detector.",
+  "description": "A stereo-linked compressor: a follower tracks the louder side (or the sidechain), a gain curve turns that level into gain reduction, and a gain per side applies it with makeup. The mix blends the compressed signal with the dry one as dry + mix x (compressed - dry): 1 is fully compressed, below 1 is parallel compression. Mix runs from 0 (dry) to 1 (fully compressed). A mono source can use audio_left alone (the right output is then silent). For bus use, a highpass of 60 to 120 Hz keeps the bass from pumping the detector.",
   "modules": [
     {
       "id": "detector",
@@ -239,7 +239,8 @@
     {
       "name": "mix",
       "module": "mix_left",
-      "control": "level.1"
+      "control": "level.1",
+      "range": { "min": 0.0, "max": 1.0 }
     },
     {
       "name": "mix",
