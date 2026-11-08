@@ -1,8 +1,8 @@
-//! The chorus and flanger `rate`, the compressor `mix` and every pack's
-//! `dry` and `wet` declare their own ranges, narrower than the controls they
-//! reach: each pack, loaded against the pinned core, lists and describes
-//! the range, holds every write and configured value within it, and starts
-//! at its old default.
+//! The chorus and flanger `rate`, the compressor `mix`, the tape delay's
+//! `feedback` and every pack's `dry` and `wet` declare their own ranges,
+//! narrower than the controls they reach: each pack, loaded against the
+//! pinned core, lists and describes the range, holds every write and
+//! configured value within it, and starts at its old default.
 
 use std::path::PathBuf;
 
@@ -54,7 +54,7 @@ const PING_PONG: &str = "fugue.effects.ping-pong-delay";
 const TAPE: &str = "fugue.effects.tape-delay";
 const DELAY: &str = "delay.development.json";
 
-const RANGED: [Ranged; 15] = [
+const RANGED: [Ranged; 16] = [
     ranged(
         CHORUS,
         "chorus",
@@ -134,6 +134,9 @@ const RANGED: [Ranged; 15] = [
     ranged(PING_PONG, "ping_pong_delay", DELAY, "wet", LEVEL, 0.5),
     ranged(TAPE, "tape_delay", DELAY, "dry", LEVEL, 1.0),
     ranged(TAPE, "tape_delay", DELAY, "wet", LEVEL, 0.5),
+    // At 1 the repeats hold their level; above it they would grow until
+    // the saturation caught them.
+    ranged(TAPE, "tape_delay", DELAY, "feedback", LEVEL, 0.4),
 ];
 
 fn development_path(pack: &str, file: &str) -> String {
