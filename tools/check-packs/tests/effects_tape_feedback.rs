@@ -87,7 +87,9 @@ fn at_feedback_1_no_burst_grows_over_30_seconds() {
     }
 }
 
-/// The creep a loop gain a hair above 1 would bring shows only over minutes.
+/// The creep a loop gain a hair above 1 would bring shows only over minutes:
+/// without the loop's trim the 30 s checks miss it by little, and this one
+/// by several dB, so this is the guard that keeps it from coming back.
 #[test]
 fn at_feedback_1_a_quiet_repeat_does_not_creep_up_over_two_minutes() {
     for hz in [500.0, PEAK_HZ] {
