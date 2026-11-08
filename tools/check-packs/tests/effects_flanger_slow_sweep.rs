@@ -76,7 +76,8 @@ fn phase(window: &[f32], start: usize) -> f64 {
 fn delay_track(out: &[f32], input: &[f32]) -> Vec<f64> {
     let mut track = Vec::new();
     let mut last: Option<f64> = None;
-    let windows = out.chunks_exact(WINDOW).zip(input.chunks_exact(WINDOW));
+    let windows = out.as_chunks::<WINDOW>().0.iter();
+    let windows = windows.zip(input.as_chunks::<WINDOW>().0);
     for (w, (window, dry)) in windows.enumerate() {
         let mut lag = phase(dry, w * WINDOW) - phase(window, w * WINDOW);
         if let Some(prev) = last {
