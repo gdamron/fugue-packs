@@ -97,10 +97,10 @@ fn the_first_echo_comes_after_time_plus_at_most_32_frames() {
 /// "the first echo of a quiet, low tone (e.g. 200 Hz at 0.01 amplitude in
 /// both inputs) is within ±1 dB of the input x `wet`": the echo's RMS, over
 /// 50 cycles clear of its onset, on each side, at the default `wet` (0.5)
-/// and at 1.5. `dry` 0 and `feedback` 0 leave the first echo alone.
+/// and at 1.0, the top of the declared 0 to 1 range. `dry` 0 and `feedback` 0 leave the first echo alone.
 #[test]
 fn a_quiet_low_tone_echoes_at_unity_times_wet() {
-    for wet in [0.5f32, 1.5] {
+    for wet in [0.5f32, 1.0] {
         let config = json!({ "dry": 0.0, "feedback": 0.0, "wet": wet });
         let (left, right) = render_doc(&sine_doc(config, 200.0, 0.01, 1.0), 2 * TIME);
         let want = 0.01 / 2f32.sqrt() * wet;

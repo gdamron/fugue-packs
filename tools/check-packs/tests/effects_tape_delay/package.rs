@@ -24,8 +24,32 @@ fn check_packs_validates_the_repository_with_the_tape_pack() {
     assert!(out.status.success(), "check-packs failed: {stdout}{stderr}");
 }
 
+/// A date-based version YYYY.M.P (a year from 2026, a month 1-12, a patch, no
+/// leading zeros) not earlier than 2026.11.1.
+fn assert_date_version_not_before_2026_11_1(what: &str, version: &str) {
+    let parts: Vec<&str> = version.split('.').collect();
+    assert!(parts.len() == 3, "{what}: {version} is YYYY.M.P");
+    assert!(
+        parts.iter().all(|p| !p.starts_with('0') || *p == "0"),
+        "{what}: {version} has a leading zero"
+    );
+    let numbers: Vec<u32> = (parts.iter())
+        .map(|p| {
+            p.parse()
+                .unwrap_or_else(|_| panic!("{what} version {version}"))
+        })
+        .collect();
+    assert!((2026..2100).contains(&numbers[0]), "{what}: {version}");
+    assert!((1..=12).contains(&numbers[1]), "{what}: {version}");
+    assert!(
+        (numbers[0], numbers[1], numbers[2]) >= (2026, 11, 1),
+        "{what}: {version} is earlier than 2026.11.1"
+    );
+}
+
 /// "`fugue.pkg.json` (kind `development`, entry `delay.development.json`,
-/// MIT, version `2026.11.1`) and `LICENSE`".
+/// MIT, a date-based YYYY.M.P version not earlier than `2026.11.1`) and
+/// `LICENSE`".
 #[test]
 fn manifest_declares_a_development_entry_under_mit_at_this_release() {
     let path = pack_dir(TAPE).join("fugue.pkg.json");
@@ -35,7 +59,8 @@ fn manifest_declares_a_development_entry_under_mit_at_this_release() {
     assert_eq!(manifest["kind"], "development");
     assert_eq!(manifest["entry"]["development"], "delay.development.json");
     assert_eq!(manifest["license"], "MIT");
-    assert_eq!(manifest["version"], "2026.11.1");
+    let version = manifest["version"].as_str().expect("a version string");
+    assert_date_version_not_before_2026_11_1(TAPE, version);
     assert!(pack_dir(TAPE).join("LICENSE").is_file(), "has a LICENSE");
     fugue::pkg::parse_path(&path).unwrap_or_else(|e| panic!("fugue refuses it: {e}"));
 }
