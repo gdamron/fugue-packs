@@ -32,7 +32,15 @@ fn manifest_declares_the_development_under_mit() {
         "granular.development.json"
     );
     assert_eq!(manifest["license"], "MIT");
-    assert_eq!(manifest["version"], "2026.11.1");
+    // A date-based YYYY.M.P version, at or after the pack's first release.
+    let version = manifest["version"].as_str().expect("version");
+    let parts: Vec<u32> = (version.split('.'))
+        .map(|p| p.parse().unwrap_or_else(|_| panic!("version {version}")))
+        .collect();
+    assert!(
+        parts.len() == 3 && (parts[0], parts[1], parts[2]) >= (2026, 11, 1),
+        "version {version}"
+    );
     assert!(pack_dir().join("LICENSE").is_file(), "has a LICENSE");
     fugue::pkg::parse_path(&path).unwrap_or_else(|e| panic!("fugue refuses it: {e}"));
 }
