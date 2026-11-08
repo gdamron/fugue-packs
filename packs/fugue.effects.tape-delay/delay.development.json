@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "title": "Tape Delay",
-  "description": "One tape head: both inputs, summed to mono, and the echoes fed back pass soft saturation and a lowpass tone filter into a delay whose time changes slew, bending the pitch. Slow wow and fast flutter wobble the delay time. The echo is heard on both sides, mixed with the dry signal. Delay times shorter than 10 ms are held at 10 ms.",
+  "description": "One tape head: both inputs, summed to mono, and the echoes fed back pass soft saturation and a lowpass tone filter into a delay whose time changes slew, bending the pitch. Slow wow and fast flutter wobble the delay time. The echo is heard on both sides, mixed with the dry signal. Delay times shorter than 10 ms are held at 10 ms. Feedback runs from 0 to 1: at 1, with the tone open, a quiet repeat holds its level; a darker tone fades it each pass.",
   "modules": [
     {
       "id": "send",
@@ -54,7 +54,7 @@
         "pans": [
           -1.0
         ],
-        "master": 1.0
+        "master": 0.9985
       }
     },
     {
@@ -259,7 +259,8 @@
     {
       "name": "feedback",
       "module": "feedback",
-      "control": "level.0"
+      "control": "level.0",
+      "range": { "min": 0.0, "max": 1.0 }
     },
     {
       "name": "tone",
