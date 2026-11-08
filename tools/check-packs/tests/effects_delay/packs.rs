@@ -1,6 +1,6 @@
 //! "Both packs pass check-packs validation", and the manifest the interface
 //! pins: kind `development`, entry `delay.development.json`, license MIT,
-//! version 2026.11.1, a LICENSE file.
+//! a date-based YYYY.M.P version not earlier than 2026.11.1, a LICENSE file.
 
 use std::fs;
 use std::process::Command;
@@ -24,6 +24,29 @@ fn check_packs_validates_the_repository_with_both_packs() {
     }
 }
 
+/// A date-based version YYYY.M.P (a year from 2026, a month 1-12, a patch, no
+/// leading zeros) not earlier than 2026.11.1.
+fn assert_date_version_not_before_2026_11_1(what: &str, version: &str) {
+    let parts: Vec<&str> = version.split('.').collect();
+    assert!(parts.len() == 3, "{what}: {version} is YYYY.M.P");
+    assert!(
+        parts.iter().all(|p| !p.starts_with('0') || *p == "0"),
+        "{what}: {version} has a leading zero"
+    );
+    let numbers: Vec<u32> = (parts.iter())
+        .map(|p| {
+            p.parse()
+                .unwrap_or_else(|_| panic!("{what} version {version}"))
+        })
+        .collect();
+    assert!((2026..2100).contains(&numbers[0]), "{what}: {version}");
+    assert!((1..=12).contains(&numbers[1]), "{what}: {version}");
+    assert!(
+        (numbers[0], numbers[1], numbers[2]) >= (2026, 11, 1),
+        "{what}: {version} is earlier than 2026.11.1"
+    );
+}
+
 #[test]
 fn manifests_declare_a_development_entry_under_mit_at_this_release() {
     for id in BOTH {
@@ -37,7 +60,8 @@ fn manifests_declare_a_development_entry_under_mit_at_this_release() {
             "{id}"
         );
         assert_eq!(manifest["license"], "MIT", "{id}");
-        assert_eq!(manifest["version"], "2026.11.1", "{id}");
+        let version = manifest["version"].as_str().expect("a version string");
+        assert_date_version_not_before_2026_11_1(id, version);
         assert!(pack_dir(id).join("LICENSE").is_file(), "{id} has a LICENSE");
         fugue::pkg::parse_path(&path).unwrap_or_else(|e| panic!("{id}: fugue refuses it: {e}"));
     }
