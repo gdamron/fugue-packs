@@ -99,8 +99,6 @@ pub fn check_sweep(pack: Pack, sweep: &Sweep, amp: f64, config: Value) {
     assert_bounded_steps(&what, (&out.0, &out.1), &dry_window(amp));
 }
 
-pub const SLOW_FAST: (f32, f32) = (0.001, 100.0);
-pub const FAST_SLOW: (f32, f32) = (100.0, 0.001);
 pub const FULL: (f32, f32) = (0.0, 1.0);
 pub const FULL_DOWN: (f32, f32) = (1.0, 0.0);
 

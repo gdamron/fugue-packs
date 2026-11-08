@@ -2,14 +2,20 @@
 //! 1 s: the largest step is no more than 1.5x the dry input's."
 //!
 //! Each side's two voices move opposite ways around `time` (12 ms), at most
-//! `depth` x 4 ms, so at `rate` 100 Hz and `depth` 1 a voice's delay moves
-//! 2.5 samples per sample. Cases that keep the product of rate and depth
-//! lower use `dry` 0.4 and `wet` 0.3 (levels summing to 1.0 over a side's
-//! two voices); the cases that take both to their maximum together use
-//! `dry` 0.25 and `wet` 0.1 so the legitimate steps stay inside the bound.
+//! `depth` x 4 ms, so at `rate` 10 Hz (the top of its range) and `depth` 1
+//! a voice's delay moves 0.25 samples per sample. Cases that keep the
+//! product of rate and depth lower use `dry` 0.4 and `wet` 0.3 (levels
+//! summing to 1.0 over a side's two voices); the cases that take both to
+//! their maximum together use `dry` 0.25 and `wet` 0.1 so the legitimate
+//! steps stay inside the bound.
 
 use super::rig::*;
 use super::zipper::*;
+
+/// The declared `rate` range, slowest to fastest and back, so a sweep
+/// spans the whole range and no write lands beyond it.
+const SLOW_FAST: (f32, f32) = (0.05, 10.0);
+const FAST_SLOW: (f32, f32) = (10.0, 0.05);
 
 fn sweep(
     name: &'static str,
@@ -32,7 +38,7 @@ const BALANCED: (f32, f32) = (0.4, 0.3);
 const LIGHT_WET: (f32, f32) = (0.25, 0.1);
 
 /// Rate across its range one way while depth crosses its range the other
-/// (the delay never moves faster than 0.63 samples per sample), linear and
+/// (the delay never moves faster than 0.063 samples per sample), linear and
 /// geometric in rate.
 #[test]
 fn sweeping_rate_up_and_depth_down_makes_no_step() {
