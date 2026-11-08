@@ -1,7 +1,8 @@
-//! The chorus and flanger `rate` and the compressor `mix` declare their own
-//! ranges, narrower than the controls they reach: each pack, loaded against
-//! the pinned core, lists and describes the range, holds every write and
-//! configured value within it, and starts at its old default.
+//! The chorus and flanger `rate`, the compressor `mix` and every pack's
+//! `dry` and `wet` declare their own ranges, narrower than the controls they
+//! reach: each pack, loaded against the pinned core, lists and describes
+//! the range, holds every write and configured value within it, and starts
+//! at its old default.
 
 use std::path::PathBuf;
 
@@ -23,31 +24,116 @@ struct Ranged {
     default: f32,
 }
 
-const RANGED: [Ranged; 3] = [
+const fn ranged(
+    pack: &'static str,
+    kind: &'static str,
+    file: &'static str,
+    key: &'static str,
+    range: (f32, f32),
+    default: f32,
+) -> Ranged {
     Ranged {
-        pack: "fugue.effects.chorus",
-        kind: "chorus",
-        file: "chorus.development.json",
-        key: "rate",
-        range: (0.05, 10.0),
-        default: 0.8,
-    },
-    Ranged {
-        pack: "fugue.effects.flanger",
-        kind: "flanger",
-        file: "flanger.development.json",
-        key: "rate",
-        range: (0.02, 10.0),
-        default: 0.25,
-    },
-    Ranged {
-        pack: "fugue.effects.compressor",
-        kind: "compressor",
-        file: "compressor.development.json",
-        key: "mix",
-        range: (0.0, 1.0),
-        default: 1.0,
-    },
+        pack,
+        kind,
+        file,
+        key,
+        range,
+        default,
+    }
+}
+
+const RATE_CHORUS: (f32, f32) = (0.05, 10.0);
+const RATE_FLANGER: (f32, f32) = (0.02, 10.0);
+const LEVEL: (f32, f32) = (0.0, 1.0);
+
+const CHORUS: &str = "fugue.effects.chorus";
+const FLANGER: &str = "fugue.effects.flanger";
+const GRANULAR: &str = "fugue.effects.granular";
+const STEREO: &str = "fugue.effects.stereo-delay";
+const PING_PONG: &str = "fugue.effects.ping-pong-delay";
+const TAPE: &str = "fugue.effects.tape-delay";
+const DELAY: &str = "delay.development.json";
+
+const RANGED: [Ranged; 15] = [
+    ranged(
+        CHORUS,
+        "chorus",
+        "chorus.development.json",
+        "rate",
+        RATE_CHORUS,
+        0.8,
+    ),
+    ranged(
+        FLANGER,
+        "flanger",
+        "flanger.development.json",
+        "rate",
+        RATE_FLANGER,
+        0.25,
+    ),
+    ranged(
+        "fugue.effects.compressor",
+        "compressor",
+        "compressor.development.json",
+        "mix",
+        LEVEL,
+        1.0,
+    ),
+    // Every dry/wet level is a mix, not a boost: 0 to 1, not the mixer's 0 to 2.
+    ranged(
+        GRANULAR,
+        "granular_texture",
+        "granular.development.json",
+        "dry",
+        LEVEL,
+        1.0,
+    ),
+    ranged(
+        GRANULAR,
+        "granular_texture",
+        "granular.development.json",
+        "wet",
+        LEVEL,
+        0.5,
+    ),
+    ranged(
+        CHORUS,
+        "chorus",
+        "chorus.development.json",
+        "dry",
+        LEVEL,
+        0.7,
+    ),
+    ranged(
+        CHORUS,
+        "chorus",
+        "chorus.development.json",
+        "wet",
+        LEVEL,
+        0.5,
+    ),
+    ranged(
+        FLANGER,
+        "flanger",
+        "flanger.development.json",
+        "dry",
+        LEVEL,
+        0.5,
+    ),
+    ranged(
+        FLANGER,
+        "flanger",
+        "flanger.development.json",
+        "wet",
+        LEVEL,
+        0.5,
+    ),
+    ranged(STEREO, "stereo_delay", DELAY, "dry", LEVEL, 1.0),
+    ranged(STEREO, "stereo_delay", DELAY, "wet", LEVEL, 0.5),
+    ranged(PING_PONG, "ping_pong_delay", DELAY, "dry", LEVEL, 1.0),
+    ranged(PING_PONG, "ping_pong_delay", DELAY, "wet", LEVEL, 0.5),
+    ranged(TAPE, "tape_delay", DELAY, "dry", LEVEL, 1.0),
+    ranged(TAPE, "tape_delay", DELAY, "wet", LEVEL, 0.5),
 ];
 
 fn development_path(pack: &str, file: &str) -> String {
@@ -135,7 +221,12 @@ fn writes_outside_the_range_read_back_at_its_ends() {
     } in RANGED
     {
         let mut engine = engine(&doc(pack, kind, file, json!({})));
-        for (written, held) in [(range.1 * 10.0, range.1), (range.0 - 1.0, range.0)] {
+        let writes = [
+            (range.1 * 1.5, range.1),
+            (range.1 * 10.0, range.1),
+            (range.0 - 1.0, range.0),
+        ];
+        for (written, held) in writes {
             engine
                 .set_control("fx", key, ControlValue::Number(written))
                 .expect("accepted");

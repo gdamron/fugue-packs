@@ -236,7 +236,8 @@
     {
       "name": "dry",
       "module": "mix_left",
-      "control": "level.0"
+      "control": "level.0",
+      "range": { "min": 0.0, "max": 1.0 }
     },
     {
       "name": "dry",
@@ -246,7 +247,8 @@
     {
       "name": "wet",
       "module": "mix_left",
-      "control": "level.1"
+      "control": "level.1",
+      "range": { "min": 0.0, "max": 1.0 }
     },
     {
       "name": "wet",
