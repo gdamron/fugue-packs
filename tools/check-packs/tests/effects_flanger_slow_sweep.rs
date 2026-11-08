@@ -20,7 +20,8 @@ const RATE: f32 = 0.02;
 const TONE: f64 = 100.0;
 /// One cycle of the tone.
 const WINDOW: usize = (SR as f64 / TONE) as usize;
-/// Long enough for the delay to cross its center twice after the start.
+/// Long enough for the delay to cross its center twice after the start:
+/// the lfo starts at its center, so the crossings fall near 25 s and 50 s.
 const SECONDS: usize = 54;
 
 fn development_path() -> String {
