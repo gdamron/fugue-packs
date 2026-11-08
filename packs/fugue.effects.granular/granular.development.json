@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "title": "Granular",
-  "description": "A granular texture processor: the granular module records both inputs into a 4 s buffer and plays it back as a cloud of grains, a time-stretch or a looping delay, and the result is mixed with the dry signal and sent to a reverb. dry and wet are the levels of the input and of the processed signal; reverb is the level of the reverb's return. The send is taken before wet, so with wet at 0 the grains are heard only through the reverb. reverb_size, reverb_decay and reverb_damping shape the reverb. Use dry and wet from 0 to 1; the controls report the mixer's 0 to 2 range. A static limit on each output keeps the mix, the dry signal included, within -1 to 1 without latency or pumping: below -3 dBFS it passes the signal unchanged; above it, peaks are reshaped rather than turned down, rising at about a quarter of the rate to a ceiling just under 0 dBFS, and past +6 dBFS in they are clipped. glide and inertia give the looping delay a tape glide: while it records and position sets its delay, with glide above 0 a moved position slides the delay to its new length instead of crossfading, bending the pitch on the way. glide is roughly the time a move takes at the middle inertia; higher inertia (heavier tape) takes longer and bends more gently, lower lurches and settles fast. Leaps larger than the glide can cover, tapped or clocked delays, freeze and the thaw after it still crossfade, as does every move at glide 0. For a mono source, patch it into both inputs; otherwise the right side records silence. sync follows the clock input and needs a clock patched: in granular mode grains start on its divisions (with sync on and no clock, only trigger starts grains), and the looping delay takes its delay from the clock's period.",
+  "description": "A granular texture processor: the granular module records both inputs into a 4 s buffer and plays it back as a cloud of grains, a time-stretch or a looping delay, and the result is mixed with the dry signal and sent to a reverb. dry and wet are the levels of the input and of the processed signal; reverb is the level of the reverb's return. The send is taken before wet, so with wet at 0 the grains are heard only through the reverb. reverb_size, reverb_decay and reverb_damping shape the reverb. dry and wet run from 0 to 1. A static limit on each output keeps the mix, the dry signal included, within -1 to 1 without latency or pumping: below -3 dBFS it passes the signal unchanged; above it, peaks are reshaped rather than turned down, rising at about a quarter of the rate to a ceiling just under 0 dBFS, and past +6 dBFS in they are clipped. glide and inertia give the looping delay a tape glide: while it records and position sets its delay, with glide above 0 a moved position slides the delay to its new length instead of crossfading, bending the pitch on the way. glide is roughly the time a move takes at the middle inertia; higher inertia (heavier tape) takes longer and bends more gently, lower lurches and settles fast. Leaps larger than the glide can cover, tapped or clocked delays, freeze and the thaw after it still crossfade, as does every move at glide 0. For a mono source, patch it into both inputs; otherwise the right side records silence. sync follows the clock input and needs a clock patched: in granular mode grains start on its divisions (with sync on and no clock, only trigger starts grains), and the looping delay takes its delay from the clock's period.",
   "modules": [
     {
       "id": "grains",
@@ -386,7 +386,8 @@
     {
       "name": "dry",
       "module": "mix_left",
-      "control": "level.0"
+      "control": "level.0",
+      "range": { "min": 0.0, "max": 1.0 }
     },
     {
       "name": "dry",
@@ -396,7 +397,8 @@
     {
       "name": "wet",
       "module": "mix_left",
-      "control": "level.1"
+      "control": "level.1",
+      "range": { "min": 0.0, "max": 1.0 }
     },
     {
       "name": "wet",
