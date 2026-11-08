@@ -3,15 +3,21 @@
 //! feedback.
 //!
 //! The flanger's delay moves `depth` x 1.5 ms around `time`, so at `rate`
-//! 100 Hz and `depth` 1 it moves 0.94 samples per sample. The sweeps run
-//! with `feedback` 0 (so the wet path is one pass through the line) and
-//! `dry` 0.4, `wet` 0.25, except one run at the default `feedback` 0.5
-//! with `dry` and `wet` lowered to match the comb's boost.
+//! 10 Hz (the top of its range) and `depth` 1 it moves 0.094 samples per
+//! sample. The sweeps run with `feedback` 0 (so the wet path is one pass
+//! through the line) and `dry` 0.4, `wet` 0.25, except one run at the
+//! default `feedback` 0.5 with `dry` and `wet` lowered to match the comb's
+//! boost.
 
 use serde_json::{json, Value};
 
 use super::rig::*;
 use super::zipper::*;
+
+/// The declared `rate` range, slowest to fastest and back, so a sweep
+/// spans the whole range and no write lands beyond it.
+const SLOW_FAST: (f32, f32) = (0.02, 10.0);
+const FAST_SLOW: (f32, f32) = (10.0, 0.02);
 
 const OPEN: (f32, f32) = (0.4, 0.25);
 const COMB: (f32, f32) = (0.2, 0.2);
