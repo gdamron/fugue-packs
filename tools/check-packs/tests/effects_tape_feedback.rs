@@ -45,7 +45,7 @@ fn repeats(hz: f64, amp: f64, tone: f64, count: usize) -> Vec<f32> {
     render(&mut fx, TIME / 2);
     (fx.set_control("burst", "level", ControlValue::Number(0.0))).expect("the burst silences");
     let (left, _) = render(&mut fx, count * TIME);
-    let levels: Vec<f32> = left.chunks_exact(TIME).map(rms).collect();
+    let levels: Vec<f32> = left.as_chunks::<TIME>().0.iter().map(|c| rms(c)).collect();
     assert!(levels[0] > amp as f32 / 100.0, "{hz} Hz: the burst echoes");
     levels
 }
