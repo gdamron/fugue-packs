@@ -37,7 +37,7 @@ const RANGED: [Ranged; 3] = [
         kind: "flanger",
         file: "flanger.development.json",
         key: "rate",
-        range: (0.05, 10.0),
+        range: (0.02, 10.0),
         default: 0.25,
     },
     Ranged {
