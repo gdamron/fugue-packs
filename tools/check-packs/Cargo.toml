@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-fugue = { git = "https://github.com/gdamron/fugue.git", rev = "4393b44d9c5d759f8546f79bba23b694c5685e7d" }
+fugue = { git = "https://github.com/gdamron/fugue.git", rev = "377e37a56c770c117f5e17f5d9d059835fad326d" }
 semver = "1"
 serde_json = "1"
 
