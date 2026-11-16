@@ -18,8 +18,8 @@ keep that idea in earshot.
 ## Leave space to notice
 
 Give each change time to be noticed: let it sound for at least a phrase
-before the next, and put it where the music already moves, such as a bar line
-or the end of a phrase. Silence and repetition are part of the music, not
+before the next, and put it where the music already turns, at the end of a
+phrase rather than the middle of one. Silence and repetition are part of the music, not
 gaps to fill.
 
 ## Prefer a small, playable invention

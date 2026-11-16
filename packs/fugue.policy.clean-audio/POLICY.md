@@ -10,7 +10,7 @@ each and a master of 0.8: begin there, and raise a level only after hearing
 it. Levels add, so a new voice comes with room made for it by lowering the
 others or the master. Delay feedback, reverb and resonance add level of their
 own. While building, keep peaks near 0.5; never leave a sustained peak at or
-above 1.0, where the output clamp flattens the wave.
+above 1.0.
 
 ## Shape every note with an envelope
 
@@ -27,8 +27,8 @@ the old note has mostly died away, or give the repeat its own voice.
 ## Ramp, never step
 
 A control may jump to the value it is given. A mixer's level, pan and master
-changes glide over 10 ms, so use them to fade; assume a step for any other
-control. Move a sounding control such as pitch, filter
+and a vca's level glide over 10 ms, so use them to fade; assume a step for
+any other control. Move a sounding control such as pitch, filter
 cutoff or a level ahead of the mixer in several small writes, or let an lfo
 or adsr move it. Make a large jump where the voice is silent, such as on a
 rest.
