@@ -74,9 +74,12 @@ restarts state, happens only when nothing is running.
 
 When resending the whole document costs more than the change (a new voice
 wired into a mixer, a filter inserted into a chain, several starting values
-retuned together), use apply_edits: its edits apply in order, all or nothing,
-in one revision. Chain each call on the previous result's revision.
-reload_invention stays the default when you hold the document.
+retuned together), use apply_edits: its edits apply in order, and the batch
+commits whole, in one revision, or not at all. A control write that does not
+take after the batch commits is listed in controls_failed: repair only those
+against the new revision rather than resending the batch. Chain each call on
+the previous result's revision. reload_invention stays the default when you
+hold the document.
 
 ## Read before retrying
 
@@ -94,19 +97,22 @@ Read live keys and ranges first (list_controls). Use set_controls for a
 gesture that moves several controls and set_control for one. A batch runs in
 order without rollback: earlier writes stay if a later one fails. Each write's
 ack is applied (with its value) or pending (with a request that
-control_changed names when it applies). intent "perform" plays a value
-without saving it into the document.
+control_changed names when it applies, and list_pending_requests lists until
+then). intent "perform" plays a value without saving it into the document.
 
 ## Land changes on the beat
 
 Pass when, such as {"kind":"next_bar"}, to land a control write, swap_module,
-apply_edits or reload_invention in musical time. Nothing changes until it
-lands; follow the request with get_request or poll_events, and give it
-ttl_ms to let it expire instead of landing late. One timed edit waits at a
-time. Another structural edit cancels it, and so does an authored write (not
+apply_edits or reload_invention in musical time, and give it ttl_ms to let
+it expire instead of landing late. Nothing changes until it lands. A timed
+edit returns a request: follow it with get_request or poll_events
+(request_changed). A timed control write's ack is pending with its landing,
+the control reads its old value until then, and a control_request_settled
+event (poll_events) reports it applied, superseded, overridden, refused or
+expired. One timed edit waits at a time. Another structural edit cancels it, and so does an authored write (not
 intent "perform") to a module it rebuilds or removes. An authored write to a
 control it sets as it lands is kept: the edit lands without its own write to
-that control, or is cancelled if it cannot. Perform writes, and authored
+that control, or is canceled if it cannot. Perform writes, and authored
 writes to other controls of modules it keeps, never cancel it, except a
 schedule written to a scheduler it re-resolves or whose targets it rebuilds
 or removes. Between a timed write and a timed edit, whichever lands later
@@ -168,7 +174,7 @@ These rules hold only for agents that reach Fugue through the MCP server.
   truncating.
 - save_invention writes on the daemon's filesystem and does not download a
   file to the agent host.
-- A call the host cancelled or timed out is like "Outcome unknown": read
+- A call the host canceled or timed out is like "Outcome unknown": read
   before retrying.
 - Examples and developments work whether or not the host surfaces MCP
   resources.
