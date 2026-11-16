@@ -11,6 +11,9 @@
     "mcp-tools": ["fugue"],
     "capabilities": ["random", "time"]
   },
-  "policies": ["fugue.demo.pulse-policy@^0.1.0"],
+  "policies": [
+    "fugue.policy.clean-audio@^2026.11.0",
+    "fugue.policy.musical-intent@^2026.11.0"
+  ],
   "entry": { "definition": "agent.json" }
 }

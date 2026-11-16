@@ -54,8 +54,10 @@ A `policy` pack holds rules that skills and agent definitions require by id
 instead of restating them: one Markdown file, opened with a `#` title and no
 frontmatter. `fugue.policy.authoring` is the full contract for creating,
 editing and conducting an invention through the `fugue` tools; the MCP
-server's instructions summarize it. `fugue.demo.pulse-policy` is the small
-example the pulse demos share.
+server's instructions summarize it. `fugue.policy.clean-audio`,
+`fugue.policy.musical-intent` and `fugue.policy.listening` are the core
+musical policies: protecting the sound, making musical choices, and judging by
+ear. The pulse demos require the first two.
 
 ## Release musical content
 
