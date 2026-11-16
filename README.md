@@ -48,6 +48,15 @@ installer can address individual packages in this monorepo.
 See [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a pack and
 [LICENSING.md](LICENSING.md) for the repository's licensing model.
 
+## Policies
+
+A `policy` pack holds rules that skills and agent definitions require by id
+instead of restating them: one Markdown file, opened with a `#` title and no
+frontmatter. `fugue.policy.authoring` is the full contract for creating,
+editing and conducting an invention through the `fugue` tools; the MCP
+server's instructions summarize it. `fugue.demo.pulse-policy` is the small
+example the pulse demos share.
+
 ## Release musical content
 
 `fugue.instruments.piano`, `fugue.instruments.marimba`,
