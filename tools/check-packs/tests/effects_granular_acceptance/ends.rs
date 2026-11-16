@@ -40,7 +40,13 @@ fn with_wet_and_reverb_off_a_hot_input_is_limited_sample_for_sample() {
     for extra in [json!({}), json!({ "mode": "stretch", "feedback": 1.0 })] {
         let config = with(&json!({ "wet": 0.0, "reverb": 0.0 }), extra);
         let (left, right) = render_doc(&feed.effect(config.clone(), 1.0), FRAMES / 4);
-        let (in_left, in_right) = render_doc(&feed.dry(), FRAMES / 4);
+        // Renders clamp at the dac like live playback, so the unlimited input
+        // is rendered 12 dB down, under the clamp, and brought back up.
+        let quiet = Feed::hot_noise_pair(1.0, 8.0 - 12.0);
+        let (quiet_left, quiet_right) = render_doc(&quiet.dry(), FRAMES / 4);
+        let up = 10f32.powf(12.0 / 20.0);
+        let in_left: Vec<f32> = quiet_left.iter().map(|sample| sample * up).collect();
+        let in_right: Vec<f32> = quiet_right.iter().map(|sample| sample * up).collect();
         assert!(
             peak(&in_left) > 1.5,
             "the input is hot ({})",

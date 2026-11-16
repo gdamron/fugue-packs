@@ -8,5 +8,6 @@
   "homepage": "https://github.com/gdamron/fugue-packs",
   "targets": ["external-agent"],
   "requires": { "mcp-tools": ["fugue"] },
+  "policies": ["fugue.demo.pulse-policy@^0.1.0"],
   "entry": { "skill": "SKILL.md" }
 }

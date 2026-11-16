@@ -11,5 +11,6 @@
     "mcp-tools": ["fugue"],
     "capabilities": ["random", "time"]
   },
+  "policies": ["fugue.demo.pulse-policy@^0.1.0"],
   "entry": { "definition": "agent.json" }
 }
