@@ -11,6 +11,11 @@ document; use live controls to conduct the music once it plays.
 
 ## Discover only what you need
 
+When you do not know which tool, view, module type, development, example,
+package or control fits, ask find in a few key words first: it returns a
+short ranked list of cards, each with the exact call or document fragment
+that uses it. A module type, development or example card names the
+describe_* call for its full detail.
 describe_module_types({}) returns a terse index of module types (builtins
 only while idle; a loaded invention adds its developments).
 describe_module({"type":"mixer","config":{"levels":[0.25,0.25,0.25],"master":0.8}})
@@ -47,7 +52,7 @@ the instrument. Ask again after stale_cursor or stale_reference.
 
 ## Start examples by ref
 
-list_examples finds complete playable examples, each with an exact ref;
+list_examples lists complete playable examples, each with an exact ref;
 describe_example reports its dependencies and assets without playing it. Pass
 the ref unchanged to load_invention to start one.
 
