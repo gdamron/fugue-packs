@@ -80,12 +80,13 @@ reload_invention stays the default when you hold the document.
 
 ## Read before retrying
 
-An edit that returns normally applied exactly once. A reload, edit batch or
-example load marked recovered applied before its reply was lost, and its
-details went with the reply: inspect with get_invention. An "Outcome unknown"
-error, including after a daemon restart, means the change may or may not have
-applied: read get_invention or list_controls before retrying. Live gestures
-are never resent.
+When the daemon connection drops mid-call, an edit is resent only when it
+cannot apply twice, so an edit that returns normally applied exactly once. A
+reload, edit batch or example load marked recovered applied before its reply
+was lost, and its details went with the reply: inspect with get_invention. An
+"Outcome unknown" error, including after a daemon restart, means the change
+may or may not have applied: read get_invention or list_controls before
+retrying. Live gestures are never resent.
 
 ## Conduct with set_controls
 
