@@ -29,7 +29,12 @@ fn wet_and_reverb_at_zero_pass_the_input_below_the_knee() {
 #[test]
 fn a_hot_input_follows_the_soft_limit_without_latency() {
     let source = Source::noise_at(8.0);
-    let (want_l, want_r) = render_doc(&dry(&source), SECOND);
+    // Renders clamp at the dac like live playback, so the unlimited reference
+    // is rendered 12 dB down, under the clamp, and brought back up.
+    let (quiet_l, quiet_r) = render_doc(&dry(&Source::noise_at(8.0 - 12.0)), SECOND);
+    let up = 10f32.powf(12.0 / 20.0);
+    let want_l: Vec<f32> = quiet_l.iter().map(|sample| sample * up).collect();
+    let want_r: Vec<f32> = quiet_r.iter().map(|sample| sample * up).collect();
     let config = json!({ "wet": 0.0, "reverb": 0.0 });
     let (l, r) = render_doc(&effect(&source, config), SECOND);
     assert_limited("left", &l, &want_l);

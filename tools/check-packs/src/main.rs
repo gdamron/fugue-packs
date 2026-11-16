@@ -1,9 +1,11 @@
-use std::collections::HashSet;
+use std::collections::BTreeMap;
 use std::env;
+use std::error::Error;
 use std::fs;
 use std::path::{Component, Path, PathBuf};
 
-use fugue::pkg::{self, sample_pack, EntrySpec, PackageManifest};
+use fugue::pkg::{self, sample_pack, EntrySpec, PackageManifest, PackageProvider};
+use semver::Version;
 use serde_json::Value;
 
 fn main() {
@@ -33,8 +35,7 @@ fn check_repository(root: &Path) -> Result<usize, String> {
         .map_err(|error| format!("cannot enumerate {}: {error}", packs_dir.display()))?;
     directories.sort_by_key(|entry| entry.file_name());
 
-    let mut ids = HashSet::new();
-    let mut count = 0;
+    let mut packs = RepositoryPacks::default();
     for directory in directories {
         let file_type = directory
             .file_type()
@@ -59,18 +60,48 @@ fn check_repository(root: &Path) -> Result<usize, String> {
                 manifest.id
             ));
         }
-        if !ids.insert(manifest.id.clone()) {
-            return Err(format!("duplicate package id `{}`", manifest.id));
-        }
-
         check_entry(&pack_root, &manifest)?;
-        count += 1;
+        if packs.0.insert(manifest.id.clone(), manifest).is_some() {
+            return Err(format!("duplicate package id `{directory_name}`"));
+        }
     }
 
-    if count == 0 {
+    if packs.0.is_empty() {
         return Err("packs directory contains no packages".to_string());
     }
-    Ok(count)
+    for manifest in packs.0.values() {
+        pkg::resolve_package(manifest, &packs).map_err(|error| {
+            format!("{}: cannot resolve its requirements: {error}", manifest.id)
+        })?;
+    }
+    Ok(packs.0.len())
+}
+
+/// The repository's own packs, keyed by id, as a resolution source: every
+/// `deps` and `policies` requirement must resolve within the repository.
+#[derive(Default)]
+struct RepositoryPacks(BTreeMap<String, PackageManifest>);
+
+impl PackageProvider for RepositoryPacks {
+    type Acquired = ();
+
+    fn available_versions(&self, id: &str) -> Result<Vec<Version>, Box<dyn Error>> {
+        self.0
+            .get(id)
+            .map(|manifest| Version::parse(&manifest.version).map(|version| vec![version]))
+            .transpose()
+            .map(Option::unwrap_or_default)
+            .map_err(Into::into)
+    }
+
+    fn acquire(
+        &self,
+        id: &str,
+        _version: &Version,
+    ) -> Result<(PackageManifest, ()), Box<dyn Error>> {
+        let manifest = self.0.get(id).ok_or_else(|| format!("no pack `{id}`"))?;
+        Ok((manifest.clone(), ()))
+    }
 }
 
 fn check_index(path: &Path) -> Result<(), String> {
@@ -91,14 +122,7 @@ fn check_index(path: &Path) -> Result<(), String> {
 }
 
 fn check_entry(pack_root: &Path, manifest: &PackageManifest) -> Result<(), String> {
-    let entry = match &manifest.entry {
-        EntrySpec::Module { wasm } => wasm,
-        EntrySpec::Invention { invention } => invention,
-        EntrySpec::Development { development } => development,
-        EntrySpec::Skill { skill } => skill,
-        EntrySpec::Agent { definition } => definition,
-        EntrySpec::SamplePack { samples } => samples,
-    };
+    let entry = manifest.entry.path();
     let relative = Path::new(entry);
     if relative.as_os_str().is_empty()
         || relative
@@ -155,6 +179,10 @@ fn check_entry(pack_root: &Path, manifest: &PackageManifest) -> Result<(), Strin
     if matches!(manifest.entry, EntrySpec::SamplePack { .. }) {
         check_sample_pack_entry(pack_root, &canonical_root, &canonical_entry, manifest)?;
     }
+    if matches!(manifest.entry, EntrySpec::Policy { .. }) {
+        pkg::check_policy_entry(pack_root, manifest)
+            .map_err(|error| format!("{}: {error}", manifest.id))?;
+    }
     Ok(())
 }
 
@@ -198,9 +226,19 @@ mod tests {
     }
 
     fn write_skill(root: &Path, directory: &str, id: &str, entry: &str) {
+        write_skill_requiring(root, directory, id, entry, None);
+    }
+
+    fn write_skill_requiring(
+        root: &Path,
+        directory: &str,
+        id: &str,
+        entry: &str,
+        policies: Option<&[&str]>,
+    ) {
         let pack = root.join("packs").join(directory);
         fs::create_dir_all(&pack).expect("pack directory");
-        let manifest = json!({
+        let mut manifest = json!({
             "id": id,
             "version": "0.1.0",
             "kind": "skill",
@@ -209,12 +247,113 @@ mod tests {
             "targets": ["external-agent"],
             "entry": {"skill": entry}
         });
+        if let Some(policies) = policies {
+            manifest["policies"] = json!(policies);
+        }
         fs::write(
             pack.join("fugue.pkg.json"),
             serde_json::to_vec_pretty(&manifest).expect("manifest JSON"),
         )
         .expect("manifest");
         fs::write(pack.join(entry), "# Test skill\n").expect("entry");
+    }
+
+    fn write_policy(root: &Path, id: &str, entry: &str, text: &str) {
+        let pack = root.join("packs").join(id);
+        fs::create_dir_all(&pack).expect("pack directory");
+        let manifest = json!({
+            "id": id,
+            "version": "0.1.0",
+            "kind": "policy",
+            "license": "CC0-1.0",
+            "authors": [{"name": "Test Author"}],
+            "targets": ["external-agent"],
+            "entry": {"policy": entry}
+        });
+        fs::write(
+            pack.join("fugue.pkg.json"),
+            serde_json::to_vec_pretty(&manifest).expect("manifest JSON"),
+        )
+        .expect("manifest");
+        fs::write(pack.join(entry), text).expect("entry");
+    }
+
+    #[test]
+    fn accepts_a_skill_requiring_a_policy_in_the_repository() {
+        let root = repository();
+        write_policy(root.path(), "fugue.test.rules", "POLICY.md", "# Rules\n");
+        write_skill_requiring(
+            root.path(),
+            "fugue.test.skill",
+            "fugue.test.skill",
+            "SKILL.md",
+            Some(&["fugue.test.rules@^0.1.0"]),
+        );
+        assert_eq!(check_repository(root.path()).unwrap(), 2);
+    }
+
+    #[test]
+    fn rejects_a_policy_requirement_the_repository_cannot_resolve() {
+        let root = repository();
+        write_skill_requiring(
+            root.path(),
+            "fugue.test.skill",
+            "fugue.test.skill",
+            "SKILL.md",
+            Some(&["fugue.test.rules@^0.1.0"]),
+        );
+        let error = check_repository(root.path()).unwrap_err();
+        assert!(error.contains("fugue.test.rules"), "{error}");
+    }
+
+    #[test]
+    fn rejects_a_policy_entry_with_frontmatter() {
+        let root = repository();
+        write_policy(
+            root.path(),
+            "fugue.test.rules",
+            "POLICY.md",
+            "---\nname: rules\n---\n# Rules\n",
+        );
+        let error = check_repository(root.path()).unwrap_err();
+        assert!(error.contains("frontmatter"), "{error}");
+    }
+
+    #[test]
+    fn the_pulse_demos_lock_their_shared_policy_once() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+        check_repository(&root).expect("repository packs validate");
+        let mut packs = RepositoryPacks::default();
+        for id in [
+            "fugue.demo.pulse-skill",
+            "fugue.demo.pulse-agent",
+            "fugue.demo.pulse-policy",
+        ] {
+            let manifest = pkg::parse_path(root.join("packs").join(id).join("fugue.pkg.json"))
+                .expect("pulse manifest");
+            packs.0.insert(id.to_string(), manifest);
+        }
+        let resolved = pkg::resolve_transitive(
+            &[
+                "fugue.demo.pulse-skill@^0.1.0".to_string(),
+                "fugue.demo.pulse-agent@^0.1.0".to_string(),
+            ],
+            &packs,
+        )
+        .expect("pulse demos resolve");
+        let policies: Vec<_> = resolved
+            .iter()
+            .filter(|package| package.id == "fugue.demo.pulse-policy")
+            .collect();
+        assert_eq!(policies.len(), 1);
+        assert_eq!(policies[0].version, "0.1.0");
+        for requirer in ["fugue.demo.pulse-skill", "fugue.demo.pulse-agent"] {
+            let package = resolved
+                .iter()
+                .find(|package| package.id == requirer)
+                .unwrap();
+            assert_eq!(package.dependencies, ["fugue.demo.pulse-policy@0.1.0"]);
+        }
     }
 
     #[test]

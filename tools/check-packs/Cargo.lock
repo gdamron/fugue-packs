@@ -328,6 +328,7 @@ name = "check-packs"
 version = "0.1.0"
 dependencies = [
  "fugue",
+ "semver 1.0.28",
  "serde_json",
  "tempfile",
 ]
@@ -719,8 +720,8 @@ dependencies = [
 
 [[package]]
 name = "fugue"
-version = "2026.8.0"
-source = "git+https://github.com/gdamron/fugue.git?rev=7ac7133190f67b103d0f807f88640b303f803ba6#7ac7133190f67b103d0f807f88640b303f803ba6"
+version = "2026.11.0"
+source = "git+https://github.com/gdamron/fugue.git?rev=2fed351c90fb0d8751396381fad6556e094e8cb6#2fed351c90fb0d8751396381fad6556e094e8cb6"
 dependencies = [
  "boa_engine",
  "claxon",
