@@ -30,6 +30,17 @@ pub const DEVELOPMENT_TOOLS: &[&str] = &[
     "describe_development",
 ];
 
+/// Local server tools a listening skill names: `get_meters` and `show_scope`
+/// in their own `crates/mcp/src/tools/<tool>.rs`, `pause_invention` and
+/// `resume_invention` both in `pause_invention.rs`. The audio preview is
+/// `show_view` with view "audio" (`audio_view.rs`), already in `LOCAL_TOOLS`.
+pub const LISTENING_TOOLS: &[&str] = &[
+    "get_meters",
+    "show_scope",
+    "pause_invention",
+    "resume_invention",
+];
+
 /// Whether `span` is a command line of `COMMANDS` passing only its listed
 /// flags, or one of those flags alone.
 pub fn is_command(span: &str) -> bool {

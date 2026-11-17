@@ -82,6 +82,10 @@ development, which requires the authoring and clean-audio policies: exposed
 ports and controls, names, version, and defaults that stay clean wherever it
 is dropped in, with an example development to start from.
 
+`fugue.review.listener` is a listening critique for external agents: it
+hears the loaded piece through the local audio preview and meters, says what
+it heard against the piece's intent, and proposes one change.
+
 ## Release musical content
 
 `fugue.instruments.piano`, `fugue.instruments.marimba`,
