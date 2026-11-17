@@ -63,6 +63,9 @@ to the clock, sequencer and drum map modules that realize them.
 `fugue.policy.surfaces` is for external agents only: how to tell which surface
 they are on, which route plays a piece there, and what the browser preview
 does not offer.
+`fugue.policy.theory` is the theory reference: choosing a mode, spelling a scale
+for the sequencers, keeping `chance` and `melody` in key, and changing key while
+a piece plays.
 
 ## Release musical content
 
