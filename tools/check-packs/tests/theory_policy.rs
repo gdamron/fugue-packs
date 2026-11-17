@@ -80,7 +80,7 @@ fn a_name_the_registry_lacks_is_caught() {
 
 /// The scales the prose lists are ones `chance.scale` takes, as written
 /// (outside code spans, so the span check does not see them): the list that
-/// ends "and chromatic" is read from the prose, and each name is checked.
+/// ends at a full stop is read from the prose, and each name is checked.
 #[test]
 fn the_scales_the_policy_lists_exist() {
     let registry = ModuleRegistry::default();
@@ -89,15 +89,14 @@ fn the_scales_the_policy_lists_exist() {
     let list = prose
         .split("`chance.scale` takes ")
         .nth(1)
-        .and_then(|rest| rest.split_once("chromatic"))
-        .expect("the policy lists the scales `chance.scale` takes, ending in chromatic")
+        .and_then(|rest| rest.split_once(". "))
+        .expect("the policy lists the scales `chance.scale` takes, ending in a full stop")
         .0;
-    let mut names: Vec<String> = list
+    let names: Vec<String> = list
         .replace(" and", ",")
         .split(',')
         .filter_map(|part| part.split_whitespace().next().map(str::to_string))
         .collect();
-    names.push("chromatic".into());
     assert!(names.len() >= 12, "read {names:?}");
     for name in &names {
         let span = format!("chance.scale={name}");

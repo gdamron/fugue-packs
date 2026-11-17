@@ -47,8 +47,8 @@ There is no shared key: each module holds its own. Write them in one
 
 To transpose, write `step_sequencer.root_note`, `cell_sequencer.root_note`,
 `melody.root_note`, `chance.key` and, for chords, `macro_oscillator.key`; up
-a fifth is +7. To change mode, write `chance.scale`, `macro_oscillator.scale`,
-`melody.degrees`, or the notes of `step_sequencer.pattern` or
+a fifth is +7. To change mode, write `chance.scale`, for chords
+`macro_oscillator.scale`, `melody.degrees`, or the notes of `step_sequencer.pattern` or
 `cell_sequencer.cells`. The relative minor keeps every note and moves the
 tonic: from C major, `chance.key=A` and `chance.scale=minor`; sequencer notes
 and `melody.degrees` need respelling from the new root.
@@ -64,4 +64,4 @@ fugue.policy.musical-intent's.
 Nothing quantizes an incoming pitch or CV to a scale: only `chance` snaps, and
 only its own draws. There is no tuning control: pitch is twelve-tone equal at
 A 440, and sequencers and `melody` take whole semitones. For a microtonal
-pitch, set `oscillator.frequency` in Hz directly.
+pitch, set `oscillator.frequency` in Hz with its input unpatched.
