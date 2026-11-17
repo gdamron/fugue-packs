@@ -41,6 +41,7 @@ fn every_name_the_policy_uses_exists_in_the_registry() {
     assert_names_exist(
         POLICY,
         &["clock", "step_sequencer", "cell_sequencer", "drum_map"],
+        &[],
     );
 }
 

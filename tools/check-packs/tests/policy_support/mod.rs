@@ -112,6 +112,50 @@ fn accepts(kind: &ControlKind, value: &str) -> bool {
     }
 }
 
+/// The options of the control `module_type.key`, if it is a choice.
+pub fn control_options(
+    registry: &ModuleRegistry,
+    module_type: &str,
+    key: &str,
+) -> Option<Vec<String>> {
+    match facts(registry, module_type)
+        .controls
+        .into_iter()
+        .find(|(control, _)| control == key)?
+        .1
+    {
+        ControlKind::String {
+            options: Some(options),
+        } => Some(options),
+        _ => None,
+    }
+}
+
+/// The module types that declare a control or config key named `key`. A
+/// type that cannot be described without config of its own (a sink that
+/// needs a URL) is skipped.
+pub fn types_with_control(registry: &ModuleRegistry, key: &str) -> BTreeSet<String> {
+    registry
+        .types()
+        .filter(|module_type| {
+            let query = DescribeModuleQuery {
+                module_type: Some((*module_type).into()),
+                ..Default::default()
+            };
+            let described =
+                ModuleDescription::from_registry(registry, SR, RegistryScope::Builtins, &query);
+            let control =
+                described.is_ok_and(|d| d.info.controls.iter().any(|control| control.key == key));
+            control
+                || registry
+                    .config_keys(module_type)
+                    .iter()
+                    .any(|k| k.key == key)
+        })
+        .map(str::to_string)
+        .collect()
+}
+
 /// Why `span` names something the registry does not have, if it does not.
 /// A span is a module type (`clock`), a `type.name` (a control, config key
 /// or port of that type), or `type.control=value`.
@@ -189,12 +233,22 @@ pub fn assert_fits_prompt(id: &str) {
 
 /// Every module type, config key, control, port and value the prose names
 /// exists in the pinned core's registry, and it names each type in `needed`.
-pub fn assert_names_exist(id: &str, needed: &[&str]) {
+/// A span in `tools` (a tool or argument such as `set_controls`) is allowed
+/// when the authoring policy names it too.
+pub fn assert_names_exist(id: &str, needed: &[&str], tools: &[&str]) {
     let registry = ModuleRegistry::default();
+    let authoring = policy_text("fugue.policy.authoring");
+    for tool in tools {
+        assert!(
+            authoring.contains(tool),
+            "{tool} is not named by fugue.policy.authoring"
+        );
+    }
     let (prose, _) = split_fences(&policy_text(id));
     let spans = code_spans(&prose);
     let problems: Vec<String> = spans
         .iter()
+        .filter(|span| !tools.contains(&span.as_str()))
         .filter_map(|span| problem_with(&registry, span))
         .collect();
     assert!(problems.is_empty(), "{problems:#?}");
