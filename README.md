@@ -66,6 +66,9 @@ does not offer.
 `fugue.policy.theory` is the theory reference: choosing a mode, spelling a scale
 for the sequencers, keeping `chance` and `melody` in key, and changing key while
 a piece plays.
+`fugue.policy.harmony` is the harmony reference: building chords with the macro
+oscillator or one sequencer per voice, carrying a progression, re-voicing a
+playing piece one voice at a time, and what has no module.
 
 ## Release musical content
 
