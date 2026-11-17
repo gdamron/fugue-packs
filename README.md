@@ -70,6 +70,14 @@ a piece plays.
 oscillator or one sequencer per voice, carrying a progression, re-voicing a
 playing piece one voice at a time, and what has no module.
 
+## Skills
+
+A `skill` pack holds one `SKILL.md`: a thin procedure an agent host loads as
+a skill, which requires the policies it follows instead of restating them.
+`fugue.skill.entry` is the `fugue` skill, the `/fugue` entry point for
+external agents: it works out which surface the agent is on, says which route
+will play the piece, and has it authored and played through that route.
+
 ## Release musical content
 
 `fugue.instruments.piano`, `fugue.instruments.marimba`,

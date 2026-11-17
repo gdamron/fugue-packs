@@ -3,7 +3,10 @@
 //! repository's real `packs/` and the pinned core's module registry.
 //!
 //! Each policy's test file calls these with its own pack id and the names it
-//! must teach; what is specific to one policy stays in its file.
+//! must teach; what is specific to one policy stays in its file. The checks
+//! that read text rather than a pack id (`unknown_names`,
+//! `assert_text_fragments_load`, `restated_sentences`, `british_spellings`)
+//! also serve the skill tests, through `skill_support`.
 
 #![allow(dead_code)]
 
@@ -246,11 +249,7 @@ pub fn assert_names_exist(id: &str, needed: &[&str], tools: &[&str]) {
     }
     let (prose, _) = split_fences(&policy_text(id));
     let spans = code_spans(&prose);
-    let problems: Vec<String> = spans
-        .iter()
-        .filter(|span| !tools.contains(&span.as_str()))
-        .filter_map(|span| problem_with(&registry, span))
-        .collect();
+    let problems = unknown_names(&registry, &prose, tools);
     assert!(problems.is_empty(), "{problems:#?}");
     for needed in needed {
         assert!(
@@ -262,13 +261,29 @@ pub fn assert_names_exist(id: &str, needed: &[&str], tools: &[&str]) {
     }
 }
 
+/// What each code span of `prose` names that the registry does not have,
+/// leaving out the spans in `allowed` (tools, commands, package ids).
+pub fn unknown_names(registry: &ModuleRegistry, prose: &str, allowed: &[&str]) -> Vec<String> {
+    code_spans(prose)
+        .iter()
+        .filter(|span| !allowed.contains(&span.as_str()))
+        .filter_map(|span| problem_with(registry, span))
+        .collect()
+}
+
 /// Every fragment the policy shows loads in the pinned core, and what it
 /// loads sets nothing aside (an unknown config key is refused, or warned).
 pub fn assert_fragments_load(id: &str, at_least: usize) {
-    let (_, blocks) = split_fences(&policy_text(id));
+    assert_text_fragments_load(&policy_text(id), at_least);
+}
+
+/// Every fenced fragment in `text` loads in the pinned core with no load
+/// warnings, and there are at least `at_least` of them.
+pub fn assert_text_fragments_load(text: &str, at_least: usize) {
+    let (_, blocks) = split_fences(text);
     assert!(
         blocks.len() >= at_least,
-        "the policy shows {} fragments",
+        "the text shows {} fragments",
         blocks.len()
     );
     for block in blocks {
@@ -302,11 +317,40 @@ pub fn assert_names_owners_without_restating(id: &str, owners: &[&str], owned: &
 
 /// American English: none of `extra` nor the common British spellings.
 pub fn assert_american_spelling(id: &str, extra: &[&str]) {
-    let lower = policy_text(id).to_lowercase();
-    for british in ["colour", "behaviour", "centre", "labelled", "grey"]
+    let found = british_spellings(&policy_text(id), extra);
+    assert!(found.is_empty(), "British spelling: {found:?}");
+}
+
+/// The common British spellings, and those in `extra`, that `text` uses.
+pub fn british_spellings(text: &str, extra: &[&str]) -> Vec<String> {
+    let lower = text.to_lowercase();
+    ["colour", "behaviour", "centre", "labelled", "grey"]
         .into_iter()
         .chain(extra.iter().copied())
-    {
-        assert!(!lower.contains(british), "British spelling: {british}");
-    }
+        .filter(|british| lower.contains(british))
+        .map(str::to_string)
+        .collect()
+}
+
+/// The text with its line breaks and indents collapsed to single spaces.
+pub fn flat(text: &str) -> String {
+    text.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+/// The sentences of six words or more in `source`'s prose that `text`
+/// copies: a sample that catches a rule restated word for word.
+pub fn restated_sentences(text: &str, source: &str) -> Vec<String> {
+    let text = flat(text);
+    // Headings are dropped first, or one would stay glued to the front of the
+    // first sentence under it and hide a copy of that sentence.
+    let prose: String = source
+        .lines()
+        .filter(|line| !line.starts_with('#'))
+        .collect::<Vec<_>>()
+        .join("\n");
+    flat(&prose)
+        .split(". ")
+        .filter(|sentence| sentence.split(' ').count() >= 6 && text.contains(*sentence))
+        .map(str::to_string)
+        .collect()
 }

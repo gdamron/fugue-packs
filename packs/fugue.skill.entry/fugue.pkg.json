@@ -1,0 +1,24 @@
+{
+  "id": "fugue.skill.entry",
+  "version": "2026.11.0",
+  "kind": "skill",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "The /fugue entry point: works out which surface the agent is on, says which route will play the piece, and makes and plays it through that route.",
+  "targets": [
+    "external-agent"
+  ],
+  "policies": [
+    "fugue.policy.authoring@^2026.11.0",
+    "fugue.policy.surfaces@^2026.11.0",
+    "fugue.policy.clean-audio@^2026.11.0",
+    "fugue.policy.musical-intent@^2026.11.0"
+  ],
+  "entry": {
+    "skill": "SKILL.md"
+  }
+}
