@@ -29,11 +29,12 @@ fn stand_in_player() -> String {
         r#"<!doctype html>
 <!--
   Stand-in player. Put an invention's JSON in the fyug-invention script element.
+  <script type="application/json" id="fyug-invention"></script>
 -->
 <html lang="en">
   <head><meta charset="utf-8" /><title>Stand-in player</title></head>
   <body>
-    <header><h1>Fyug</h1><span class="badge">Preview</span></header>
+    <header><h1>Fyug — Ünïcödé</h1><span class="badge">Preview</span></header>
     <script type="application/json" id="fyug-supported-modules">
       {modules}
     </script>
@@ -111,10 +112,11 @@ impl Run {
     }
 }
 
-/// The text of the one `fyug-invention` element, read as a browser does: to
+/// The text of the `fyug-invention` element (the last, after the stand-in's
+/// commented-out copy), read as a browser does: to
 /// the first `</script`, whatever case.
 fn inserted(page: &str) -> &str {
-    let start = page.find(r#"id="fyug-invention">"#).unwrap() + r#"id="fyug-invention">"#.len();
+    let start = page.rfind(r#"id="fyug-invention">"#).unwrap() + r#"id="fyug-invention">"#.len();
     let end = start + page[start..].to_lowercase().find("</script").unwrap();
     &page[start..end]
 }
@@ -148,7 +150,7 @@ fn the_script_writes_the_player_with_the_piece_inside() {
         assert!(output.status.success(), "{output:?}");
 
         let page = run.output().expect("the preview file is written");
-        let (before, after) = player.split_once(EMPTY).unwrap();
+        let (before, after) = player.rsplit_once(EMPTY).unwrap();
         let open = &EMPTY[..EMPTY.len() - "</script>".len()];
         let body = page
             .strip_prefix(before)
@@ -223,6 +225,24 @@ fn bad_input_is_refused_without_writing() {
     let run = Run::new(Some(&stand_in_player()), &piece);
     fs::write(run.path("modules.json"), "[]").unwrap();
     assert_refused(&run, &run.write(&["--modules", "modules.json"]), "not a");
+
+    let twice = stand_in_player().replace(EMPTY, &format!("{EMPTY}\n{EMPTY}"));
+    let run = Run::new(Some(&twice), &piece);
+    assert_refused(&run, &run.write(&[]), "more than one fyug-invention");
+
+    let run = Run::new(Some(&stand_in_player()), &piece);
+    let output = run.write(&["--out", "missing/preview.html"]);
+    assert!(!output.status.success() && !run.path("missing").exists());
+    assert!(String::from_utf8_lossy(&output.stderr).contains("does not exist"));
+
+    // The output never replaces one of the script's own inputs.
+    let run = Run::new(Some(&stand_in_player()), &piece);
+    for input in ["player.html", "piece.json"] {
+        let before = fs::read(run.path(input)).unwrap();
+        let output = run.write(&["--out", input]);
+        assert!(!output.status.success(), "{output:?}");
+        assert_eq!(fs::read(run.path(input)).unwrap(), before, "{input}");
+    }
 }
 
 /// The script imports only the standard library, none of its network
@@ -231,6 +251,11 @@ fn bad_input_is_refused_without_writing() {
 fn the_script_needs_only_the_standard_library_and_no_network() {
     let check = r#"
 import ast, sys
+stdlib = getattr(sys, "stdlib_module_names", None)
+if stdlib is None:  # before Python 3.10
+    import pkgutil, sysconfig
+    lib = sysconfig.get_paths()["stdlib"]
+    stdlib = set(sys.builtin_module_names) | {m.name for m in pkgutil.iter_modules([lib])}
 tree = ast.parse(open(sys.argv[1]).read())
 names = set()
 for node in ast.walk(tree):
@@ -241,7 +266,7 @@ for node in ast.walk(tree):
     elif isinstance(node, ast.Call) and getattr(node.func, "id", "") == "__import__":
         names.add("__import__")
 forbidden = {"urllib", "http", "socket", "ssl", "ftplib", "smtplib", "asyncio", "xmlrpc", "webbrowser", "subprocess"}
-bad = sorted(n for n in names if n not in sys.stdlib_module_names or n in forbidden)
+bad = sorted(n for n in names if n not in stdlib or n in forbidden)
 print(" ".join(bad))
 sys.exit(1 if bad else 0)
 "#;

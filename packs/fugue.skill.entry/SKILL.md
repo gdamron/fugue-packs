@@ -57,7 +57,8 @@ have to pick a backend.
    - **Plain chat:** the preview file, when the host can run this skill's
      script and show an HTML file. Save the piece, then run
      `python3 scripts/write_preview.py --player fyug-player.html --modules fyug-player-modules.json --invention piece.json --out piece-preview.html`
-     with the release's player and module list that come with this skill.
+     from this skill's folder, giving the paths of the release's player and
+     module list that come with this skill and of your piece and output.
      Hand the user the file: say it is a limited preview that may drop out,
      tapping Play starts it, and link the desktop install,
      https://github.com/Ilusiv-media/fyug#install. Never retype, edit or

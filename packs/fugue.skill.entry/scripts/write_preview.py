@@ -65,7 +65,7 @@ def write_preview(player_path, invention_path, out_path, modules_path=None):
     if len(invention_spans) > 1:
         raise Refusal(f"the player {player_path} has more than one {INVENTION_ID} element")
 
-    text = read_text(invention_path, "invention file").lstrip("﻿")
+    text = read_text(invention_path, "invention file").lstrip("\ufeff")
     invention = parse_json(text, f"the invention {invention_path}")
     if not isinstance(invention, dict):
         raise Refusal(f"the invention {invention_path} is not a JSON object")
@@ -79,28 +79,35 @@ def write_preview(player_path, invention_path, out_path, modules_path=None):
         names = ", ".join(missing)
         raise Refusal(f"the browser preview does not support these module types: {names}")
 
-    for source in (player_path, invention_path):
-        if os.path.exists(out_path) and os.path.samefile(out_path, source):
+    for source in (player_path, invention_path, modules_path):
+        if source is not None and os.path.exists(out_path) and os.path.samefile(out_path, source):
             raise Refusal(f"the output path is {source} itself; choose another path")
     out_dir = os.path.dirname(os.path.abspath(out_path))
     if not os.path.isdir(out_dir):
         raise Refusal(f"the output folder {out_dir} does not exist")
 
-    # "<" appears in JSON text only inside strings, where < means the
+    # "<" appears in JSON text only inside strings, where \u003c means the
     # same character, so this keeps the piece and cannot close the element.
     safe = text.strip().replace("<", "\\u003c")
     start, end = invention_spans[0]
     preview = player[:start] + safe + player[end:]
 
+    # Write beside the output and move it into place, so a failed write
+    # leaves no partial file; give it the mode a plain new file would get.
     handle, temporary = tempfile.mkstemp(dir=out_dir, suffix=".tmp")
     try:
+        umask = os.umask(0)
+        os.umask(umask)
+        os.chmod(temporary, 0o666 & ~umask)
         with os.fdopen(handle, "w", encoding="utf-8", newline="") as file:
             file.write(preview)
         os.replace(temporary, out_path)
-    except OSError as error:
+    except BaseException as error:
         if os.path.exists(temporary):
             os.remove(temporary)
-        raise Refusal(f"cannot write {out_path}: {error.strerror}") from error
+        if isinstance(error, OSError):
+            raise Refusal(f"cannot write {out_path}: {error.strerror}") from error
+        raise
 
 
 def read_text(path, what):
@@ -133,10 +140,7 @@ class ScriptFinder(HTMLParser):
     def __init__(self, text):
         super().__init__(convert_charrefs=False)
         self.text = text
-        self.line_starts = [0]
-        for index, character in enumerate(text):
-            if character == "\n":
-                self.line_starts.append(index + 1)
+        self.line_starts = [0] + [found.end() for found in re.finditer("\n", text)]
         self.scripts = []
 
     def handle_starttag(self, tag, attrs):
@@ -147,7 +151,11 @@ class ScriptFinder(HTMLParser):
         # A script's text runs to the first "</script", whatever it holds.
         found = SCRIPT_END.search(self.text, start)
         end = found.start() if found else len(self.text)
-        self.scripts.append(((start, end), dict(attrs)))
+        # A browser keeps the first of a repeated attribute.
+        first = {}
+        for name, value in attrs:
+            first.setdefault(name, value)
+        self.scripts.append(((start, end), first))
 
 
 def script_elements(player):
