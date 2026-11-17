@@ -301,7 +301,11 @@ fn write_skill_requiring(root: &Path, requirement: &str) {
         serde_json::to_vec_pretty(&manifest).unwrap(),
     )
     .unwrap();
-    fs::write(dir.join("SKILL.md"), "# Test authoring skill\n").unwrap();
+    fs::write(
+        dir.join("SKILL.md"),
+        "---\nname: test-authoring-skill\ndescription: A skill that requires the authoring policy.\n---\n\n# Test authoring skill\n",
+    )
+    .unwrap();
 }
 
 /// A repository holding the real authoring policy pack and nothing else.

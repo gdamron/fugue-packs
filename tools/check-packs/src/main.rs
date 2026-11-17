@@ -17,7 +17,12 @@ fn main() {
     }
 
     match check_repository(&root) {
-        Ok(count) => println!("validated {count} pack manifests"),
+        Ok(checked) => {
+            for warning in &checked.warnings {
+                eprintln!("warning: {warning}");
+            }
+            println!("validated {} pack manifests", checked.count);
+        }
         Err(error) => {
             eprintln!("pack check failed: {error}");
             std::process::exit(1);
@@ -25,7 +30,15 @@ fn main() {
     }
 }
 
-fn check_repository(root: &Path) -> Result<usize, String> {
+/// A repository that passed: how many packs it holds, and problems worth
+/// fixing that do not fail the check.
+#[derive(Debug)]
+struct Checked {
+    count: usize,
+    warnings: Vec<String>,
+}
+
+fn check_repository(root: &Path) -> Result<Checked, String> {
     check_index(&root.join("index.json"))?;
 
     let packs_dir = root.join("packs");
@@ -36,6 +49,7 @@ fn check_repository(root: &Path) -> Result<usize, String> {
     directories.sort_by_key(|entry| entry.file_name());
 
     let mut packs = RepositoryPacks::default();
+    let mut warnings = Vec::new();
     for directory in directories {
         let file_type = directory
             .file_type()
@@ -60,7 +74,7 @@ fn check_repository(root: &Path) -> Result<usize, String> {
                 manifest.id
             ));
         }
-        check_entry(&pack_root, &manifest)?;
+        warnings.extend(check_entry(&pack_root, &manifest)?);
         if packs.0.insert(manifest.id.clone(), manifest).is_some() {
             return Err(format!("duplicate package id `{directory_name}`"));
         }
@@ -74,7 +88,10 @@ fn check_repository(root: &Path) -> Result<usize, String> {
             format!("{}: cannot resolve its requirements: {error}", manifest.id)
         })?;
     }
-    Ok(packs.0.len())
+    Ok(Checked {
+        count: packs.0.len(),
+        warnings,
+    })
 }
 
 /// The repository's own packs, keyed by id, as a resolution source: every
@@ -121,7 +138,8 @@ fn check_index(path: &Path) -> Result<(), String> {
     Ok(())
 }
 
-fn check_entry(pack_root: &Path, manifest: &PackageManifest) -> Result<(), String> {
+/// Check a pack's entry, returning warnings that do not fail the check.
+fn check_entry(pack_root: &Path, manifest: &PackageManifest) -> Result<Vec<String>, String> {
     let entry = manifest.entry.path();
     let relative = Path::new(entry);
     if relative.as_os_str().is_empty()
@@ -168,14 +186,6 @@ fn check_entry(pack_root: &Path, manifest: &PackageManifest) -> Result<(), Strin
             )
         })?;
     }
-    if matches!(manifest.entry, EntrySpec::Skill { .. })
-        && canonical_entry.file_name().and_then(|name| name.to_str()) != Some("SKILL.md")
-    {
-        return Err(format!(
-            "{}: skill entry must be named SKILL.md",
-            manifest.id
-        ));
-    }
     if matches!(manifest.entry, EntrySpec::SamplePack { .. }) {
         check_sample_pack_entry(pack_root, &canonical_root, &canonical_entry, manifest)?;
     }
@@ -183,7 +193,16 @@ fn check_entry(pack_root: &Path, manifest: &PackageManifest) -> Result<(), Strin
         pkg::check_policy_entry(pack_root, manifest)
             .map_err(|error| format!("{}: {error}", manifest.id))?;
     }
-    Ok(())
+    if matches!(manifest.entry, EntrySpec::Skill { .. }) {
+        let checked = pkg::check_skill_package(pack_root, manifest)
+            .map_err(|error| format!("{}: {error}", manifest.id))?;
+        return Ok(checked
+            .warnings
+            .iter()
+            .map(|warning| format!("{}: {warning}", manifest.id))
+            .collect());
+    }
+    Ok(Vec::new())
 }
 
 fn check_sample_pack_entry(
@@ -255,7 +274,11 @@ mod tests {
             serde_json::to_vec_pretty(&manifest).expect("manifest JSON"),
         )
         .expect("manifest");
-        fs::write(pack.join(entry), "# Test skill\n").expect("entry");
+        fs::write(
+            pack.join(entry),
+            "---\nname: test-skill\ndescription: A test skill.\n---\n# Test skill\n",
+        )
+        .expect("entry");
     }
 
     fn write_policy(root: &Path, id: &str, entry: &str, text: &str) {
@@ -289,7 +312,7 @@ mod tests {
             "SKILL.md",
             Some(&["fugue.test.rules@^0.1.0"]),
         );
-        assert_eq!(check_repository(root.path()).unwrap(), 2);
+        assert_eq!(check_repository(root.path()).unwrap().count, 2);
     }
 
     #[test]
@@ -366,7 +389,7 @@ mod tests {
             "fugue.test.skill",
             "SKILL.md",
         );
-        assert_eq!(check_repository(root.path()).unwrap(), 1);
+        assert_eq!(check_repository(root.path()).unwrap().count, 1);
     }
 
     #[test]
@@ -447,7 +470,7 @@ mod tests {
         );
         assert!(check_repository(root.path())
             .unwrap_err()
-            .contains("must be named SKILL.md"));
+            .contains("must be a SKILL.md file"));
     }
 
     fn write_sample_pack(root: &Path, id: &str, samples_json: &str) {
@@ -482,7 +505,7 @@ mod tests {
     fn accepts_valid_sample_pack() {
         let root = repository();
         write_sample_pack(root.path(), "fugue.test.samples", VALID_SAMPLES);
-        assert_eq!(check_repository(root.path()).unwrap(), 1);
+        assert_eq!(check_repository(root.path()).unwrap().count, 1);
     }
 
     #[test]
