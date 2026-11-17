@@ -79,28 +79,36 @@ fn a_name_the_registry_lacks_is_caught() {
 }
 
 /// The scales the prose lists are ones `chance.scale` takes, as written
-/// (outside code spans, so the span check does not see them).
+/// (outside code spans, so the span check does not see them): the list that
+/// ends "and chromatic" is read from the prose, and each name is checked.
 #[test]
 fn the_scales_the_policy_lists_exist() {
     let registry = ModuleRegistry::default();
+    let (prose, _) = split_fences(&policy_text(POLICY));
+    let prose = prose.replace('\n', " ");
+    let list = prose
+        .split("`chance.scale` takes ")
+        .nth(1)
+        .and_then(|rest| rest.split_once("chromatic"))
+        .expect("the policy lists the scales `chance.scale` takes, ending in chromatic")
+        .0;
+    let mut names: Vec<String> = list
+        .replace(" and", ",")
+        .split(',')
+        .filter_map(|part| part.split_whitespace().next().map(str::to_string))
+        .collect();
+    names.push("chromatic".into());
+    assert!(names.len() >= 12, "read {names:?}");
+    for name in &names {
+        let span = format!("chance.scale={name}");
+        assert_eq!(problem_with(&registry, &span), None, "{span}");
+    }
     let options = control_options(&registry, "chance", "scale").expect("chance.scale is a choice");
-    let text = policy_text(POLICY);
-    for scale in [
-        "major",
-        "minor",
-        "dorian",
-        "phrygian",
-        "lydian",
-        "mixolydian",
-        "locrian",
-        "harmonic_minor",
-        "melodic_minor",
-        "blues",
-        "whole_tone",
-        "chromatic",
-    ] {
-        assert!(text.contains(scale), "the policy omits {scale}");
-        assert!(options.iter().any(|o| o == scale), "no scale {scale}");
+    for option in options {
+        assert!(
+            names.contains(&option),
+            "the policy omits the scale {option}"
+        );
     }
 }
 
