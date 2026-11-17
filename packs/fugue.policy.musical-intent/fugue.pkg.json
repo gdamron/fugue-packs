@@ -1,0 +1,19 @@
+{
+  "id": "fugue.policy.musical-intent",
+  "version": "2026.11.0",
+  "kind": "policy",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "How an agent makes musical choices in Fugue: one audible decision at a time, an idea established before it is varied, space to notice each change, and a small playable invention over a dense demo.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "entry": {
+    "policy": "POLICY.md"
+  }
+}

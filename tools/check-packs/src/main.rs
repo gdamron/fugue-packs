@@ -320,39 +320,40 @@ mod tests {
     }
 
     #[test]
-    fn the_pulse_demos_lock_their_shared_policy_once() {
+    fn the_pulse_demos_lock_each_shared_policy_once() {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
         check_repository(&root).expect("repository packs validate");
+        let policies = ["fugue.policy.clean-audio", "fugue.policy.musical-intent"];
+        let requirers = ["fugue.demo.pulse-skill", "fugue.demo.pulse-agent"];
         let mut packs = RepositoryPacks::default();
-        for id in [
-            "fugue.demo.pulse-skill",
-            "fugue.demo.pulse-agent",
-            "fugue.demo.pulse-policy",
-        ] {
+        for id in requirers.iter().chain(&policies) {
             let manifest = pkg::parse_path(root.join("packs").join(id).join("fugue.pkg.json"))
                 .expect("pulse manifest");
             packs.0.insert(id.to_string(), manifest);
         }
-        let resolved = pkg::resolve_transitive(
-            &[
-                "fugue.demo.pulse-skill@^0.1.0".to_string(),
-                "fugue.demo.pulse-agent@^0.1.0".to_string(),
-            ],
-            &packs,
-        )
-        .expect("pulse demos resolve");
-        let policies: Vec<_> = resolved
-            .iter()
-            .filter(|package| package.id == "fugue.demo.pulse-policy")
-            .collect();
-        assert_eq!(policies.len(), 1);
-        assert_eq!(policies[0].version, "0.1.0");
-        for requirer in ["fugue.demo.pulse-skill", "fugue.demo.pulse-agent"] {
+        let resolved = pkg::resolve_transitive(&requirers.map(|id| format!("{id}@^0.1.0")), &packs)
+            .expect("pulse demos resolve");
+        for policy in policies {
+            let locked: Vec<_> = resolved
+                .iter()
+                .filter(|package| package.id == policy)
+                .collect();
+            assert_eq!(locked.len(), 1, "{policy} is locked once");
+            assert_eq!(locked[0].version, "2026.11.0");
+        }
+        for requirer in requirers {
             let package = resolved
                 .iter()
                 .find(|package| package.id == requirer)
                 .unwrap();
-            assert_eq!(package.dependencies, ["fugue.demo.pulse-policy@0.1.0"]);
+            assert_eq!(
+                package.dependencies,
+                [
+                    "fugue.policy.clean-audio@2026.11.0",
+                    "fugue.policy.musical-intent@2026.11.0"
+                ],
+                "{requirer} requires the real policies"
+            );
         }
     }
 
