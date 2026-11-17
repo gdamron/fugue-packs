@@ -146,7 +146,9 @@ fn the_script_writes_the_player_with_the_piece_inside() {
     for player in [stand_in_player(), stand_in_player().replace('\n', "\r\n")] {
         let text = serde_json::to_string_pretty(&piece()).unwrap();
         let run = Run::new(Some(&player), &text);
-        let output = run.write(&[]);
+        // An absolute output path, as an agent would give.
+        let out = run.path("preview.html");
+        let output = run.write(&["--out", out.to_str().unwrap()]);
         assert!(output.status.success(), "{output:?}");
 
         let page = run.output().expect("the preview file is written");
@@ -203,6 +205,7 @@ fn an_unsupported_module_type_is_refused_by_name() {
     fs::write(run.path("modules.json"), wider).unwrap();
     let output = run.write(&["--modules", "modules.json"]);
     assert!(output.status.success(), "{output:?}");
+    assert!(run.output().unwrap().contains("rtmp_sink"));
 
     let voice = |inner: &str| {
         json!({
@@ -230,7 +233,11 @@ fn bad_input_is_refused_without_writing() {
     assert_refused(&run, &run.write(&[]), "not valid JSON");
 
     let run = Run::new(None, &piece);
-    assert_refused(&run, &run.write(&[]), "does not exist");
+    assert_refused(
+        &run,
+        &run.write(&[]),
+        "player file player.html does not exist",
+    );
 
     let run = Run::new(Some(&stand_in_player().replace(EMPTY, "")), &piece);
     assert_refused(&run, &run.write(&[]), "no fyug-invention script element");
