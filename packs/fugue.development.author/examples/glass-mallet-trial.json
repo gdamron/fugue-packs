@@ -1,0 +1,31 @@
+{
+  "version": "1.0.0",
+  "title": "Glass Mallet Trial",
+  "description": "Drops two Glass Mallet instances into a small piece at their defaults: one on quick repeated notes, one on slow held notes.",
+  "developments": [{ "name": "glass_mallet", "path": "glass-mallet.development.json" }],
+  "modules": [
+    { "id": "clock", "type": "clock", "config": { "bpm": 112.0 } },
+    {
+      "id": "quick",
+      "type": "melody",
+      "config": { "root_note": 74, "degrees": [0, 2, 4, 7, 9], "note_weights": [2.0, 1.0, 1.5, 1.5, 1.0] }
+    },
+    { "id": "slow", "type": "melody", "config": { "root_note": 50, "degrees": [0, 7, 12], "note_weights": [2.0, 1.0, 1.0] } },
+    { "id": "high", "type": "glass_mallet" },
+    { "id": "low", "type": "glass_mallet", "config": { "decay": 1.8, "release": 0.8, "brightness": 600.0 } },
+    { "id": "mixer", "type": "mixer", "config": { "levels": [0.25, 0.25], "pans": [0.3, -0.3], "master": 0.8 } },
+    { "id": "dac", "type": "dac" }
+  ],
+  "connections": [
+    { "from": "clock", "from_port": "beat_x2", "to": "quick", "to_port": "gate" },
+    { "from": "clock", "from_port": "beat_d2", "to": "slow", "to_port": "gate" },
+    { "from": "quick", "from_port": "frequency", "to": "high", "to_port": "frequency" },
+    { "from": "quick", "from_port": "gate", "to": "high", "to_port": "gate" },
+    { "from": "slow", "from_port": "frequency", "to": "low", "to_port": "frequency" },
+    { "from": "slow", "from_port": "gate", "to": "low", "to_port": "gate" },
+    { "from": "high", "from_port": "audio", "to": "mixer", "to_port": "audio.0" },
+    { "from": "low", "from_port": "audio", "to": "mixer", "to_port": "audio.1" },
+    { "from": "mixer", "from_port": "audio_left", "to": "dac", "to_port": "audio_left" },
+    { "from": "mixer", "from_port": "audio_right", "to": "dac", "to_port": "audio_right" }
+  ]
+}

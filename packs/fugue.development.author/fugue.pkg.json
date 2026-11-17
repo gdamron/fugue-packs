@@ -1,0 +1,27 @@
+{
+  "id": "fugue.development.author",
+  "version": "2026.11.0",
+  "kind": "skill",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "Packages a reusable voice or subgraph as a development: its exposed ports and controls, names, version, and defaults that stay clean wherever it is dropped in.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "policies": [
+    "fugue.policy.authoring@^2026.11.0",
+    "fugue.policy.clean-audio@^2026.11.0"
+  ],
+  "examples": [
+    "examples/glass-mallet.development.json",
+    "examples/glass-mallet-trial.json"
+  ],
+  "entry": {
+    "skill": "SKILL.md"
+  }
+}

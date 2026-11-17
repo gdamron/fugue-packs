@@ -19,6 +19,17 @@ pub const COMMANDS: &[(&str, &[&str])] = &[("fyug render", &["--out", "--seconds
 /// which `get_status` returns.
 pub const INSTALL_URL: &str = "https://github.com/Ilusiv-media/fyug#install";
 
+/// Local server tools for inspecting, installing and finding developments,
+/// each a `crates/mcp/src/tools/<tool>.rs`. A skill test passes these to
+/// `assert_names_exist` as its others.
+pub const DEVELOPMENT_TOOLS: &[&str] = &[
+    "describe_module",
+    "get_meters",
+    "install_package",
+    "list_developments",
+    "describe_development",
+];
+
 /// Whether `span` is a command line of `COMMANDS` passing only its listed
 /// flags, or one of those flags alone.
 pub fn is_command(span: &str) -> bool {
