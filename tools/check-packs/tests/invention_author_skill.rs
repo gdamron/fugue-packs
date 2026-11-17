@@ -122,7 +122,8 @@ fn the_procedure_plans_authors_loads_listens_and_refines() {
 }
 
 /// Every example the manifest ships loads in the pinned core with no
-/// warnings and plays, with its peak under full scale.
+/// warnings and plays with headroom, every note shaped by an envelope
+/// that does not click.
 #[test]
 fn the_example_invention_loads_and_plays_with_headroom() {
     let manifest = parse_path(pack(SKILL).join("fugue.pkg.json")).unwrap();
@@ -130,10 +131,24 @@ fn the_example_invention_loads_and_plays_with_headroom() {
     assert_eq!(examples, [EXAMPLE]);
     for example in examples {
         let text = fs::read_to_string(pack(SKILL).join(&example)).unwrap();
+        let document: serde_json::Value = serde_json::from_str(&text).unwrap();
+        let envelopes: Vec<&serde_json::Value> = document["modules"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|module| module["type"] == "adsr")
+            .collect();
+        assert!(!envelopes.is_empty(), "{example} shapes no note");
+        for envelope in envelopes {
+            for stage in ["attack", "release"] {
+                let seconds = envelope["config"][stage].as_f64().unwrap_or(0.0);
+                assert!(seconds >= 0.002, "{example}: {stage} {seconds}");
+            }
+        }
         let (left, right) = peaks(&text, 8);
         assert!(left > 0.05 && right > 0.05, "{example} is silent");
         assert!(
-            left < 1.0 && right < 1.0,
+            left < 0.5 && right < 0.5,
             "{example} peaks at {left}, {right}"
         );
     }
@@ -169,7 +184,9 @@ fn the_pitfalls_the_skill_states_hold_in_the_core() {
             {{"from":"amp","from_port":"audio","to":"dac","to_port":"audio"}}]}}"#
         )
     };
-    assert_eq!(peaks(&enveloped(0.0), 1), peaks(&enveloped(1.0), 1));
+    let (silenced, full) = (peaks(&enveloped(0.0), 1), peaks(&enveloped(1.0), 1));
+    assert!(silenced.0 > 0.1, "the envelope sounds");
+    assert_eq!(silenced, full);
 
     // A mono line on one side of the dac plays in one ear; on `audio`, both.
     let to_dac = |port: &str| {
@@ -212,7 +229,20 @@ fn the_pitfalls_the_skill_states_hold_in_the_core() {
         refused.contains("frequency"),
         "the refusal lists the keys: {refused}"
     );
-    assert!(load(&to_dac("audio").replace("oscillator", "noise")).is_err());
+    let noise = r#"{"modules":[{"id":"hiss","type":"noise"},{"id":"dac","type":"dac"}],
+        "connections":[{"from":"hiss","from_port":"audio","to":"dac","to_port":"audio"}]}"#;
+    let refused = load(noise).err().expect("noise has no audio port");
+    assert!(
+        refused.contains("white") && refused.contains("pink"),
+        "{refused}"
+    );
+
+    // A refusal names an unknown type or module id.
+    let unknown = r#"{"modules":[{"id":"tone","type":"sine"}],"connections":[]}"#;
+    assert!(load(unknown).err().unwrap().contains("sine"));
+    let missing = r#"{"modules":[{"id":"dac","type":"dac"}],
+        "connections":[{"from":"tone","from_port":"audio","to":"dac","to_port":"audio"}]}"#;
+    assert!(load(missing).err().unwrap().contains("tone"));
 }
 
 /// The document loaded in the pinned core, or why not.

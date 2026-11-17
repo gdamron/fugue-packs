@@ -44,8 +44,7 @@ user meant: plan it, write it whole, load it, listen, then refine it.
 ## Procedure
 
 1. **Plan the piece.** Name each voice and its role, the tempo, the meter
-   and the form, before writing any module, as the musical-intent policy
-   asks.
+   and the form, before writing any module.
 2. **Author one complete document.** The example
    `examples/dorian-evening.invention.json` shows the shape. Patterns that
    hold in every piece:
@@ -85,8 +84,8 @@ Stop, say why, and say what the user can do next.
 - **No Fugue tools here.** Nothing can load or play the piece on this
   surface: hand over to the `fugue` skill if it is present, or say what to
   install.
-- **The request needs something Fugue lacks**, such as a module type, a
-  tuning or a swung melody line the policies say does not exist. Say so and
+- **The request needs something Fugue lacks**: no module type does it, or
+  a policy says it does not exist, such as a tuning or a swung melody line. Say so and
   offer the closest piece it can play.
 - **The same load is refused twice for one reason.** Show the user the
   refusal instead of guessing again.
