@@ -1,0 +1,72 @@
+---
+name: fugue
+description: Make, play or change music with Fugue (also called Fyug), on any surface. Use when the user asks to compose or play a piece, hear an example, or change the music that is playing, or types /fugue. Not for working on Fugue's own source code.
+---
+
+# Fugue
+
+The way in to making music with Fugue. Work out where you are, say how the
+piece will play, then make it and play it that way. The user never has to
+choose a backend.
+
+## Triggers
+
+- A request to make, play, hear or change music with Fugue or Fyug.
+- `/fugue`, alone or followed by a request.
+
+## Required policies
+
+- [Surfaces](policies/fugue.policy.surfaces.md): which surface you are on and
+  which route plays the piece there.
+- [Authoring](policies/fugue.policy.authoring.md): writing, loading and
+  changing a piece.
+- [Clean audio](policies/fugue.policy.clean-audio.md) and
+  [musical intent](policies/fugue.policy.musical-intent.md): how it sounds.
+
+## Inputs
+
+- The user's request, in their words.
+- The tools and shell you can see: they decide the surface.
+- The piece that is playing or named, if there is one.
+
+## Outputs
+
+- Before playing, one sentence naming the route.
+- The piece, playing on that route, or a stop that tells the user what they
+  can do next.
+
+## Procedure
+
+1. Recognize the surface as the surfaces policy says.
+2. Tell the user which route you will use.
+3. Author or change the piece as the authoring policy says. When the
+   `fugue.invention.author` skill is present, hand the authoring to it.
+4. Play it through the route for the surface:
+   - **Local:** the local tools, `load_invention` or `reload_invention`, then
+     `show_view` where the host shows views.
+   - **Shell on the user's machine:** the native install offer. The guided
+     install is not published yet: until it is, ask before anything is
+     installed and point to https://github.com/Ilusiv-media/fyug#install.
+     Once Fyug is installed and connected, use the local route.
+   - **Shell in a cloud session:** an offline render where Fyug is already
+     installed: `fyug render piece.json --out piece.wav`. Otherwise the
+     preview file below; until it ships, say what is missing.
+   - **Hosted:** `check_invention`, fix what it reports, then `play_preview`.
+     The user taps Play.
+   - **Plain chat:** the preview file that this skill's script will write.
+     The script has not shipped: until it does, say what to connect or
+     install.
+
+## Stop conditions
+
+Stop, say why, and say what the user can do next. Never move to another
+route without telling the user first.
+
+- **The user declines the install.** Install nothing. They can connect the
+  hosted connector the surfaces policy names to hear a preview, or install
+  later.
+- **The piece uses a module type the preview does not support.**
+  `check_invention` or `play_preview` names it. Offer to rework the piece
+  without it, or to play it in full after installing Fyug.
+- **No route on this surface can play the piece.** Say what is missing and
+  what to connect or install; do not pretend it played.
