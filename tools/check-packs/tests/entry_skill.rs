@@ -156,6 +156,7 @@ fn each_surface_in_the_surfaces_policy_has_its_step() {
     ] {
         assert!(plain.contains(words), "the plain chat step omits `{words}`");
     }
+    assert!(!plain.contains("has not shipped"), "no placeholder is left");
     assert!(plain.contains(&format!("`{PREVIEW_COMMAND}`")));
     let script = PREVIEW_COMMAND.split(' ').nth(1).unwrap();
     assert!(

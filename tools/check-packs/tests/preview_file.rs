@@ -9,7 +9,7 @@ mod policy_support;
 mod skill_support;
 
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::process::{Command, Output};
 
 use policy_support::{code_spans, flat, pack, repository};
@@ -41,10 +41,10 @@ fn stand_in_player() -> String {
     {EMPTY}
     <script>
       const text = document.getElementById("fyug-invention").textContent;
+      if (text.length < 1) console.log("no piece");
     </script>
   </body>
-</html>
-"#
+</html>"#
     )
 }
 
@@ -168,7 +168,8 @@ fn the_script_writes_the_player_with_the_piece_inside() {
 #[test]
 fn the_piece_cannot_end_its_element_early() {
     let mut hostile = piece();
-    hostile["title"] = json!("x</script><script>alert(1)</SCRIPT> <!-- <script");
+    hostile["title"] = json!("x</script><script>alert(1)</SCRIPT > <!-- <script");
+    hostile["description"] = json!("a < b, </scrip, <\\/script>");
     let run = Run::new(Some(&stand_in_player()), &hostile.to_string());
     let output = run.write(&[]);
     assert!(output.status.success(), "{output:?}");
@@ -178,6 +179,8 @@ fn the_piece_cannot_end_its_element_early() {
     let text = inserted(&page);
     assert!(!text.contains('<'), "{text}");
     assert_eq!(serde_json::from_str::<Value>(text).unwrap(), hostile);
+    let after = &page[page.rfind(text).unwrap() + text.len()..];
+    assert!(after.contains("getElementById"), "the page script follows");
 }
 
 /// A module type off the supported list is refused by name, whether the
@@ -195,14 +198,27 @@ fn an_unsupported_module_type_is_refused_by_name() {
     fs::write(run.path("modules.json"), modules_list(&["dac"])).unwrap();
     let output = run.write(&["--modules", "modules.json"]);
     assert_refused(&run, &output, "oscillator, vca, rtmp_sink");
+    // A list given with --modules is the one checked, not the player's own.
+    let wider = modules_list(&["oscillator", "vca", "dac", "rtmp_sink"]);
+    fs::write(run.path("modules.json"), wider).unwrap();
+    let output = run.write(&["--modules", "modules.json"]);
+    assert!(output.status.success(), "{output:?}");
 
-    let voice = json!({
-        "developments": [{ "name": "voice", "definition": {
-            "modules": [{ "id": "g", "type": "granular" }]
-        }}],
-        "modules": [{ "id": "v", "type": "voice" }, { "id": "dac", "type": "dac" }]
-    });
-    let run = Run::new(Some(&stand_in_player()), &voice.to_string());
+    let voice = |inner: &str| {
+        json!({
+            "developments": [{ "name": "voice", "definition": {
+                "modules": [{ "id": "g", "type": inner }]
+            }}],
+            "modules": [{ "id": "v", "type": "voice" }, { "id": "dac", "type": "dac" }]
+        })
+        .to_string()
+    };
+    let run = Run::new(Some(&stand_in_player()), &voice("oscillator"));
+    assert!(
+        run.write(&[]).status.success(),
+        "a development's name is a type"
+    );
+    let run = Run::new(Some(&stand_in_player()), &voice("granular"));
     assert_refused(&run, &run.write(&[]), "granular");
 }
 
@@ -218,6 +234,11 @@ fn bad_input_is_refused_without_writing() {
 
     let run = Run::new(Some(&stand_in_player().replace(EMPTY, "")), &piece);
     assert_refused(&run, &run.write(&[]), "no fyug-invention script element");
+
+    // A refusal leaves an earlier preview at the output path as it was.
+    fs::write(run.path("preview.html"), "an earlier preview").unwrap();
+    assert!(!run.write(&[]).status.success());
+    assert_eq!(run.output().unwrap(), "an earlier preview");
 
     let run = Run::new(Some(&stand_in_player()), "[1, 2]");
     assert_refused(&run, &run.write(&[]), "not a JSON object");
@@ -248,7 +269,7 @@ fn bad_input_is_refused_without_writing() {
 /// The script imports only the standard library, none of its network
 /// modules, as `python3` itself reports.
 #[test]
-fn the_script_needs_only_the_standard_library_and_no_network() {
+fn the_script_imports_only_the_standard_library() {
     let check = r#"
 import ast, sys
 stdlib = getattr(sys, "stdlib_module_names", None)
@@ -276,6 +297,45 @@ sys.exit(1 if bad else 0)
         .output()
         .expect("python3 runs");
     assert!(output.status.success(), "{output:?}");
+}
+
+/// Runs the script isolated from site-packages, with every socket call
+/// recorded in a marker file and refused.
+const NETWORK_GUARD: &str = r#"
+import os, runpy, socket, sys
+marker = os.environ["PREVIEW_NETWORK_MARKER"]
+def refuse(*args, **kwargs):
+    with open(marker, "a") as f:
+        f.write("network request\n")
+    raise OSError("the network is disabled in this test")
+socket.getaddrinfo = refuse
+socket.create_connection = refuse
+socket.socket.connect = refuse
+socket.socket.connect_ex = refuse
+socket.socket.sendto = refuse
+script = sys.argv[1]
+sys.argv = sys.argv[1:]
+runpy.run_path(script, run_name="__main__")
+"#;
+
+/// Neither a preview nor a refusal makes a network request when run.
+#[test]
+fn the_script_makes_no_network_request() {
+    for player in [Some(stand_in_player()), None] {
+        let run = Run::new(player.as_deref(), &piece().to_string());
+        let marker = run.path("network.log");
+        let output = Command::new("python3")
+            .args(["-I", "-S", "-c", NETWORK_GUARD])
+            .arg(script())
+            .args(["--player", "player.html", "--invention", "piece.json"])
+            .args(["--out", "preview.html"])
+            .current_dir(run.dir.path())
+            .env("PREVIEW_NETWORK_MARKER", &marker)
+            .output()
+            .expect("python3 runs");
+        assert_eq!(output.status.success(), player.is_some(), "{output:?}");
+        assert!(!marker.exists(), "a network request: {output:?}");
+    }
 }
 
 /// The command the skill gives works as written against the stand-in.
@@ -310,21 +370,40 @@ fn the_skill_runs_the_script_as_the_script_expects() {
     assert!(run.path("piece-preview.html").is_file());
 }
 
-/// Neither the player nor its supported-modules list is checked in.
+/// Neither a player nor a supported-modules list is checked in, whatever
+/// its name; a test's stand-in player stays small.
 #[test]
 fn no_release_player_file_is_checked_in() {
-    fn walk(dir: &Path, found: &mut Vec<PathBuf>) {
-        for entry in fs::read_dir(dir).unwrap().map(Result::unwrap) {
-            let path = entry.path();
-            let name = entry.file_name().to_string_lossy().to_string();
-            if path.is_dir() {
-                walk(&path, found);
-            } else if name.starts_with("fyug-player") || name.contains("supported-modules") {
-                found.push(path);
-            }
+    let root = repository();
+    let listed = Command::new("git")
+        .args([
+            "ls-files",
+            "--cached",
+            "--others",
+            "--exclude-standard",
+            "-z",
+        ])
+        .current_dir(&root)
+        .output()
+        .expect("git runs");
+    assert!(listed.status.success());
+    let mut problems = Vec::new();
+    for name in String::from_utf8(listed.stdout).unwrap().split('\0') {
+        let Ok(bytes) = fs::read(root.join(name)) else {
+            continue;
+        };
+        let text = String::from_utf8_lossy(&bytes);
+        let in_tests = name.starts_with("tools/check-packs/tests/");
+        let player = text.contains("fyug-invention") && text.to_lowercase().contains("<html");
+        if player && !(in_tests && bytes.len() <= 64 * 1024) {
+            problems.push(format!("{name} holds a player"));
+        }
+        let schema = serde_json::from_slice::<Value>(&bytes)
+            .ok()
+            .and_then(|v| v.get("schema").and_then(Value::as_str).map(str::to_string));
+        if schema.as_deref() == Some("fyug.supported-modules/1") {
+            problems.push(format!("{name} is a supported-modules list"));
         }
     }
-    let mut found = Vec::new();
-    walk(&repository().join("packs"), &mut found);
-    assert!(found.is_empty(), "{found:?}");
+    assert!(problems.is_empty(), "{problems:#?}");
 }
