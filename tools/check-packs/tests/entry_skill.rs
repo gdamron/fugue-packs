@@ -127,6 +127,10 @@ fn each_surface_in_the_surfaces_policy_has_its_step() {
         machine.contains(INSTALL_URL),
         "the install link is the product's"
     );
+    assert!(
+        machine.contains("use the local route"),
+        "then plays locally"
+    );
     let cloud = step("Shell in a cloud session");
     assert!(cloud.contains("`fyug render ") && cloud.contains("--out"));
     assert!(cloud.contains("WAV file"), "the render reaches the user");
