@@ -30,6 +30,9 @@ fn main() {
     }
 }
 
+/// The lock file readers of a packages directory hold while they read it.
+const CATALOG_LOCK: &str = ".catalog.lock";
+
 /// A repository that passed: how many packs it holds, and problems worth
 /// fixing that do not fail the check.
 #[derive(Debug)]
@@ -51,6 +54,11 @@ fn check_repository(root: &Path) -> Result<Checked, String> {
     let mut packs = RepositoryPacks::default();
     let mut warnings = Vec::new();
     for directory in directories {
+        // Readers of a packages directory (this check's agent resolution
+        // among them) take a shared lock on this file; it is not a pack.
+        if directory.file_name() == CATALOG_LOCK {
+            continue;
+        }
         let file_type = directory
             .file_type()
             .map_err(|error| format!("cannot inspect {}: {error}", directory.path().display()))?;
@@ -87,6 +95,10 @@ fn check_repository(root: &Path) -> Result<Checked, String> {
         pkg::resolve_package(manifest, &packs).map_err(|error| {
             format!("{}: cannot resolve its requirements: {error}", manifest.id)
         })?;
+        if matches!(manifest.entry, EntrySpec::Agent { .. }) {
+            pkg::resolve_agent_package(&packs_dir.join(&manifest.id), &packs_dir)
+                .map_err(|error| error.to_string())?;
+        }
     }
     Ok(Checked {
         count: packs.0.len(),
@@ -95,7 +107,8 @@ fn check_repository(root: &Path) -> Result<Checked, String> {
 }
 
 /// The repository's own packs, keyed by id, as a resolution source: every
-/// `deps` and `policies` requirement must resolve within the repository.
+/// `deps`, `policies` and `skills` requirement must resolve within the
+/// repository.
 #[derive(Default)]
 struct RepositoryPacks(BTreeMap<String, PackageManifest>);
 
@@ -188,6 +201,10 @@ fn check_entry(pack_root: &Path, manifest: &PackageManifest) -> Result<Vec<Strin
     }
     if matches!(manifest.entry, EntrySpec::SamplePack { .. }) {
         check_sample_pack_entry(pack_root, &canonical_root, &canonical_entry, manifest)?;
+    }
+    if matches!(manifest.entry, EntrySpec::Agent { .. }) {
+        pkg::check_agent_package(pack_root, manifest)
+            .map_err(|error| format!("{}: {error}", manifest.id))?;
     }
     if matches!(manifest.entry, EntrySpec::Policy { .. }) {
         pkg::check_policy_entry(pack_root, manifest)
@@ -370,7 +387,7 @@ mod tests {
                 .find(|package| package.id == requirer)
                 .unwrap();
             assert_eq!(
-                package.dependencies,
+                package.dependencies[..2],
                 [
                     "fugue.policy.clean-audio@2026.11.0",
                     "fugue.policy.musical-intent@2026.11.0"
@@ -378,6 +395,15 @@ mod tests {
                 "{requirer} requires the real policies"
             );
         }
+        let agent = resolved
+            .iter()
+            .find(|package| package.id == "fugue.demo.pulse-agent")
+            .unwrap();
+        assert_eq!(
+            agent.dependencies[2..],
+            ["fugue.demo.pulse-skill@0.1.0"],
+            "the agent composes the pulse skill"
+        );
     }
 
     #[test]

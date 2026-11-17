@@ -6,7 +6,7 @@
   "authors": [{ "name": "Grant Damron", "url": "https://github.com/gdamron" }],
   "description": "A compact workflow for turning a pulse into a musical phrase.",
   "homepage": "https://github.com/gdamron/fugue-packs",
-  "targets": ["external-agent"],
+  "targets": ["external-agent", "in-graph-agent"],
   "requires": { "mcp-tools": ["fugue"] },
   "policies": [
     "fugue.policy.clean-audio@^2026.11.0",
