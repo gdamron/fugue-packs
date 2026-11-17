@@ -57,7 +57,9 @@ editing and conducting an invention through the `fugue` tools; the MCP
 server's instructions summarize it. `fugue.policy.clean-audio`,
 `fugue.policy.musical-intent` and `fugue.policy.listening` are the core
 musical policies: protecting the sound, making musical choices, and judging by
-ear. The pulse demos require the first two.
+ear. The pulse demos require the first two. `fugue.policy.surfaces` is for
+external agents only: how to tell which surface they are on, which route plays
+a piece there, and what the browser preview does not offer.
 
 ## Release musical content
 
