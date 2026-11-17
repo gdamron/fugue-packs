@@ -8,7 +8,7 @@ mod skill_support;
 
 use std::process::Command;
 
-use policy_support::{code_spans, flat, policy_text, repository};
+use policy_support::{code_spans, flat, pack, policy_text, repository};
 use skill_support::{
     assert_body_fits, assert_first_party_skill, assert_names_exist, assert_requires_policies,
     assert_restates_no_policy, assert_thin_shape, section, skill, HOSTED_TOOLS, INSTALL_URL,
@@ -23,6 +23,9 @@ const POLICIES: [&str; 4] = [
     "fugue.policy.clean-audio",
     "fugue.policy.musical-intent",
 ];
+/// The command the plain chat step runs, from the skill's folder.
+const PREVIEW_COMMAND: &str = "python3 scripts/write_preview.py --player fyug-player.html \
+    --modules fyug-player-modules.json --invention piece.json --out piece-preview.html";
 /// The issue's own limit, below the shared one.
 const MAX_BODY_CHARACTERS: usize = 4_000;
 
@@ -67,7 +70,10 @@ fn the_entry_skill_is_thin_short_and_names_only_what_exists() {
     let skill = skill(SKILL);
     assert_thin_shape(&skill, 5);
     assert_body_fits(&skill, MAX_BODY_CHARACTERS);
-    assert_names_exist(&skill, &["/fugue", "fugue.invention.author"]);
+    assert_names_exist(
+        &skill,
+        &["/fugue", "fugue.invention.author", PREVIEW_COMMAND],
+    );
 }
 
 /// Recognize the surface, name the route, author, then play, in that order.
@@ -134,11 +140,28 @@ fn each_surface_in_the_surfaces_policy_has_its_step() {
     let cloud = step("Shell in a cloud session");
     assert!(cloud.contains("`fyug render ") && cloud.contains("--out"));
     assert!(cloud.contains("WAV file"), "the render reaches the user");
+    assert!(cloud.contains("Otherwise the preview file"));
     let hosted = step("Hosted");
     let spans = code_spans(&hosted);
     assert_eq!(spans, ["check_invention", "play_preview"]);
     assert!(spans.iter().all(|s| HOSTED_TOOLS.contains(&s.as_str())));
-    assert!(step("Plain chat").contains("preview file"));
+    let plain = step("Plain chat");
+    for words in [
+        "preview file",
+        "host can run this skill's script and show an HTML file",
+        "limited preview",
+        INSTALL_URL,
+        "Never retype, edit or regenerate the player",
+        "say so and what to connect or install",
+    ] {
+        assert!(plain.contains(words), "the plain chat step omits `{words}`");
+    }
+    assert!(plain.contains(&format!("`{PREVIEW_COMMAND}`")));
+    let script = PREVIEW_COMMAND.split(' ').nth(1).unwrap();
+    assert!(
+        pack(SKILL).join(script).is_file(),
+        "{script} ships in the pack"
+    );
 }
 
 /// Each stop says what the user can do next and never changes route
@@ -167,5 +190,5 @@ fn the_stop_conditions_cover_the_three_dead_ends() {
             .unwrap_or_else(|| panic!("no stop for `{stop}`"));
         assert!(bullet.contains(next), "`{stop}` should offer `{next}`");
     }
-    assert!(stops.contains("`play_preview` refuses it by name"));
+    assert!(stops.contains("`play_preview` refuses it by name, and so does the script"));
 }

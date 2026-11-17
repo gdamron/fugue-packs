@@ -51,13 +51,18 @@ have to pick a backend.
    - **Shell in a cloud session:** an offline render where Fyug is already
      installed, `fyug render piece.json --out piece.wav --seconds 60` (or
      `--to-end` when the piece ends itself), then hand the user the WAV file
-     and say it is a recording, not live. Otherwise the preview file below;
-     until it ships, say what is missing.
+     and say it is a recording, not live. Otherwise the preview file below.
    - **Hosted:** `check_invention`, fix what it reports, then `play_preview`.
      The user taps Play.
-   - **Plain chat:** the preview file that this skill's script will write.
-     The script has not shipped: until it does, say what to connect or
-     install.
+   - **Plain chat:** the preview file, when the host can run this skill's
+     script and show an HTML file. Save the piece, then run
+     `python3 scripts/write_preview.py --player fyug-player.html --modules fyug-player-modules.json --invention piece.json --out piece-preview.html`
+     with the release's player and module list that come with this skill.
+     Hand the user the file: say it is a limited preview that may drop out,
+     tapping Play starts it, and link the desktop install,
+     https://github.com/Ilusiv-media/fyug#install. Never retype, edit or
+     regenerate the player yourself; if the script or either file is
+     missing, say so and what to connect or install.
 
 ## Stop conditions
 
@@ -68,7 +73,8 @@ route without telling the user first.
   hosted connector the surfaces policy names to hear a preview, or install
   later.
 - **The piece uses a module type the preview does not support.**
-  `play_preview` refuses it by name. Offer to rework the piece without it, or
-  to play it in full after installing Fyug (`get_status` gives the link).
+  `play_preview` refuses it by name, and so does the script, writing no
+  file. Offer to rework the piece without it, or to play it in full after
+  installing Fyug (`get_status` gives the link).
 - **No route on this surface can play the piece.** Say what is missing and
   what to connect or install; do not pretend it played.
