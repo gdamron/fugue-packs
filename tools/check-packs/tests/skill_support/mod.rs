@@ -6,7 +6,7 @@
 //! calls these with its own pack id; what is specific to one skill (its
 //! routes, its procedure) stays in its file.
 
-#![allow(dead_code, unused_imports)]
+#![allow(dead_code)]
 
 mod tools;
 
@@ -18,8 +18,9 @@ use fugue::ModuleRegistry;
 use serde_json::Value;
 
 use tools::is_command;
-pub use tools::LISTENING_TOOLS;
-pub use tools::{HOSTED_TOOLS, INSTALL_URL, LOCAL_TOOLS};
+// Each skill's test uses some of these, not all.
+#[allow(unused_imports)]
+pub use tools::{HOSTED_TOOLS, INSTALL_URL, LISTENING_TOOLS, LOCAL_TOOLS};
 
 use crate::policy_support::{
     assert_text_fragments_load, british_spellings, code_spans, pack, policy_text, problem_with,

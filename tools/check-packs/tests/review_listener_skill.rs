@@ -84,7 +84,7 @@ fn the_procedure_measures_previews_judges_and_proposes_one_change() {
     };
     let steps = [
         at("1. Recognize the surface as the surfaces policy says"),
-        at("2. While the piece plays, read `get_meters`"),
+        at("2. Read `get_meters`"),
         at("3. Get the bounded audio preview"),
         at("4. Say what you heard against the musical-intent policy"),
         at("5. Propose one change"),
@@ -105,7 +105,12 @@ fn the_procedure_measures_previews_judges_and_proposes_one_change() {
         preview.windows(2).all(|pair| pair[0] < pair[1]),
         "{procedure}"
     );
+    assert!(procedure.contains("10 seconds"), "the preview's default");
     assert!(procedure.contains("at most 30"), "the preview's own cap");
+    // The user's music is theirs: ask before pausing it, and resume only
+    // what was paused here.
+    assert!(at("ask before pausing it") < preview[0]);
+    assert!(procedure.contains("`resume_invention` only if you paused it"));
     let spans = code_spans(&procedure);
     assert!(!spans.is_empty());
     for span in &spans {
@@ -125,6 +130,7 @@ fn the_stop_conditions_cover_a_missing_preview_and_an_unheard_one() {
             "No audio preview on this surface.",
             "The surfaces policy decides",
         ),
+        ("Any other preview refusal.", "Say the reason"),
         ("Nothing is loaded.", "ask which piece"),
         (
             "The piece cannot be rendered offline.",
