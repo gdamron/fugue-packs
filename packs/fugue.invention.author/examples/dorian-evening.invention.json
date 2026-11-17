@@ -1,0 +1,81 @@
+{
+  "version": "1.0.0",
+  "title": "Dorian Evening",
+  "description": "Two voices in D dorian at 84 bpm: an eighth-note bass line and a melody drawn from the mode over it, mixed low into one shared reverb.",
+  "modules": [
+    { "id": "clock", "type": "clock", "config": { "bpm": 84, "beats_per_bar": 4 } },
+    {
+      "id": "bass_line",
+      "type": "step_sequencer",
+      "config": {
+        "root_note": 38,
+        "step_count": 8,
+        "gate_length": 0.6,
+        "pattern": [
+          { "note": 0 },
+          { "note": null },
+          { "note": 7 },
+          { "note": 0 },
+          { "note": 10 },
+          { "note": null },
+          { "note": 9 },
+          { "note": 7 }
+        ]
+      }
+    },
+    { "id": "bass_osc", "type": "oscillator", "config": { "waveform": "triangle" } },
+    {
+      "id": "bass_env",
+      "type": "adsr",
+      "config": { "attack": 0.005, "decay": 0.12, "sustain": 0.5, "release": 0.08 }
+    },
+    { "id": "bass_amp", "type": "vca" },
+    {
+      "id": "tune",
+      "type": "melody",
+      "config": {
+        "root_note": 62,
+        "degrees": [0, 2, 3, 5, 7, 9, 10],
+        "note_weights": [3, 1, 1, 1, 2, 1.5, 1]
+      }
+    },
+    { "id": "tune_osc", "type": "oscillator", "config": { "waveform": "sine" } },
+    {
+      "id": "tune_env",
+      "type": "adsr",
+      "config": { "attack": 0.02, "decay": 0.2, "sustain": 0.4, "release": 0.3 }
+    },
+    { "id": "tune_amp", "type": "vca" },
+    {
+      "id": "mix",
+      "type": "mixer",
+      "config": { "channel_count": 2, "levels": [0.25, 0.2], "pans": [0, 0.2], "master": 0.8 }
+    },
+    {
+      "id": "room",
+      "type": "reverb",
+      "config": { "room_size": 0.6, "damping": 0.5, "wet": 0.25, "dry": 0.8 }
+    },
+    { "id": "dac", "type": "dac" }
+  ],
+  "connections": [
+    { "from": "clock", "from_port": "beat_x2", "to": "bass_line", "to_port": "clock" },
+    { "from": "bass_line", "from_port": "frequency", "to": "bass_osc", "to_port": "frequency" },
+    { "from": "bass_line", "from_port": "gate", "to": "bass_env", "to_port": "gate" },
+    { "from": "bass_osc", "from_port": "audio", "to": "bass_amp", "to_port": "audio" },
+    { "from": "bass_env", "from_port": "envelope", "to": "bass_amp", "to_port": "level" },
+    { "from": "bass_amp", "from_port": "audio", "to": "mix", "to_port": "audio.0" },
+
+    { "from": "clock", "from_port": "beat", "to": "tune", "to_port": "gate" },
+    { "from": "tune", "from_port": "frequency", "to": "tune_osc", "to_port": "frequency" },
+    { "from": "tune", "from_port": "gate", "to": "tune_env", "to_port": "gate" },
+    { "from": "tune_osc", "from_port": "audio", "to": "tune_amp", "to_port": "audio" },
+    { "from": "tune_env", "from_port": "envelope", "to": "tune_amp", "to_port": "level" },
+    { "from": "tune_amp", "from_port": "audio", "to": "mix", "to_port": "audio.1" },
+
+    { "from": "mix", "from_port": "audio_left", "to": "room", "to_port": "audio_left" },
+    { "from": "mix", "from_port": "audio_right", "to": "room", "to_port": "audio_right" },
+    { "from": "room", "from_port": "audio_left", "to": "dac", "to_port": "audio_left" },
+    { "from": "room", "from_port": "audio_right", "to": "dac", "to_port": "audio_right" }
+  ]
+}

@@ -18,6 +18,7 @@ use fugue::ModuleRegistry;
 use serde_json::Value;
 
 use tools::is_command;
+use tools::AUTHORING_TOOLS;
 // Each skill's test uses some of these, not all.
 pub use tools::{HOSTED_TOOLS, INSTALL_URL, LISTENING_TOOLS, LOCAL_TOOLS};
 
@@ -183,6 +184,7 @@ pub fn assert_names_exist(skill: &Skill, others: &[&str]) {
     let (prose, _) = split_fences(&skill.body);
     let known = |span: &str| {
         LOCAL_TOOLS.contains(&span)
+            || AUTHORING_TOOLS.contains(&span)
             || HOSTED_TOOLS.contains(&span)
             || LISTENING_TOOLS.contains(&span)
             || others.contains(&span)

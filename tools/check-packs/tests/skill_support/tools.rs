@@ -57,3 +57,7 @@ pub fn is_command(span: &str) -> bool {
         }
     })
 }
+
+/// More local server tools, for the authoring skill: each a
+/// `crates/mcp/src/tools/<tool>.rs` at the same revision.
+pub const AUTHORING_TOOLS: &[&str] = &["describe_module", "get_meters", "set_controls"];
