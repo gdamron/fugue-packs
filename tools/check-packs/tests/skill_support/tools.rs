@@ -19,6 +19,17 @@ pub const COMMANDS: &[(&str, &[&str])] = &[("fyug render", &["--out", "--seconds
 /// which `get_status` returns.
 pub const INSTALL_URL: &str = "https://github.com/Ilusiv-media/fyug#install";
 
+/// Local server tools for inspecting, installing and finding developments,
+/// each a `crates/mcp/src/tools/<tool>.rs`. A skill test passes these to
+/// `assert_names_exist` as its others.
+pub const DEVELOPMENT_TOOLS: &[&str] = &[
+    "describe_module",
+    "get_meters",
+    "install_package",
+    "list_developments",
+    "describe_development",
+];
+
 /// Local server tools a listening skill names: `get_meters` and `show_scope`
 /// in their own `crates/mcp/src/tools/<tool>.rs`, `pause_invention` and
 /// `resume_invention` both in `pause_invention.rs`. The audio preview is

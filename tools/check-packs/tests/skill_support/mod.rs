@@ -6,7 +6,7 @@
 //! calls these with its own pack id; what is specific to one skill (its
 //! routes, its procedure) stays in its file.
 
-#![allow(dead_code)]
+#![allow(dead_code, unused_imports)]
 
 mod tools;
 
@@ -19,13 +19,16 @@ use serde_json::Value;
 
 use tools::is_command;
 // Each skill's test uses some of these, not all.
-#[allow(unused_imports)]
 pub use tools::{HOSTED_TOOLS, INSTALL_URL, LISTENING_TOOLS, LOCAL_TOOLS};
 
 use crate::policy_support::{
     assert_text_fragments_load, british_spellings, code_spans, pack, policy_text, problem_with,
     repository, restated_sentences, split_fences,
 };
+
+mod format;
+pub use format::{format_fields, interface_names};
+pub use tools::DEVELOPMENT_TOOLS;
 
 /// The most characters a skill's body may hold, unless its issue sets less.
 pub const MAX_BODY_CHARACTERS: usize = 5_000;
