@@ -727,7 +727,7 @@ dependencies = [
 [[package]]
 name = "fugue"
 version = "2026.11.0"
-source = "git+https://github.com/gdamron/fugue.git?rev=d541f4937f8d3d14df8f3fe29d77677343818d4a#d541f4937f8d3d14df8f3fe29d77677343818d4a"
+source = "git+https://github.com/gdamron/fugue.git?rev=3bfdd0e248398ecad6a28a1fd165d6f615aa0331#3bfdd0e248398ecad6a28a1fd165d6f615aa0331"
 dependencies = [
  "boa_engine",
  "claxon",
