@@ -57,7 +57,9 @@ editing and conducting an invention through the `fugue` tools; the MCP
 server's instructions summarize it. `fugue.policy.clean-audio`,
 `fugue.policy.musical-intent` and `fugue.policy.listening` are the core
 musical policies: protecting the sound, making musical choices, and judging by
-ear. The pulse demos require the first two.
+ear. The pulse demos require the first two. `fugue.policy.rhythm` is the
+rhythm reference: meter, grid, triplets and polyrhythm, swing and groove, tied
+to the clock, sequencer and drum map modules that realize them.
 
 ## Release musical content
 
