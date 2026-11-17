@@ -77,6 +77,11 @@ a skill, which requires the policies it follows instead of restating them.
 `fugue.skill.entry` is the `fugue` skill, the `/fugue` entry point for
 external agents: it works out which surface the agent is on, says which route
 will play the piece, and has it authored and played through that route.
+Its `scripts/write_preview.py` (Python 3 standard library only) puts a piece
+into a release's single-file browser player for surfaces with no engine and
+no hosted connector; the player and its supported-modules list come from the
+release, not from this repository.
+
 `fugue.development.author` packages a reusable voice or subgraph as a
 development, which requires the authoring and clean-audio policies: exposed
 ports and controls, names, version, and defaults that stay clean wherever it
@@ -85,11 +90,6 @@ is dropped in, with an example development to start from.
 `fugue.invention.author` builds a new invention from a request, for external
 and in-graph agents: it plans the piece, writes one complete document, loads
 it, listens and refines it, and ships a small example invention.
-
-`fugue.development.author` packages a reusable voice or subgraph as a
-development, which requires the authoring and clean-audio policies: exposed
-ports and controls, names, version, and defaults that stay clean wherever it
-is dropped in, with an example development to start from.
 
 `fugue.review.listener` is a listening critique for external agents: it
 hears the loaded piece through the local audio preview and meters, says what
