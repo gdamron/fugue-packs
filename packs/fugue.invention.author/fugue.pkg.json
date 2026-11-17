@@ -1,0 +1,31 @@
+{
+  "id": "fugue.invention.author",
+  "version": "2026.11.0",
+  "kind": "skill",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "Builds a new invention from a request: plans the piece, writes one complete document, loads it, listens and refines it.",
+  "targets": [
+    "external-agent",
+    "in-graph-agent"
+  ],
+  "policies": [
+    "fugue.policy.authoring@^2026.11.0",
+    "fugue.policy.clean-audio@^2026.11.0",
+    "fugue.policy.musical-intent@^2026.11.0",
+    "fugue.policy.listening@^2026.11.0",
+    "fugue.policy.theory@^2026.11.0",
+    "fugue.policy.harmony@^2026.11.0",
+    "fugue.policy.rhythm@^2026.11.0"
+  ],
+  "examples": [
+    "examples/dorian-evening.invention.json"
+  ],
+  "entry": {
+    "skill": "SKILL.md"
+  }
+}
