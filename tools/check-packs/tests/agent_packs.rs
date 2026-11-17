@@ -154,6 +154,18 @@ fn refuses_a_missing_definition_naming_the_path() {
     assert!(!passed && output.contains("agent.json"), "{output}");
 }
 
+#[cfg(unix)]
+#[test]
+fn refuses_a_definition_reached_through_a_symlink() {
+    let repo = repository("{}", &["in-graph-agent"]);
+    let pack = repo.path().join("packs").join(AGENT);
+    fs::write(pack.join("real.json"), r#"{"system_prompt": "Persona."}"#).unwrap();
+    fs::remove_file(pack.join("agent.json")).unwrap();
+    std::os::unix::fs::symlink(pack.join("real.json"), pack.join("agent.json")).unwrap();
+    let (passed, output) = check(repo.path());
+    assert!(!passed && output.contains("agent.json"), "{output}");
+}
+
 #[test]
 fn refuses_a_skill_for_external_agents_only_naming_it() {
     let repo = repository(r#"{"system_prompt": "Persona."}"#, &["external-agent"]);
