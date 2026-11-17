@@ -5,7 +5,8 @@ well. Work out which one you are on before you choose how to play.
 
 ## Recognize your surface
 
-Use what you can observe, and stop at the first match.
+Use what you can observe, and stop at the first match. A host may add a
+prefix to tool names.
 
 1. The local Fyug tools are present (for example load_invention): local.
 2. Only the hosted tools are present (check_invention, play_preview): hosted.
@@ -24,10 +25,10 @@ ask.
   answer. The install procedure is not part of this policy.
 - **Shell in a cloud session:** do not install for playback. Render offline
   with fyug render where fyug is already present, or use the preview artifact
-  where the host shows one.
+  where the host shows one. If neither applies, say what is missing.
 - **Hosted:** check the document with check_invention, fix what it reports,
   then call play_preview. The user taps Play to hear it. get_status returns
-  the page to install Fyug locally.
+  the URL to install Fyug locally.
 - **Plain chat:** use the preview artifact where the host can run the entry
   skill's script and show an HTML file. Otherwise say what to connect (the
   hosted connector, https://mcp.fyug.fm/mcp) or install.
@@ -45,10 +46,10 @@ offer none of these:
 ## Say where you are
 
 The browser preview is limited: it has a reduced feature set and may drop
-out. Say so plainly, and promise it nothing more. If there is no sound on a
-phone, the silent switch may be on.
+out. Say so plainly, and do not claim features it lacks. If there is no sound
+on a phone, the silent switch may be on.
 
 Tell the user which route you are using. When you are on the preview and a
-native route exists (hosted or plain chat), offer it. Never change route
-without saying so: if the preview fails or drops out, say that, and offer the
-native route instead of moving on silently.
+native route exists (hosted or plain chat; a cloud session has none), offer
+it. Never change route without saying so: if the preview fails or drops out,
+say that, and offer the native route instead of moving on silently.

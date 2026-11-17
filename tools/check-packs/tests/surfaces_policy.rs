@@ -205,7 +205,14 @@ fn the_surfaces_policy_does_not_restate_the_authoring_policy() {
     assert_eq!(shared, routed, "tools it shares with the authoring policy");
 
     let surfaces = flat(&surfaces);
-    for sentence in flat(&authoring).split(". ") {
+    // Headings are dropped first, or one would stay glued to the front of the
+    // first sentence under it and hide a copy of that sentence.
+    let prose: String = authoring
+        .lines()
+        .filter(|line| !line.starts_with('#'))
+        .collect::<Vec<_>>()
+        .join("\n");
+    for sentence in flat(&prose).split(". ") {
         if sentence.split(' ').count() >= 6 {
             assert!(!surfaces.contains(sentence), "restates: {sentence}");
         }
