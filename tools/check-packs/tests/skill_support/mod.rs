@@ -6,7 +6,7 @@
 //! calls these with its own pack id; what is specific to one skill (its
 //! routes, its procedure) stays in its file.
 
-#![allow(dead_code)]
+#![allow(dead_code, unused_imports)]
 
 mod tools;
 
@@ -18,6 +18,7 @@ use fugue::ModuleRegistry;
 use serde_json::Value;
 
 use tools::is_command;
+pub use tools::LISTENING_TOOLS;
 pub use tools::{HOSTED_TOOLS, INSTALL_URL, LOCAL_TOOLS};
 
 use crate::policy_support::{
@@ -179,6 +180,7 @@ pub fn assert_names_exist(skill: &Skill, others: &[&str]) {
     let known = |span: &str| {
         LOCAL_TOOLS.contains(&span)
             || HOSTED_TOOLS.contains(&span)
+            || LISTENING_TOOLS.contains(&span)
             || others.contains(&span)
             || is_command(span)
     };

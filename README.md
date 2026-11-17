@@ -78,6 +78,8 @@ a skill, which requires the policies it follows instead of restating them.
 external agents: it works out which surface the agent is on, says which route
 will play the piece, and has it authored and played through that route.
 
+`fugue.review.listener` is a listening critique for external agents: it hears the loaded piece through the local audio preview and meters, says what it heard against the piece's intent, and proposes one change.
+
 ## Release musical content
 
 `fugue.instruments.piano`, `fugue.instruments.marimba`,

@@ -1,0 +1,154 @@
+//! The listening critique skill, `fugue.review.listener`, checked against
+//! the repository's real `packs/`: it hears the piece through the local
+//! server's audio preview and meters, judges it against musical intent and
+//! proposes one change, leaving every rule to the four policies it requires.
+
+mod policy_support;
+mod skill_support;
+
+use std::process::Command;
+
+use policy_support::{code_spans, flat, repository};
+use skill_support::{
+    assert_body_fits, assert_first_party_skill, assert_names_exist, assert_requires_policies,
+    assert_restates_no_policy, assert_thin_shape, section, skill, HOSTED_TOOLS, LISTENING_TOOLS,
+    LOCAL_TOOLS, MAX_BODY_CHARACTERS,
+};
+
+const SKILL: &str = "fugue.review.listener";
+const POLICIES: [&str; 4] = [
+    "fugue.policy.listening",
+    "fugue.policy.musical-intent",
+    "fugue.policy.clean-audio",
+    "fugue.policy.surfaces",
+];
+
+/// A local server tool, as the product lists it.
+fn is_local_tool(name: &str) -> bool {
+    LOCAL_TOOLS.contains(&name) || LISTENING_TOOLS.contains(&name)
+}
+
+/// The pack is a first-party skill for external agents with a host-safe
+/// name, and the repository passes check-packs with it, warning about
+/// nothing.
+#[test]
+fn the_listener_is_a_first_party_skill_for_external_agents() {
+    assert_first_party_skill(SKILL, &["external-agent"]);
+    let skill = skill(SKILL);
+    assert_eq!(skill.name, "fugue-review-listener");
+    let description = skill.description.to_lowercase();
+    for word in ["listen", "review", "critique", "mix", "use when", "not for"] {
+        assert!(description.contains(word), "the description omits `{word}`");
+    }
+
+    let output = Command::new(env!("CARGO_BIN_EXE_check-packs"))
+        .arg(repository())
+        .output()
+        .expect("check-packs runs");
+    let printed = format!(
+        "{}{}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(output.status.success(), "check-packs failed:\n{printed}");
+    assert!(!printed.contains(SKILL), "check-packs warns:\n{printed}");
+}
+
+/// The four policies are required and linked, and none is restated.
+#[test]
+fn the_listener_requires_its_policies_without_restating_them() {
+    let skill = skill(SKILL);
+    assert_requires_policies(&skill, &POLICIES);
+    assert_restates_no_policy(&skill);
+}
+
+/// Thin shape, within the shared size limit, naming only real things.
+#[test]
+fn the_listener_is_thin_short_and_names_only_what_exists() {
+    let skill = skill(SKILL);
+    assert_thin_shape(&skill, 5);
+    assert_body_fits(&skill, MAX_BODY_CHARACTERS);
+    assert_names_exist(&skill, &[]);
+}
+
+/// Surface, meters, preview, judgment against intent, one change: in that
+/// order, each carried out by the local server's tools.
+#[test]
+fn the_procedure_measures_previews_judges_and_proposes_one_change() {
+    let skill = skill(SKILL);
+    let procedure = flat(section(&skill.body, "Procedure"));
+    let at = |needle: &str| {
+        procedure
+            .find(needle)
+            .unwrap_or_else(|| panic!("the procedure should say `{needle}`"))
+    };
+    let steps = [
+        at("1. Recognize the surface as the surfaces policy says"),
+        at("2. While the piece plays, read `get_meters`"),
+        at("3. Get the bounded audio preview"),
+        at("4. Say what you heard against the musical-intent policy"),
+        at("5. Propose one change"),
+    ];
+    assert!(
+        steps.windows(2).all(|pair| pair[0] < pair[1]),
+        "{procedure}"
+    );
+    assert!(procedure.contains("`show_scope`"));
+    // The preview is `show_view` with view "audio", which renders only a
+    // paused piece: pause, render, resume.
+    let preview = [
+        at("`pause_invention`"),
+        at("`show_view` with view \"audio\""),
+        at("`resume_invention`"),
+    ];
+    assert!(
+        preview.windows(2).all(|pair| pair[0] < pair[1]),
+        "{procedure}"
+    );
+    assert!(procedure.contains("at most 30"), "the preview's own cap");
+    let spans = code_spans(&procedure);
+    assert!(!spans.is_empty());
+    for span in &spans {
+        assert!(is_local_tool(span), "`{span}` is no local server tool");
+    }
+}
+
+/// The stops, each with what the user can do next; whether a preview
+/// exists is the surfaces policy's call.
+#[test]
+fn the_stop_conditions_cover_a_missing_preview_and_an_unheard_one() {
+    let skill = skill(SKILL);
+    let stops = flat(section(&skill.body, "Stop conditions"));
+    assert!(stops.contains("what the user can do next"));
+    for (stop, next) in [
+        (
+            "No audio preview on this surface.",
+            "The surfaces policy decides",
+        ),
+        ("Nothing is loaded.", "ask which piece"),
+        (
+            "The piece cannot be rendered offline.",
+            "Critique from the meters and scope alone",
+        ),
+        (
+            "The user does not want the music paused.",
+            "Critique from the meters and scope alone",
+        ),
+        (
+            "Your host cannot play the WAV to you.",
+            "Do not claim to have heard it",
+        ),
+    ] {
+        let bullet = stops
+            .split("- **")
+            .find(|bullet| bullet.starts_with(stop))
+            .unwrap_or_else(|| panic!("no stop for `{stop}`"));
+        assert!(bullet.contains(next), "`{stop}` should say `{next}`");
+    }
+    for span in code_spans(&stops) {
+        assert!(
+            is_local_tool(&span) || HOSTED_TOOLS.contains(&span.as_str()),
+            "`{span}` is no product tool"
+        );
+    }
+}
