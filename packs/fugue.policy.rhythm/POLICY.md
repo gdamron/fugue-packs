@@ -5,8 +5,8 @@ comes from a `clock`.
 
 ## Count the bar
 
-Set `clock.beats_per_bar=3` for waltz time, or 7 for 7/8 counted in eighths;
-the default 0 keeps no bars. The clock then reports `clock.bar` and
+Set `clock.beats_per_bar=3` for waltz time, or 7 for 7/8 with the beat an
+eighth; the default 0 keeps no bars. The clock then reports `clock.bar` and
 `clock.beat_in_bar`, and a change scheduled for the next bar (see
 fugue.policy.clean-audio) lands on your bars. Size a looping sequencer's
 `cell_sequencer.step_count` or `step_sequencer.step_count` to a whole number
@@ -15,7 +15,8 @@ of bars on its grid, or it drifts against the bar line.
 ## Choose the grid
 
 Patch a sequencer's `step_sequencer.clock` from the output with one edge per
-step: `clock.beat_x2` for eighths, `clock.beat_x4` for sixteenths. Keep
+step: with a quarter-note beat, `clock.beat_x2` for eighths and
+`clock.beat_x4` for sixteenths. Keep
 `clock.bpm` at the notated tempo instead of running it fast, and leave rests
 where a fine grid has nothing to say. Echoes sit on the grid too: patch
 `clock.bpm` into `delay.bpm` and set `delay.division=dotted_8th_note`.
@@ -46,7 +47,8 @@ triplets.
 
 Only `drum_map` swings. `drum_map.swing` delays the off-beat sixteenths: 0 is
 straight, 0.3 gentle, 2/3 a triplet feel. The sequencers play a straight
-grid, so do not promise a swung melody.
+grid, so do not promise a swung melody. Its bar is always 16 sixteenths, so
+use it in 4/4 only.
 
 ```json
 {"modules":[
