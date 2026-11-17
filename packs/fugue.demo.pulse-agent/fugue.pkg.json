@@ -15,5 +15,6 @@
     "fugue.policy.clean-audio@^2026.11.0",
     "fugue.policy.musical-intent@^2026.11.0"
   ],
+  "skills": ["fugue.demo.pulse-skill@^0.1.0"],
   "entry": { "definition": "agent.json" }
 }

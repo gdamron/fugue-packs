@@ -1,0 +1,37 @@
+{
+  "version": "1.0.0",
+  "title": "Glass Mallet",
+  "description": "A struck triangle voice with a lowpass that opens on each strike, shaped by its own envelope and trimmed to a modest output level.",
+  "modules": [
+    { "id": "osc", "type": "oscillator", "config": { "waveform": "triangle", "frequency": 440.0 } },
+    {
+      "id": "filter",
+      "type": "filter",
+      "config": { "filter_type": "lowpass", "cutoff": 900.0, "resonance": 0.15, "cutoff_mod_depth": 2400.0 }
+    },
+    { "id": "sus", "type": "sustain" },
+    { "id": "env", "type": "adsr", "config": { "attack": 0.004, "decay": 0.6, "sustain": 0.0, "release": 0.3 } },
+    { "id": "amp", "type": "vca" },
+    { "id": "trim", "type": "vca", "config": { "level": 0.5 } }
+  ],
+  "connections": [
+    { "from": "osc", "from_port": "audio", "to": "filter", "to_port": "audio" },
+    { "from": "filter", "from_port": "audio", "to": "amp", "to_port": "audio" },
+    { "from": "sus", "from_port": "gate", "to": "env", "to_port": "gate" },
+    { "from": "env", "from_port": "envelope", "to": "amp", "to_port": "level" },
+    { "from": "env", "from_port": "envelope", "to": "filter", "to_port": "cutoff_mod" },
+    { "from": "amp", "from_port": "audio", "to": "trim", "to_port": "audio" }
+  ],
+  "inputs": [
+    { "name": "frequency", "to": "osc", "to_port": "frequency" },
+    { "name": "gate", "to": "sus", "to_port": "gate" },
+    { "name": "pedal", "to": "sus", "to_port": "pedal" }
+  ],
+  "outputs": [{ "name": "audio", "from": "trim", "from_port": "audio" }],
+  "controls": [
+    { "name": "brightness", "module": "filter", "control": "cutoff", "range": { "min": 300.0, "max": 3000.0 } },
+    { "name": "decay", "module": "env", "control": "decay", "range": { "min": 0.05, "max": 3.0 } },
+    { "name": "release", "module": "env", "control": "release", "range": { "min": 0.02, "max": 2.0 } },
+    { "name": "level", "module": "trim", "control": "level", "range": { "min": 0.0, "max": 0.8 } }
+  ]
+}

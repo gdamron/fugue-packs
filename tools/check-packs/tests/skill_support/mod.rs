@@ -19,12 +19,17 @@ use serde_json::Value;
 
 use tools::is_command;
 use tools::AUTHORING_TOOLS;
-pub use tools::{HOSTED_TOOLS, INSTALL_URL, LOCAL_TOOLS};
+// Each skill's test uses some of these, not all.
+pub use tools::{HOSTED_TOOLS, INSTALL_URL, LISTENING_TOOLS, LOCAL_TOOLS};
 
 use crate::policy_support::{
     assert_text_fragments_load, british_spellings, code_spans, pack, policy_text, problem_with,
     repository, restated_sentences, split_fences,
 };
+
+mod format;
+pub use format::{format_fields, interface_names};
+pub use tools::DEVELOPMENT_TOOLS;
 
 /// The most characters a skill's body may hold, unless its issue sets less.
 pub const MAX_BODY_CHARACTERS: usize = 5_000;
@@ -181,6 +186,7 @@ pub fn assert_names_exist(skill: &Skill, others: &[&str]) {
         LOCAL_TOOLS.contains(&span)
             || AUTHORING_TOOLS.contains(&span)
             || HOSTED_TOOLS.contains(&span)
+            || LISTENING_TOOLS.contains(&span)
             || others.contains(&span)
             || is_command(span)
     };
