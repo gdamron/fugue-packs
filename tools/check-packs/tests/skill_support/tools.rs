@@ -1,17 +1,37 @@
-//! The product tool and command names that first-party skills name.
+//! The product tool names, commands and links that first-party skills name.
 //!
-//! check-packs cannot see the product (fyug-product is private), so the names
-//! a skill uses are listed here by hand, copied from fyug-product main at
-//! 12da546e (2026-11-16). Add a name only after finding it there, and say
-//! where it comes from.
+//! check-packs cannot see the product (fyug-product is private), so only the
+//! names skills use are listed here, by hand, copied from fyug-product main
+//! at 12da546e (2026-11-16). These are not the full listings. Add a name only
+//! after finding it there, and say where it comes from.
 
-/// Tools of the local server, `crates/mcp/src/tools/<tool>.rs`.
+/// Local server tools, each a `crates/mcp/src/tools/<tool>.rs`.
 pub const LOCAL_TOOLS: &[&str] = &["load_invention", "reload_invention", "show_view"];
 
-/// Tools of the hosted server, the `#[tool]` functions of
-/// `crates/hosted/src/server.rs`.
-pub const HOSTED_TOOLS: &[&str] = &["check_invention", "play_preview"];
+/// Hosted server tools, `#[tool]` functions of `crates/hosted/src/server.rs`.
+pub const HOSTED_TOOLS: &[&str] = &["check_invention", "play_preview", "get_status"];
 
-/// `fyug` subcommands, from `Command` in `crates/cli/src/cli.rs`. A span that
-/// starts with one of these is a command line.
-pub const COMMANDS: &[&str] = &["fyug render"];
+/// `fyug` subcommands and the flags skills pass them, from `Command` and its
+/// argument structs in `crates/cli/src/cli.rs`.
+pub const COMMANDS: &[(&str, &[&str])] = &[("fyug render", &["--out", "--seconds", "--to-end"])];
+
+/// Where to install Fyug: `INSTALL_URL` in `crates/hosted/src/server.rs`,
+/// which `get_status` returns.
+pub const INSTALL_URL: &str = "https://github.com/Ilusiv-media/fyug#install";
+
+/// Whether `span` is a command line of `COMMANDS` passing only its listed
+/// flags, or one of those flags alone.
+pub fn is_command(span: &str) -> bool {
+    COMMANDS.iter().any(|(command, flags)| {
+        let flags_known = |words: &str| {
+            words
+                .split_whitespace()
+                .filter(|word| word.starts_with("--"))
+                .all(|flag| flags.contains(&flag))
+        };
+        match span.strip_prefix(command) {
+            Some(rest) => (rest.is_empty() || rest.starts_with(' ')) && flags_known(rest),
+            None => flags.contains(&span),
+        }
+    })
+}

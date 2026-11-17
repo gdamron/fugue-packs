@@ -17,7 +17,8 @@ use fugue::pkg::{check_skill_package, parse_path};
 use fugue::ModuleRegistry;
 use serde_json::Value;
 
-pub use tools::{COMMANDS, HOSTED_TOOLS, LOCAL_TOOLS};
+use tools::is_command;
+pub use tools::{HOSTED_TOOLS, INSTALL_URL, LOCAL_TOOLS};
 
 use crate::policy_support::{
     assert_text_fragments_load, british_spellings, code_spans, pack, policy_text, problem_with,
@@ -179,9 +180,7 @@ pub fn assert_names_exist(skill: &Skill, others: &[&str]) {
         LOCAL_TOOLS.contains(&span)
             || HOSTED_TOOLS.contains(&span)
             || others.contains(&span)
-            || COMMANDS
-                .iter()
-                .any(|command| span == *command || span.starts_with(&format!("{command} ")))
+            || is_command(span)
     };
     let problems: Vec<String> = code_spans(&prose)
         .iter()

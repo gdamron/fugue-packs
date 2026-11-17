@@ -6,8 +6,8 @@ description: Make, play or change music with Fugue (also called Fyug), on any su
 # Fugue
 
 The way in to making music with Fugue. Work out where you are, say how the
-piece will play, then make it and play it that way. The user never has to
-choose a backend.
+piece will play, then make it and play it that way, so the user does not
+have to pick a backend.
 
 ## Triggers
 
@@ -45,12 +45,14 @@ choose a backend.
    - **Local:** the local tools, `load_invention` or `reload_invention`, then
      `show_view` where the host shows views.
    - **Shell on the user's machine:** the native install offer. The guided
-     install is not published yet: until it is, ask before anything is
-     installed and point to https://github.com/Ilusiv-media/fyug#install.
-     Once Fyug is installed and connected, use the local route.
+     install is not published yet: until it is, ask first, and on a yes
+     point the user to https://github.com/Ilusiv-media/fyug#install to
+     install it themselves. When the local tools appear, use the local route.
    - **Shell in a cloud session:** an offline render where Fyug is already
-     installed: `fyug render piece.json --out piece.wav`. Otherwise the
-     preview file below; until it ships, say what is missing.
+     installed, `fyug render piece.json --out piece.wav --seconds 60` (or
+     `--to-end` when the piece ends itself), then hand the user the WAV file
+     and say it is a recording, not live. Otherwise the preview file below;
+     until it ships, say what is missing.
    - **Hosted:** `check_invention`, fix what it reports, then `play_preview`.
      The user taps Play.
    - **Plain chat:** the preview file that this skill's script will write.
@@ -66,7 +68,7 @@ route without telling the user first.
   hosted connector the surfaces policy names to hear a preview, or install
   later.
 - **The piece uses a module type the preview does not support.**
-  `check_invention` or `play_preview` names it. Offer to rework the piece
-  without it, or to play it in full after installing Fyug.
+  `play_preview` refuses it by name. Offer to rework the piece without it, or
+  to play it in full after installing Fyug (`get_status` gives the link).
 - **No route on this surface can play the piece.** Say what is missing and
   what to connect or install; do not pretend it played.

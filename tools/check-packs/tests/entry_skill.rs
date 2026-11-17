@@ -11,7 +11,8 @@ use std::process::Command;
 use policy_support::{code_spans, flat, policy_text, repository};
 use skill_support::{
     assert_body_fits, assert_first_party_skill, assert_names_exist, assert_requires_policies,
-    assert_restates_no_policy, assert_thin_shape, section, skill, HOSTED_TOOLS, LOCAL_TOOLS,
+    assert_restates_no_policy, assert_thin_shape, section, skill, HOSTED_TOOLS, INSTALL_URL,
+    LOCAL_TOOLS,
 };
 
 const SKILL: &str = "fugue.skill.entry";
@@ -120,8 +121,15 @@ fn each_surface_in_the_surfaces_policy_has_its_step() {
     let local = step("Local");
     let spans = code_spans(&local);
     assert!(!spans.is_empty() && spans.iter().all(|s| LOCAL_TOOLS.contains(&s.as_str())));
-    assert!(step("Shell on the user's machine").contains("native install offer"));
-    assert!(step("Shell in a cloud session").contains("`fyug render "));
+    let machine = step("Shell on the user's machine");
+    assert!(machine.contains("native install offer") && machine.contains("ask first"));
+    assert!(
+        machine.contains(INSTALL_URL),
+        "the install link is the product's"
+    );
+    let cloud = step("Shell in a cloud session");
+    assert!(cloud.contains("`fyug render ") && cloud.contains("--out"));
+    assert!(cloud.contains("WAV file"), "the render reaches the user");
     let hosted = step("Hosted");
     let spans = code_spans(&hosted);
     assert_eq!(spans, ["check_invention", "play_preview"]);
@@ -137,14 +145,23 @@ fn the_stop_conditions_cover_the_three_dead_ends() {
     let stops = flat(section(&skill.body, "Stop conditions"));
     assert!(stops.contains("what the user can do next"));
     assert!(stops.contains("Never move to another route without telling the user"));
-    for stop in [
-        "The user declines the install.",
-        "The piece uses a module type the preview does not support.",
-        "No route on this surface can play the piece.",
+    // Each stop, and what it offers the user next.
+    for (stop, next) in [
+        ("The user declines the install.", "They can connect"),
+        (
+            "The piece uses a module type the preview does not support.",
+            "Offer to rework the piece",
+        ),
+        (
+            "No route on this surface can play the piece.",
+            "what to connect or install",
+        ),
     ] {
-        assert!(
-            stops.contains(&format!("**{stop}**")),
-            "no stop for `{stop}`"
-        );
+        let bullet = stops
+            .split("- **")
+            .find(|bullet| bullet.starts_with(stop))
+            .unwrap_or_else(|| panic!("no stop for `{stop}`"));
+        assert!(bullet.contains(next), "`{stop}` should offer `{next}`");
     }
+    assert!(stops.contains("`play_preview` refuses it by name"));
 }
