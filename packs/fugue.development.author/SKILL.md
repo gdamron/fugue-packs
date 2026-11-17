@@ -33,8 +33,8 @@ right on their own.
 
 - A development document whose `inputs`, `outputs` and `controls` are its
   interface, tried in a piece and heard.
-- For a package, a `fugue.pkg.json` with its `kind`, `version` and `entry`,
-  installed and checked.
+- For a package, a `fugue.pkg.json`, installed and confirmed with
+  `describe_development`.
 - A short note for the user: each port and control, and what its default
   does.
 
@@ -45,21 +45,24 @@ right on their own.
 2. Name the interface after the bundled developments, so one can stand in
    for another: `frequency`, `gate` and `pedal` in and `audio` out for a
    voice, `audio_left` and `audio_right` in and out for a stereo effect.
-   List one name more than once to fan it out to several inner ports or
-   controls. Expose only what a player would reach for, named for what it
-   does (`brightness`, not the filter's cutoff), each control with a `range`
-   that keeps every value musical.
+   List an input or control name more than once to fan it out to several
+   inner ports or controls. Expose only what a player would reach for, named
+   for what it does (`brightness`, not the filter's cutoff), and give each
+   number control a `range`, within the inner control's own, that keeps
+   every value musical.
 3. Make the defaults clean anywhere. The config inside is what a piece gets
-   when it sets nothing, so write it there. Route `gate` through `sustain`
-   into an `adsr` and a `vca`, so any gate pattern a piece sends is shaped
-   as the clean-audio policy asks, and end in a second `vca` whose
-   `vca.level` sets a modest output level and is exposed as `level`.
+   when it sets nothing, so write it there. Route `gate` and `pedal`
+   through `sustain`, as the bundled voices do, then into an `adsr` and a
+   `vca`, so every note has an envelope as the clean-audio policy asks.
+   End in a second `vca` whose `vca.level` sets a modest output level and
+   is exposed as `level`.
 4. Try it where it will be used. Import it into a small piece by `path`, or
    inline as a `definition`, and load it with `load_invention`. Play quick
    repeated notes and a long held one, read `get_meters`, and read the
    instance with `describe_module`. Fix the definition, not the trial piece.
-5. Version and package. Write a `fugue.pkg.json` whose `kind` is
-   development and whose `entry` names the document. Raise its `version` for
+5. Version and package. Write a `fugue.pkg.json` like a bundled
+   instrument's: `id`, `version`, `kind` development, `license`, `authors`,
+   `targets`, and an `entry` naming the document. Raise its `version` for
    every change: a `ref` names one exact version, so pieces that import an
    older one keep hearing it. Keep port and control names across versions.
    Install it with `install_package`, find its ref with `list_developments`,

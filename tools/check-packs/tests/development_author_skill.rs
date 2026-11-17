@@ -120,7 +120,7 @@ fn the_procedure_covers_interface_naming_defaults_and_versioning() {
     );
     for needle in [
         "fan it out",
-        "with a `range`",
+        "give each number control a `range`",
         "as the clean-audio policy asks",
         "quick repeated notes",
         "Raise its `version` for every change",
@@ -190,6 +190,12 @@ fn the_example_development_follows_the_skill() {
         let module = development.modules.iter().find(|m| m.id == id).unwrap();
         (module.module_type.as_str(), &module.config)
     };
+    let (envelope, config) = type_of("env");
+    assert_eq!(envelope, "adsr");
+    for stage in ["attack", "release"] {
+        let seconds = config[stage].as_f64().unwrap();
+        assert!(seconds >= 0.002, "the envelope's {stage} is {seconds} s");
+    }
     let gate = development
         .inputs
         .iter()
