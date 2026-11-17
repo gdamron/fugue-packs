@@ -60,6 +60,9 @@ musical policies: protecting the sound, making musical choices, and judging by
 ear. The pulse demos require the first two. `fugue.policy.rhythm` is the
 rhythm reference: meter, grid, triplets and polyrhythm, swing and groove, tied
 to the clock, sequencer and drum map modules that realize them.
+`fugue.policy.surfaces` is for external agents only: how to tell which surface
+they are on, which route plays a piece there, and what the browser preview
+does not offer.
 
 ## Release musical content
 

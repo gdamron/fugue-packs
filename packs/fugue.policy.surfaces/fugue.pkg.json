@@ -1,0 +1,18 @@
+{
+  "id": "fugue.policy.surfaces",
+  "version": "2026.11.0",
+  "kind": "policy",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grant Damron"
+    }
+  ],
+  "description": "How an agent tells which surface it is on from the tools it can see, which route plays a piece there, what the browser preview does not offer, and to say which route it is using.",
+  "targets": [
+    "external-agent"
+  ],
+  "entry": {
+    "policy": "POLICY.md"
+  }
+}
