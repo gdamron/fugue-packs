@@ -16,5 +16,6 @@ score lane.
 
 The clock reads as the score does: a quarter-note beat at 90 beats per
 minute, four beats to a bar, so a bar of the piece is a measure of the
-score: the clock's bar 1 is measure 1 (a note preview counts bars from 0, so
-its `start_bar` 0 is measure 1). The score's 32nd-note grid steps on the clock's `beat_x8` output.
+score. The clock's bar 1 is measure 1; a note preview counts bars from 0,
+so its `start_bar` 0 is measure 1. The score's 32nd-note grid steps on the
+clock's `beat_x8` output.
