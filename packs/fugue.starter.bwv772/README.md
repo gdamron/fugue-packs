@@ -13,3 +13,7 @@ Attribution-ShareAlike 3.0 Unported, matching its source. Source and license:
 The invention document supplies a Fugue performance interpretation. It keeps
 the score as a separate asset and uses the bundled piano development for every
 score lane.
+
+The clock reads as the score does: a quarter-note beat at 90 beats per
+minute, four beats to a bar, so bar N of the piece is measure N+1 of the
+score. The score's 32nd-note grid steps on the clock's `beat_x8` output.
