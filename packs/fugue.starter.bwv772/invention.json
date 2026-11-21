@@ -21,7 +21,8 @@
       "id": "clock",
       "type": "clock",
       "config": {
-        "bpm": 180.0
+        "bpm": 90.0,
+        "beats_per_bar": 4
       }
     },
     {
@@ -146,11 +147,11 @@
     }
   ],
   "connections": [
-    { "from": "clock", "from_port": "beat_x4", "to": "upper", "to_port": "clock" },
-    { "from": "clock", "from_port": "beat_x4", "to": "upper_close_high", "to_port": "clock" },
-    { "from": "clock", "from_port": "beat_x4", "to": "upper_close_low", "to_port": "clock" },
-    { "from": "clock", "from_port": "beat_x4", "to": "lower", "to_port": "clock" },
-    { "from": "clock", "from_port": "beat_x4", "to": "lower_close", "to_port": "clock" },
+    { "from": "clock", "from_port": "beat_x8", "to": "upper", "to_port": "clock" },
+    { "from": "clock", "from_port": "beat_x8", "to": "upper_close_high", "to_port": "clock" },
+    { "from": "clock", "from_port": "beat_x8", "to": "upper_close_low", "to_port": "clock" },
+    { "from": "clock", "from_port": "beat_x8", "to": "lower", "to_port": "clock" },
+    { "from": "clock", "from_port": "beat_x8", "to": "lower_close", "to_port": "clock" },
     { "from": "upper", "from_port": "frequency", "to": "upper_voice", "to_port": "frequency" },
     { "from": "upper", "from_port": "gate", "to": "upper_voice", "to_port": "gate" },
     { "from": "upper_close_high", "from_port": "frequency", "to": "upper_close_high_voice", "to_port": "frequency" },
