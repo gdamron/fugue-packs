@@ -254,7 +254,6 @@ fn it_lists_what_the_hosted_server_leaves_to_the_desktop_app() {
             "phone",
             "library",
             "samples",
-            "audio unit",
             "disk",
             "limit",
         ],
