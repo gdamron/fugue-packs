@@ -123,7 +123,7 @@ fn the_procedure_plans_authors_loads_listens_and_refines() {
     // since it has no reload_invention.
     for phrase in [
         "In the in-chat player, also pass the few controls most worth playing with",
-        "in the in-chat player, read `get_notes` too",
+        "In the in-chat player, read `get_meters` and `get_notes` once its tools are offered",
         "(in the in-chat player, `apply_edits`)",
     ] {
         assert!(

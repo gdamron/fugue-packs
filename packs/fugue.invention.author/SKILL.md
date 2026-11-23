@@ -73,8 +73,8 @@ user meant: plan it, write it whole, load it, listen, then refine it.
    module does take: fix that in the document and load again. In the
    in-chat player, also pass the few controls most worth playing with.
 4. **Listen** with `get_meters` while it plays, as the listening policy
-   says; in the in-chat player, read `get_notes` too, once its tools are
-   offered (on a phone, after the person's next message).
+   says. In the in-chat player, read `get_meters` and `get_notes` once its
+   tools are offered (on a phone, after the person's next message).
 5. **Refine** as the musical-intent policy paces it: a structural change
    through `reload_invention` (in the in-chat player, `apply_edits`), a
    level or a tempo through `set_controls`. Listen again after each, and
