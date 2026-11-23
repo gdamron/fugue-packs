@@ -1,7 +1,7 @@
 # Surfaces
 
-Fyug reaches you by different routes, and each plays a piece differently.
-Work out which one you are on before you choose how to play.
+Fyug reaches you by routes that each play a piece differently. Work out
+which one you are on first.
 
 ## Recognize your surface
 
@@ -25,7 +25,7 @@ ask.
   (show_view) where the host shows them. Never use the in-chat player or the
   preview artifact.
 - **Shell on the user's machine:** offer the native install and wait for the
-  answer. The install procedure is not part of this policy.
+  answer.
 - **Shell in a cloud session:** do not install for playback. Render offline
   with fyug render where fyug is already present, or use the preview artifact
   where the host shows one. If neither applies, say what is missing.
@@ -77,12 +77,13 @@ it, or when the player fails:
   load_invention refuses either by name
 - an agent working on a piece with no player open
 
-get_status gives the install URL.
+Do not mention it otherwise. get_status gives the install URL.
 
 ## Keep a piece
 
 Asked how to keep a piece or send it to a friend, point to Download piece
-where the player shows it, and to Share link otherwise. Say that anyone with
+where the player shows it, and to Share link otherwise; neither needs the
+desktop app. Say that anyone with
 the link has the piece. Never post a share link yourself: the person decides
 who gets it. A piece with bundled samples has no Share link, so on a phone it
 cannot be kept: say so, and point to the web or the desktop app.
@@ -91,7 +92,8 @@ cannot be kept: say so, and point to the web or the desktop app.
 
 Tell the user which route you are using. The in-chat player and the preview
 artifact are limited: they run in the browser with a reduced feature set and
-may drop out. Say so, and do not claim features they lack. If there
+may drop out. Say so, and do not claim features they lack or deny ones they
+have. If there
 is no sound on a phone, the silent switch may be on. Never change route
 without saying so: if the player fails or drops out, say that, and offer the
 desktop app. On the preview artifact, offer the hosted connector.
