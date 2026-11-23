@@ -334,7 +334,7 @@ fn what_the_hosted_server_leaves_to_the_desktop_app_is_listed() {
         assert!(section.contains(lacking), "should list `{lacking}`");
     }
     assert!(
-        section.contains("otherwise do not raise it in the player"),
+        section.contains("otherwise do not raise it on this route"),
         "should keep the app out of the player otherwise"
     );
     // Download piece saves a file, so saving is not the app's alone.

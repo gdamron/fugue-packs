@@ -77,7 +77,7 @@ it, or when the player fails:
   load_invention refuses either by name
 - an agent working on a piece with no player open
 
-Otherwise do not raise it in the player. get_status gives the install URL.
+Otherwise do not raise it on this route. get_status gives the install URL.
 
 ## Keep a piece
 
@@ -93,5 +93,6 @@ Tell the user which route you are using. The in-chat player and the preview
 artifact are limited: they run in the browser with a reduced feature set and
 may drop out. Say so, and do not claim features they lack or deny ones they
 have. If there is no sound on a phone, the silent switch may be on. Never
-change route without saying so: if the player fails or drops out, say that, and offer the
-desktop app. On the preview artifact, offer the hosted connector.
+change route without saying so: if the player fails or drops out, say that,
+and offer the desktop app. On the preview artifact, offer the hosted
+connector.
