@@ -323,7 +323,6 @@ fn what_the_hosted_server_leaves_to_the_desktop_app_is_listed() {
     for lacking in [
         "keeps playing in the background, where a phone's player stops off screen",
         "a library of installed packages",
-        "saving a piece to disk",
         "their own samples",
         "file, rtmp or youtube outputs",
         "hardware output",
@@ -334,6 +333,12 @@ fn what_the_hosted_server_leaves_to_the_desktop_app_is_listed() {
     ] {
         assert!(section.contains(lacking), "should list `{lacking}`");
     }
+    assert!(
+        section.contains("otherwise do not raise it on this route"),
+        "should keep the app out of the player otherwise"
+    );
+    // Download piece saves a file, so saving is not the app's alone.
+    assert!(!section.contains("saving a piece"));
 }
 
 /// A piece is kept by its download where there is one, its share link
