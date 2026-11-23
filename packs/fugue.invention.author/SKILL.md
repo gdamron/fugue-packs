@@ -72,6 +72,9 @@ user meant: plan it, write it whole, load it, listen, then refine it.
    type, port, config key or module id, and lists the ports or keys the
    module does take: fix that in the document and load again. In the
    in-chat player, also pass the few controls most worth playing with.
+   To keep the piece, the person uses Download piece where the player
+   shows it, and Share link otherwise; anyone with the link has it. Offer
+   the desktop app only for something the player lacks, and name it.
 4. **Listen** with `get_meters` while it plays, as the listening policy
    says. In the in-chat player, read `get_meters` and `get_notes` once its
    tools are offered (on a phone, after the person's next message).

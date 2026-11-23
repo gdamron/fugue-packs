@@ -134,6 +134,26 @@ fn the_procedure_plans_authors_loads_listens_and_refines() {
     assert!(procedure.contains(&format!("`{EXAMPLE}`")));
 }
 
+/// Agents that build a piece keep this skill in view and rarely open a
+/// linked policy, so keeping and sharing the piece, and when the desktop
+/// app comes up, are said in the procedure itself.
+#[test]
+fn the_procedure_says_how_to_keep_the_piece_and_when_to_offer_the_desktop_app() {
+    let skill = skill(SKILL);
+    let procedure = flat(section(&skill.body, "Procedure"));
+    for phrase in [
+        "Download piece where the player shows it",
+        "Share link otherwise",
+        "anyone with the link has it",
+        "Offer the desktop app only for something the player lacks, and name it",
+    ] {
+        assert!(
+            procedure.contains(phrase),
+            "should say `{phrase}`: {procedure}"
+        );
+    }
+}
+
 /// Every example the manifest ships loads in the pinned core with no
 /// warnings and plays with headroom, every note shaped by an envelope
 /// that does not click.
