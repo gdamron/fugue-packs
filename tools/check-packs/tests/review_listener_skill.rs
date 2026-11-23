@@ -12,7 +12,7 @@ use policy_support::{code_spans, flat, repository};
 use skill_support::{
     assert_body_fits, assert_first_party_skill, assert_names_exist, assert_requires_policies,
     assert_restates_no_policy, assert_thin_shape, section, skill, HOSTED_TOOLS, LISTENING_TOOLS,
-    LOCAL_TOOLS, MAX_BODY_CHARACTERS,
+    LOCAL_TOOLS, MAX_BODY_CHARACTERS, PLAYER_TOOLS,
 };
 
 const SKILL: &str = "fugue.review.listener";
@@ -26,6 +26,29 @@ const POLICIES: [&str; 4] = [
 /// A local server tool, as the product lists it.
 fn is_local_tool(name: &str) -> bool {
     LOCAL_TOOLS.contains(&name) || LISTENING_TOOLS.contains(&name)
+}
+
+/// In the in-chat player there is no audio preview: the critique comes from
+/// the player's levels and notes, and says it was measured, not heard.
+#[test]
+fn in_the_in_chat_player_the_critique_is_measured_not_heard() {
+    let skill = skill(SKILL);
+    let procedure = flat(section(&skill.body, "Procedure"));
+    for phrase in [
+        "In the in-chat player, read `get_meters` and `get_notes` from the player instead",
+        "skip to step 4",
+        "measured, not heard",
+        "On any other route, stop",
+    ] {
+        assert!(
+            procedure.contains(phrase),
+            "should say `{phrase}`: {procedure}"
+        );
+    }
+    for tool in ["get_meters", "get_notes"] {
+        assert!(PLAYER_TOOLS.contains(&tool), "{tool} is a player tool");
+    }
+    assert!(!skill.description.contains("local Fyug tools are missing"));
 }
 
 /// The pack is a first-party skill for external agents with a host-safe
@@ -127,11 +150,11 @@ fn the_stop_conditions_cover_a_missing_preview_and_an_unheard_one() {
     assert!(stops.contains("what the user can do next"));
     for (stop, next) in [
         (
-            "No audio preview on this surface.",
+            "No audio preview and no player tools on this surface.",
             "The surfaces policy decides",
         ),
         ("Any other preview refusal.", "Say the reason"),
-        ("Nothing is loaded.", "ask which piece"),
+        ("Nothing is loaded.", "open it in the player"),
         (
             "The piece cannot be rendered offline.",
             "Critique from the meters and scope alone",

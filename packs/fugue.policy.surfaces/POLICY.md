@@ -1,12 +1,12 @@
 # Surfaces
 
-Fyug reaches you by different routes, and each plays a piece differently.
-Work out which one you are on before you choose how to play.
+Fyug reaches you on surfaces that play a piece differently. Work out which
+one you are on first.
 
 ## Recognize your surface
 
-Use what you can observe, and stop at the first match. A host may add a
-prefix to tool names.
+Go by what you see; stop at the first match. A host may prefix tool
+names.
 
 1. The local Fyug tools are present (reload_invention, show_view): local.
    When both sets of tools are present, this one wins.
@@ -71,27 +71,29 @@ it, or when the player fails:
 
 - music that keeps playing in the background, where a phone's player stops
   off screen
-- a library of installed packages, or saving a piece to disk
+- a library of installed packages
 - their own samples, file, RTMP or YouTube outputs, or hardware output
 - a module type the player does not build, or a piece past the hosted limits;
   load_invention refuses either by name
 - an agent working on a piece with no player open
 
-get_status gives the install URL.
+Otherwise do not raise it on this route. get_status gives the install URL.
 
 ## Keep a piece
 
 Asked how to keep a piece or send it to a friend, point to Download piece
-where the player shows it, and to Share link otherwise. Say that anyone with
-the link has the piece. Never post a share link yourself: the person decides
-who gets it. A piece with bundled samples has no Share link, so on a phone it
-cannot be kept: say so, and point to the web or the desktop app.
+where the player shows it (a file on disk), and to Share link otherwise. Say
+that anyone with the link has the piece. Never post a share link yourself:
+the person decides who gets it. A piece with bundled samples has no Share
+link, so on a phone it cannot be kept: say so, and point to the web or the
+desktop app.
 
 ## Say where you are
 
 Tell the user which route you are using. The in-chat player and the preview
 artifact are limited: they run in the browser with a reduced feature set and
-may drop out. Say so, and do not claim features they lack. If there
-is no sound on a phone, the silent switch may be on. Never change route
-without saying so: if the player fails or drops out, say that, and offer the
-desktop app. On the preview artifact, offer the hosted connector.
+may drop out. Say so, and do not claim features they lack or deny ones they
+have. If there is no sound on a phone, the silent switch may be on. Never
+change route without saying so: if the player fails or drops out, say that,
+and offer the desktop app. On the preview artifact, offer the hosted
+connector.

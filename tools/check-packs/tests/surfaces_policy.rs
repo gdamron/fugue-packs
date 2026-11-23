@@ -323,7 +323,6 @@ fn what_the_hosted_server_leaves_to_the_desktop_app_is_listed() {
     for lacking in [
         "keeps playing in the background, where a phone's player stops off screen",
         "a library of installed packages",
-        "saving a piece to disk",
         "their own samples",
         "file, rtmp or youtube outputs",
         "hardware output",
@@ -334,6 +333,12 @@ fn what_the_hosted_server_leaves_to_the_desktop_app_is_listed() {
     ] {
         assert!(section.contains(lacking), "should list `{lacking}`");
     }
+    assert!(
+        section.contains("otherwise do not raise it on this route"),
+        "should keep the app out of the player otherwise"
+    );
+    // Download piece saves the person's file, so saving is not the app's.
+    assert!(!section.contains("saving"));
 }
 
 /// A piece is kept by its download where there is one, its share link
@@ -345,6 +350,7 @@ fn a_piece_is_kept_by_download_or_share_link_never_posted() {
     let section = flat(section(&text, "Keep a piece"));
     for phrase in [
         "Download piece where the player shows it",
+        "Download piece where the player shows it (a file on disk)",
         "Share link otherwise",
         "anyone with the link has the piece",
         "Never post a share link yourself",

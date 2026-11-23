@@ -1,6 +1,6 @@
 ---
 name: fugue-review-listener
-description: Listen to the Fugue piece that is loaded and give musical feedback with one suggested change. Use when the user asks how the piece sounds, what to change, or to review, critique or check the mix ("does the bass mask the kick?", "what would make this better?"). Not for writing a new piece or playing one, and not where the local Fyug tools are missing.
+description: Listen to the Fugue piece that is loaded and give musical feedback with one suggested change. Use when the user asks how the piece sounds, what to change, or to review, critique or check the mix ("does the bass mask the kick?", "what would make this better?"). Not for writing a new piece or playing one, and not where no Fyug piece is loaded.
 ---
 
 # Review listener
@@ -39,7 +39,9 @@ you heard against what the music is meant to do, and propose one change.
 ## Procedure
 
 1. Recognize the surface as the surfaces policy says. The audio preview is
-   the local server's, so off the local route, stop.
+   the local server's. In the in-chat player, read `get_meters` and
+   `get_notes` from the player instead, once its tools are offered, skip to
+   step 4 and say the piece was measured, not heard. On any other route, stop.
 2. Read `get_meters` for the whole output and `show_scope` on the voice in
    question, as the listening policy says. A paused piece has nothing to
    measure yet; carry on to the preview.
@@ -63,9 +65,11 @@ you heard against what the music is meant to do, and propose one change.
 
 Stop, say why, and say what the user can do next.
 
-- **No audio preview on this surface.** The surfaces policy decides, and
-  says what the user's surface offers instead.
-- **Nothing is loaded.** `show_view` refuses; ask which piece to hear.
+- **No audio preview and no player tools on this surface.** The surfaces
+  policy decides, and says what the user's surface offers instead.
+- **Nothing is loaded.** `show_view` refuses, or no player is open; ask
+  which piece to hear, and in the hosted route open it in the player. On a
+  phone its tools come with the person's next message.
 - **The piece cannot be rendered offline.** `show_view` says why (it records
   or streams, say). Critique from the meters and scope alone, and say so.
 - **Any other preview refusal.** Say the reason `show_view` gives, and

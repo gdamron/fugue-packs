@@ -2,14 +2,33 @@
 //!
 //! check-packs cannot see the product (fyug-product is private), so only the
 //! names skills use are listed here, by hand, copied from fyug-product main
-//! at 12da546e (2026-11-16). These are not the full listings. Add a name only
-//! after finding it there, and say where it comes from.
+//! at 12da546e (2026-11-16), and the hosted server's and its in-chat
+//! player's at d10777d1 (2026-11-23). These are not the full listings. Add a
+//! name only after finding it there, and say where it comes from.
 
 /// Local server tools, each a `crates/mcp/src/tools/<tool>.rs`.
 pub const LOCAL_TOOLS: &[&str] = &["load_invention", "reload_invention", "show_view"];
 
 /// Hosted server tools, `#[tool]` functions of `crates/hosted/src/server.rs`.
-pub const HOSTED_TOOLS: &[&str] = &["check_invention", "play_preview", "get_status"];
+pub const HOSTED_TOOLS: &[&str] = &["check_invention", "load_invention", "get_status"];
+
+/// The in-chat player's own tools, which the page the hosted server's
+/// `load_invention` opens offers the model while it is open, with the local
+/// tools' names and arguments: the `name`s in
+/// `crates/hosted/src/player/tools.js`.
+pub const PLAYER_TOOLS: &[&str] = &[
+    "list_controls",
+    "get_control",
+    "set_control",
+    "set_controls",
+    "list_changed_controls",
+    "get_notes",
+    "get_meters",
+    "apply_edits",
+    "get_invention",
+    "pause_invention",
+    "resume_invention",
+];
 
 /// `fyug` subcommands and the flags skills pass them, from `Command` and its
 /// argument structs in `crates/cli/src/cli.rs`.
@@ -30,12 +49,13 @@ pub const DEVELOPMENT_TOOLS: &[&str] = &[
     "describe_development",
 ];
 
-/// Local server tools a listening skill names: `get_meters` and `show_scope`
-/// in their own `crates/mcp/src/tools/<tool>.rs`, `pause_invention` and
+/// Local server tools a listening skill names: `get_meters`, `get_notes` and
+/// `show_scope` in their own `crates/mcp/src/tools/<tool>.rs`, `pause_invention` and
 /// `resume_invention` both in `pause_invention.rs`. The audio preview is
 /// `show_view` with view "audio" (`audio_view.rs`), already in `LOCAL_TOOLS`.
 pub const LISTENING_TOOLS: &[&str] = &[
     "get_meters",
+    "get_notes",
     "show_scope",
     "pause_invention",
     "resume_invention",
@@ -60,4 +80,10 @@ pub fn is_command(span: &str) -> bool {
 
 /// More local server tools, for the authoring skill: each a
 /// `crates/mcp/src/tools/<tool>.rs` at the same revision.
-pub const AUTHORING_TOOLS: &[&str] = &["describe_module", "get_meters", "set_controls"];
+pub const AUTHORING_TOOLS: &[&str] = &[
+    "describe_module",
+    "get_meters",
+    "get_notes",
+    "set_controls",
+    "apply_edits",
+];
