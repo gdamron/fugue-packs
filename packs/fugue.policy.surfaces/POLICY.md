@@ -1,11 +1,11 @@
 # Surfaces
 
-Fyug reaches you on surfaces that each play a piece differently. Work out
-which one you are on first.
+Fyug reaches you on surfaces that play a piece differently. Work out which
+one you are on first.
 
 ## Recognize your surface
 
-Go by what you see, and stop at the first match. A host may prefix tool
+Go by what you see; stop at the first match. A host may prefix tool
 names.
 
 1. The local Fyug tools are present (reload_invention, show_view): local.
@@ -75,17 +75,18 @@ it, or when the player fails:
 - their own samples, file, RTMP or YouTube outputs, or hardware output
 - a module type the player does not build, or a piece past the hosted limits;
   load_invention refuses either by name
-- an agent working on a piece with no player open, or saving it to disk
+- an agent working on a piece with no player open
 
 Otherwise do not raise it on this route. get_status gives the install URL.
 
 ## Keep a piece
 
 Asked how to keep a piece or send it to a friend, point to Download piece
-where the player shows it, and to Share link otherwise. Say that anyone with
-the link has the piece. Never post a share link yourself: the person decides
-who gets it. A piece with bundled samples has no Share link, so on a phone it
-cannot be kept: say so, and point to the web or the desktop app.
+where the player shows it (it saves the piece to disk), and to Share link
+otherwise. Say that anyone with the link has the piece. Never post a share
+link yourself: the person decides who gets it. A piece with bundled samples
+has no Share link, so on a phone it cannot be kept: say so, and point to the
+web or the desktop app.
 
 ## Say where you are
 
