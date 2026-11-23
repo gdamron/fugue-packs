@@ -321,11 +321,10 @@ fn what_the_hosted_server_leaves_to_the_desktop_app_is_listed() {
         "suggest the desktop app only when the person asks for one of these, and name it, or when the player fails"
     ));
     for lacking in [
-        "keeps playing on a phone with the player off screen",
-        "a library of pieces",
-        "saving to disk",
+        "keeps playing in the background, where a phone's player stops off screen",
+        "a library of installed packages",
+        "saving a piece to disk",
         "their own samples",
-        "audio units",
         "file, rtmp or youtube outputs",
         "hardware output",
         "a module type the player does not build",

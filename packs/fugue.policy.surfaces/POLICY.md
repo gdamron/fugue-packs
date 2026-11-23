@@ -69,11 +69,10 @@ app. Do not retry unless they ask.
 Suggest the desktop app only when the person asks for one of these, and name
 it, or when the player fails:
 
-- music that keeps playing on a phone with the player off screen or the app
-  in the background
-- a library of pieces, or saving to disk
-- their own samples, Audio Units, file, RTMP or YouTube outputs, or hardware
-  output
+- music that keeps playing in the background, where a phone's player stops
+  off screen
+- a library of installed packages, or saving a piece to disk
+- their own samples, file, RTMP or YouTube outputs, or hardware output
 - a module type the player does not build, or a piece past the hosted limits;
   load_invention refuses either by name
 - an agent working on a piece with no player open
