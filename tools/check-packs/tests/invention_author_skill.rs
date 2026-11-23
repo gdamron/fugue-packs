@@ -142,10 +142,11 @@ fn the_procedure_says_how_to_keep_the_piece_and_when_to_offer_the_desktop_app() 
     let skill = skill(SKILL);
     let procedure = flat(section(&skill.body, "Procedure"));
     for phrase in [
+        "In the in-chat player, the person keeps the piece with Download piece",
         "Download piece where the player shows it",
-        "Share link otherwise",
+        "Share link otherwise (none for a piece with bundled samples)",
         "anyone with the link has it",
-        "Offer the desktop app only for something the player lacks, and name it",
+        "Offer the desktop app only for something the player lacks, and name what it lacks",
     ] {
         assert!(
             procedure.contains(phrase),
