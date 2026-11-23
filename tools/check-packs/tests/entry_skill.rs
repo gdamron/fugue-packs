@@ -186,8 +186,8 @@ fn the_stop_conditions_cover_the_three_dead_ends() {
     for (stop, next) in [
         ("The user declines the install.", "They can connect"),
         (
-            "The piece uses a module type the preview does not support.",
-            "Offer to rework the piece",
+            "The piece uses a module type the player or preview does not support.",
+            "Rework the piece without it",
         ),
         (
             "No route on this surface can play the piece.",

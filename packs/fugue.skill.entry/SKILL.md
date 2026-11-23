@@ -74,9 +74,10 @@ route without telling the user first.
 - **The user declines the install.** Install nothing. They can connect the
   hosted connector the surfaces policy names to hear a preview, or install
   later.
-- **The piece uses a module type the preview does not support.**
+- **The piece uses a module type the player or preview does not support.**
   `load_invention` refuses it by name, and so does the script, writing no
-  file. Offer to rework the piece without it, or to play it in full after
-  installing Fyug (`get_status` gives the link).
+  file. Rework the piece without it. Offer to play it in full after
+  installing Fyug (`get_status` gives the link) only when the user's request
+  needs that type.
 - **No route on this surface can play the piece.** Say what is missing and
   what to connect or install; do not pretend it played.

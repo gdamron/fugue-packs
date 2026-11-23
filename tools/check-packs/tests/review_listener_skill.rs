@@ -154,7 +154,7 @@ fn the_stop_conditions_cover_a_missing_preview_and_an_unheard_one() {
             "The surfaces policy decides",
         ),
         ("Any other preview refusal.", "Say the reason"),
-        ("Nothing is loaded.", "ask which piece"),
+        ("Nothing is loaded.", "open it in the player"),
         (
             "The piece cannot be rendered offline.",
             "Critique from the meters and scope alone",

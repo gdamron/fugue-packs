@@ -40,8 +40,8 @@ you heard against what the music is meant to do, and propose one change.
 
 1. Recognize the surface as the surfaces policy says. The audio preview is
    the local server's. In the in-chat player, read `get_meters` and
-   `get_notes` from the player instead, skip to step 4 and say the piece
-   was measured, not heard. On any other route, stop.
+   `get_notes` from the player instead, once its tools are offered, skip to
+   step 4 and say the piece was measured, not heard. On any other route, stop.
 2. Read `get_meters` for the whole output and `show_scope` on the voice in
    question, as the listening policy says. A paused piece has nothing to
    measure yet; carry on to the preview.
@@ -67,7 +67,9 @@ Stop, say why, and say what the user can do next.
 
 - **No audio preview and no player tools on this surface.** The surfaces
   policy decides, and says what the user's surface offers instead.
-- **Nothing is loaded.** `show_view` refuses; ask which piece to hear.
+- **Nothing is loaded.** `show_view` refuses, or no player is open; ask
+  which piece to hear, and in the hosted route open it in the player. On a
+  phone its tools come with the person's next message.
 - **The piece cannot be rendered offline.** `show_view` says why (it records
   or streams, say). Critique from the meters and scope alone, and say so.
 - **Any other preview refusal.** Say the reason `show_view` gives, and
