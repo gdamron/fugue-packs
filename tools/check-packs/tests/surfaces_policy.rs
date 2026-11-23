@@ -337,7 +337,8 @@ fn what_the_hosted_server_leaves_to_the_desktop_app_is_listed() {
         section.contains("otherwise do not raise it on this route"),
         "should keep the app out of the player otherwise"
     );
-    // Download piece saves a file, so saving is not the app's alone.
+    // Download piece saves a file, so only the agent's saving is the app's.
+    assert!(section.contains("no player open, or saving it to disk"));
     assert!(!section.contains("saving a piece"));
 }
 

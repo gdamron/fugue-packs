@@ -5,8 +5,8 @@ which one you are on first.
 
 ## Recognize your surface
 
-Use what you can observe, and stop at the first match. A host may add a
-prefix to tool names.
+Go by what you see, and stop at the first match. A host may prefix tool
+names.
 
 1. The local Fyug tools are present (reload_invention, show_view): local.
    When both sets of tools are present, this one wins.
@@ -75,7 +75,7 @@ it, or when the player fails:
 - their own samples, file, RTMP or YouTube outputs, or hardware output
 - a module type the player does not build, or a piece past the hosted limits;
   load_invention refuses either by name
-- an agent working on a piece with no player open
+- an agent working on a piece with no player open, or saving it to disk
 
 Otherwise do not raise it on this route. get_status gives the install URL.
 
