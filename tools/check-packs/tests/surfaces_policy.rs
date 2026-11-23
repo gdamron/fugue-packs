@@ -350,7 +350,7 @@ fn a_piece_is_kept_by_download_or_share_link_never_posted() {
     let section = flat(section(&text, "Keep a piece"));
     for phrase in [
         "Download piece where the player shows it",
-        "it saves the piece to disk",
+        "Download piece where the player shows it (a file on disk)",
         "Share link otherwise",
         "anyone with the link has the piece",
         "Never post a share link yourself",
