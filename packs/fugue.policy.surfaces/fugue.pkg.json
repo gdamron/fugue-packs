@@ -1,6 +1,6 @@
 {
   "id": "fugue.policy.surfaces",
-  "version": "2026.11.0",
+  "version": "2026.11.1",
   "kind": "policy",
   "license": "MIT",
   "authors": [
@@ -8,7 +8,7 @@
       "name": "Grant Damron"
     }
   ],
-  "description": "How an agent tells which surface it is on from the tools it can see, which route plays a piece there, what the browser preview does not offer, and to say which route it is using.",
+  "description": "How an agent tells which surface it is on from the tools it can see, which route plays a piece there, how the hosted in-chat player is used on the web and on a phone, how a piece is kept, what the hosted server leaves to the desktop app, and to say which route it is using.",
   "targets": [
     "external-agent"
   ],
