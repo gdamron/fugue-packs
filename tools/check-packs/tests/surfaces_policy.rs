@@ -161,7 +161,13 @@ fn each_set_of_tools_lands_on_its_surface_and_both_land_on_local() {
     let text = rules(POLICY);
     let section = flat(section(&text, "Recognize your surface"));
     // The tools each numbered rule names, in order.
-    let starts: Vec<usize> = ["1. ", "2. ", "3. ", "4. ", "A shell is on"]
+    let starts: Vec<usize> = [
+        "1. The local",
+        "2. The hosted",
+        "3. A shell is present",
+        "4. None of these",
+        "A shell is on",
+    ]
         .iter()
         .map(|marker| position(&section, marker))
         .collect();
@@ -260,7 +266,7 @@ fn the_in_chat_player_is_loaded_read_and_changed_through_its_tools() {
         "silence, clipping, a part out of range",
         "set_controls for values and apply_edits",
         "rather than sending it again",
-        "offers no player tools, send a changed document to load_invention",
+        "offers no player tools even then, send a changed document to load_invention",
         "list_changed_controls",
     ] {
         assert!(section.contains(phrase), "should say `{phrase}`: {section}");
@@ -286,11 +292,11 @@ fn a_phone_waits_for_the_next_message_and_an_unapproved_call_is_not_retried() {
     for phrase in [
         "On the web the player sits beside the chat",
         "offers downloads",
-        "On a phone its tools appear only after the person's next message",
-        "plan no player tool call in the turn that opens it",
+        "If the player's tools are not offered once load_invention returns, as on a phone, they come with the person's next message",
+        "plan no player tool call in this turn and do not send the piece again",
         "ask them to tap Play",
         "Never call it checked before you have read them",
-        "Sound stops when the player is off screen",
+        "On a phone sound stops when the player is off screen",
         "say what you were about to do",
         "point to the same control in the player",
         "Tell the person once",
@@ -312,7 +318,7 @@ fn what_the_hosted_server_leaves_to_the_desktop_app_is_listed() {
     ))
     .to_lowercase();
     assert!(section.contains(
-        "suggest the desktop app only when the person asks for one of these, and name it"
+        "suggest the desktop app only when the person asks for one of these, and name it, or when the player fails"
     ));
     for lacking in [
         "keeps playing on a phone with the player off screen",
@@ -362,6 +368,7 @@ fn the_agent_names_its_route_and_never_changes_it_silently() {
         "reduced feature set",
         "Tell the user which route you are using",
         "offer the desktop app",
+        "On the preview artifact, offer the hosted connector",
         "Never change route without saying so",
     ] {
         assert!(section.contains(phrase), "should say `{phrase}`");

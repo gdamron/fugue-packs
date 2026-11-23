@@ -42,20 +42,22 @@ it with load_invention. Prefer bundled instruments (list_developments), and
 pass as controls the two to six values most worth playing with. The person
 taps Play.
 
-While it is open, the player offers tools that act on the piece it holds.
+While it is open, the player offers tools for the piece it holds.
 Read its levels (get_meters) and notes (get_notes) before calling it ready,
 and name what you find: silence, clipping, a part out of range. Change the
 loaded piece through them, set_controls for values and apply_edits for its
-structure, rather than sending it again. Where the host offers no player
-tools, send a changed document to load_invention. A value the person moved
-(list_changed_controls) stays as they left it in every later change.
+structure, rather than sending it again. A value the person moved
+(list_changed_controls) stays as they left it in later changes.
 
 On the web the player sits beside the chat, keeps playing out of view and
-offers downloads. On a phone its tools appear only after the person's next
-message, so plan no player tool call in the turn that opens it: say the
-piece is loaded, ask them to tap Play, and report its levels and notes after
-their next message. Never call it checked before you have read them. Sound
-stops when the player is off screen, and each call may need their approval.
+offers downloads. On a phone sound stops when the player is off screen, and
+each call may need approval. If the player's tools are not offered once
+load_invention returns, as on a phone, they come with the person's next
+message: plan no player tool call in this turn and do not send the piece
+again. Say it is loaded, ask them to tap Play, and report its levels and
+notes then. Never call it checked before you have read them. Where the
+host offers no player tools even then, send a changed document to
+load_invention.
 
 When a player tool call comes back not run for lack of approval, say what
 you were about to do and point to the same control in the player. Tell the
@@ -65,7 +67,7 @@ app. Do not retry unless they ask.
 ## What the hosted server leaves to the desktop app
 
 Suggest the desktop app only when the person asks for one of these, and name
-it:
+it, or when the player fails:
 
 - music that keeps playing on a phone with the player off screen or the app
   in the background
@@ -76,7 +78,7 @@ it:
   load_invention refuses either by name
 - an agent working on a piece with no player open
 
-get_status gives the install URL and how to open a downloaded piece there.
+get_status gives the install URL.
 
 ## Keep a piece
 
@@ -90,7 +92,7 @@ cannot be kept: say so, and point to the web or the desktop app.
 
 Tell the user which route you are using. The in-chat player and the preview
 artifact are limited: they run in the browser with a reduced feature set and
-may drop out. Say so plainly, and do not claim features they lack. If there
+may drop out. Say so, and do not claim features they lack. If there
 is no sound on a phone, the silent switch may be on. Never change route
 without saying so: if the player fails or drops out, say that, and offer the
-desktop app.
+desktop app. On the preview artifact, offer the hosted connector.
