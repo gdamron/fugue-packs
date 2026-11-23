@@ -54,7 +54,10 @@ have to pick a backend.
      and say it is a recording, not live. Otherwise the preview file below.
    - **Hosted:** the in-chat player, as the surfaces policy says:
      `check_invention`, then `load_invention`, then the player's own tools
-     to read and change the piece. The user taps Play.
+     to read and change the piece. The user taps Play. Asked how to keep
+     it, point to Download piece where the player shows it, else Share link
+     where there is one. Offer the desktop app only for something the player
+     lacks, and name what it lacks.
    - **Plain chat:** the preview file, when the host can run this skill's
      script and show an HTML file. Save the piece, then run
      `python3 scripts/write_preview.py --player fyug-player.html --modules fyug-player-modules.json --invention piece.json --out piece-preview.html`
