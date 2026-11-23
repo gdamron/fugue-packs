@@ -154,6 +154,14 @@ fn each_surface_in_the_surfaces_policy_has_its_step() {
     assert!(spans.iter().all(|s| HOSTED_TOOLS.contains(&s.as_str())));
     assert!(hosted.contains("in-chat player, as the surfaces policy says"));
     assert!(hosted.contains("player's own tools"));
+    for words in [
+        "Asked how to keep it, point to Download piece",
+        "else Share link where there is one",
+        "Offer the desktop app only for something the player lacks",
+        "name what it lacks",
+    ] {
+        assert!(hosted.contains(words), "the hosted step omits `{words}`");
+    }
     let plain = step("Plain chat");
     for words in [
         "preview file",
