@@ -61,8 +61,9 @@ ear. The pulse demos require the first two. `fugue.policy.rhythm` is the
 rhythm reference: meter, grid, triplets and polyrhythm, swing and groove, tied
 to the clock, sequencer and drum map modules that realize them.
 `fugue.policy.surfaces` is for external agents only: how to tell which surface
-they are on, which route plays a piece there, and what the browser preview
-does not offer.
+they are on, which route plays a piece there, how the hosted server's in-chat
+player is used on the web and on a phone, how a piece is kept, and what the
+hosted server leaves to the desktop app.
 `fugue.policy.theory` is the theory reference: choosing a mode, spelling a scale
 for the sequencers, keeping `chance` and `melody` in key, and changing key while
 a piece plays.
@@ -92,8 +93,9 @@ and in-graph agents: it plans the piece, writes one complete document, loads
 it, listens and refines it, and ships a small example invention.
 
 `fugue.review.listener` is a listening critique for external agents: it
-hears the loaded piece through the local audio preview and meters, says what
-it heard against the piece's intent, and proposes one change.
+hears the loaded piece through the local audio preview and meters (or, in the
+hosted in-chat player, measures its levels and notes), says what it found
+against the piece's intent, and proposes one change.
 
 ## Release musical content
 

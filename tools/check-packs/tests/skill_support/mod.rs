@@ -20,7 +20,7 @@ use serde_json::Value;
 use tools::is_command;
 use tools::AUTHORING_TOOLS;
 // Each skill's test uses some of these, not all.
-pub use tools::{HOSTED_TOOLS, INSTALL_URL, LISTENING_TOOLS, LOCAL_TOOLS};
+pub use tools::{HOSTED_TOOLS, INSTALL_URL, LISTENING_TOOLS, LOCAL_TOOLS, PLAYER_TOOLS};
 
 use crate::policy_support::{
     assert_text_fragments_load, british_spellings, code_spans, pack, policy_text, problem_with,
@@ -98,13 +98,30 @@ pub fn section<'a>(body: &'a str, heading: &str) -> &'a str {
     &rest[..rest.find("\n## ").unwrap_or(rest.len())]
 }
 
+/// Whether `version` is a first-party date version, `YYYY.M.P` from 2026.
+/// A pack's version rises with every change to its content, since an
+/// installed version never changes.
+pub fn is_date_version(version: &str) -> bool {
+    let parts: Vec<&str> = version.split('.').collect();
+    parts.len() == 3
+        && parts.iter().all(|part| part.parse::<u32>().is_ok())
+        && parts[0].parse::<u32>().is_ok_and(|year| year >= 2026)
+        && parts[1]
+            .parse::<u32>()
+            .is_ok_and(|month| (1..=12).contains(&month))
+}
+
 /// A first-party skill pack: date version, MIT with a LICENSE file, the
 /// given targets, and listed in the README's Skills section.
 pub fn assert_first_party_skill(id: &str, targets: &[&str]) {
     let raw: Value =
         serde_json::from_str(&fs::read_to_string(pack(id).join("fugue.pkg.json")).unwrap())
             .unwrap();
-    assert_eq!(raw["version"], "2026.11.0");
+    assert!(
+        is_date_version(raw["version"].as_str().unwrap_or_default()),
+        "{id}'s version is not YYYY.M.P: {}",
+        raw["version"]
+    );
     assert_eq!(raw["license"], "MIT");
     assert_eq!(raw["targets"], serde_json::json!(targets));
     assert!(pack(id).join("LICENSE").is_file(), "LICENSE is missing");
@@ -187,6 +204,7 @@ pub fn assert_names_exist(skill: &Skill, others: &[&str]) {
             || AUTHORING_TOOLS.contains(&span)
             || HOSTED_TOOLS.contains(&span)
             || LISTENING_TOOLS.contains(&span)
+            || PLAYER_TOOLS.contains(&span)
             || others.contains(&span)
             || is_command(span)
     };
