@@ -168,9 +168,9 @@ fn each_set_of_tools_lands_on_its_surface_and_both_land_on_local() {
         "4. None of these",
         "A shell is on",
     ]
-        .iter()
-        .map(|marker| position(&section, marker))
-        .collect();
+    .iter()
+    .map(|marker| position(&section, marker))
+    .collect();
     let rules: Vec<(String, Vec<&str>)> = starts
         .windows(2)
         .map(|pair| {
