@@ -93,8 +93,9 @@ and in-graph agents: it plans the piece, writes one complete document, loads
 it, listens and refines it, and ships a small example invention.
 
 `fugue.review.listener` is a listening critique for external agents: it
-hears the loaded piece through the local audio preview and meters, says what
-it heard against the piece's intent, and proposes one change.
+hears the loaded piece through the local audio preview and meters (or, in the
+hosted in-chat player, measures its levels and notes), says what it found
+against the piece's intent, and proposes one change.
 
 ## Release musical content
 

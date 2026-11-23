@@ -118,6 +118,19 @@ fn the_procedure_plans_authors_loads_listens_and_refines() {
     for tool in ["load_invention", "reload_invention"] {
         assert!(LOCAL_TOOLS.contains(&tool), "{tool} is a local tool");
     }
+    // In the in-chat player: a few controls at load, the notes with the
+    // levels, and a structural change through the player's apply_edits,
+    // since it has no reload_invention.
+    for phrase in [
+        "In the in-chat player, also pass the few controls most worth playing with",
+        "in the in-chat player, read `get_notes` too",
+        "(in the in-chat player, `apply_edits`)",
+    ] {
+        assert!(
+            procedure.contains(phrase),
+            "should say `{phrase}`: {procedure}"
+        );
+    }
     assert!(procedure.contains(&format!("`{EXAMPLE}`")));
 }
 

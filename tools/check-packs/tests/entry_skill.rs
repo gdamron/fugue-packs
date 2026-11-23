@@ -38,7 +38,14 @@ fn the_entry_skill_is_a_first_party_skill_named_fugue() {
     assert_eq!(skill.name, "fugue");
     let description = skill.description.to_lowercase();
     for word in [
-        "make", "play", "change", "fugue", "fyug", "/fugue", "not for",
+        "make",
+        "play",
+        "change",
+        "keep or share",
+        "fugue",
+        "fyug",
+        "/fugue",
+        "not for",
     ] {
         assert!(description.contains(word), "the description omits `{word}`");
     }
@@ -143,8 +150,10 @@ fn each_surface_in_the_surfaces_policy_has_its_step() {
     assert!(cloud.contains("Otherwise the preview file"));
     let hosted = step("Hosted");
     let spans = code_spans(&hosted);
-    assert_eq!(spans, ["check_invention", "play_preview"]);
+    assert_eq!(spans, ["check_invention", "load_invention"]);
     assert!(spans.iter().all(|s| HOSTED_TOOLS.contains(&s.as_str())));
+    assert!(hosted.contains("in-chat player, as the surfaces policy says"));
+    assert!(hosted.contains("player's own tools"));
     let plain = step("Plain chat");
     for words in [
         "preview file",
@@ -191,5 +200,9 @@ fn the_stop_conditions_cover_the_three_dead_ends() {
             .unwrap_or_else(|| panic!("no stop for `{stop}`"));
         assert!(bullet.contains(next), "`{stop}` should offer `{next}`");
     }
-    assert!(stops.contains("`play_preview` refuses it by name, and so does the script"));
+    assert!(stops.contains("`load_invention` refuses it by name, and so does the script"));
+    assert!(
+        !skill.body.contains("play_preview"),
+        "the hosted tool's old name"
+    );
 }

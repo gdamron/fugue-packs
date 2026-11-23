@@ -1,6 +1,6 @@
 {
   "id": "fugue.review.listener",
-  "version": "2026.11.0",
+  "version": "2026.11.1",
   "kind": "skill",
   "license": "MIT",
   "authors": [
@@ -8,7 +8,7 @@
       "name": "Grant Damron"
     }
   ],
-  "description": "A listening critique: hears the loaded piece through the local server's audio preview and meters, says what it heard against the piece's intent, and proposes one change.",
+  "description": "A listening critique: hears the loaded piece through the local server's audio preview and meters, or measures it in the hosted in-chat player, says what it found against the piece's intent, and proposes one change.",
   "targets": [
     "external-agent"
   ],
@@ -16,7 +16,7 @@
     "fugue.policy.listening@^2026.11.0",
     "fugue.policy.musical-intent@^2026.11.0",
     "fugue.policy.clean-audio@^2026.11.0",
-    "fugue.policy.surfaces@^2026.11.0"
+    "fugue.policy.surfaces@^2026.11.1"
   ],
   "entry": {
     "skill": "SKILL.md"

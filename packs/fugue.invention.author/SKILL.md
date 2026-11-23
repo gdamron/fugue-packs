@@ -70,12 +70,14 @@ user meant: plan it, write it whole, load it, listen, then refine it.
      an audio port. Check names with `describe_module` before you guess.
 3. **Load it** with `load_invention`. A refused load names the unknown
    type, port, config key or module id, and lists the ports or keys the
-   module does take: fix that in the document and load again.
+   module does take: fix that in the document and load again. In the
+   in-chat player, also pass the few controls most worth playing with.
 4. **Listen** with `get_meters` while it plays, as the listening policy
-   says.
+   says; in the in-chat player, read `get_notes` too.
 5. **Refine** as the musical-intent policy paces it: a structural change
-   through `reload_invention`, a level or a tempo through `set_controls`.
-   Listen again after each, and stop when it matches the plan.
+   through `reload_invention` (in the in-chat player, `apply_edits`), a
+   level or a tempo through `set_controls`. Listen again after each, and
+   stop when it matches the plan.
 
 ## Stop conditions
 

@@ -1,6 +1,6 @@
 ---
 name: fugue
-description: Make, play or change music with Fugue (also called Fyug), on any surface. Use when the user asks to compose or play a piece, hear an example, or change the music that is playing, or types /fugue. Not for working on Fugue's own source code.
+description: Make, play or change music with Fugue (also called Fyug), on any surface. Use when the user asks to compose or play a piece, hear an example, change the music that is playing, or keep or share a piece, or types /fugue. Not for working on Fugue's own source code.
 ---
 
 # Fugue
@@ -52,8 +52,9 @@ have to pick a backend.
      installed, `fyug render piece.json --out piece.wav --seconds 60` (or
      `--to-end` when the piece ends itself), then hand the user the WAV file
      and say it is a recording, not live. Otherwise the preview file below.
-   - **Hosted:** `check_invention`, fix what it reports, then `play_preview`.
-     The user taps Play.
+   - **Hosted:** the in-chat player, as the surfaces policy says:
+     `check_invention`, then `load_invention`, then the player's own tools
+     to read and change the piece. The user taps Play.
    - **Plain chat:** the preview file, when the host can run this skill's
      script and show an HTML file. Save the piece, then run
      `python3 scripts/write_preview.py --player fyug-player.html --modules fyug-player-modules.json --invention piece.json --out piece-preview.html`
@@ -74,7 +75,7 @@ route without telling the user first.
   hosted connector the surfaces policy names to hear a preview, or install
   later.
 - **The piece uses a module type the preview does not support.**
-  `play_preview` refuses it by name, and so does the script, writing no
+  `load_invention` refuses it by name, and so does the script, writing no
   file. Offer to rework the piece without it, or to play it in full after
   installing Fyug (`get_status` gives the link).
 - **No route on this surface can play the piece.** Say what is missing and
