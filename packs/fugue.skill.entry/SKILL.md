@@ -19,8 +19,8 @@ will play, and play it that way.
   to find your surface and its route.
 - Before opening the in-chat player, read
   [the player](policies/fugue.policy.player.md).
-- Before opening, keeping or sharing a piece or a .fyug file, read
-  [files](policies/fugue.policy.files.md).
+- Before opening a .fyug file, or when asked how to keep or share a piece,
+  read [files](policies/fugue.policy.files.md).
 - Before writing or changing a piece, or adding or editing a script module,
   read [authoring](policies/fugue.policy.authoring.md).
 - Before choosing sounds, levels or changes, read
@@ -29,7 +29,7 @@ will play, and play it that way.
 
 ## Inputs
 
-- The user's request, in their words, and the piece playing or named.
+- The user's request and the piece playing or named.
 - The tools and shell you can see: they decide the surface.
 
 ## Outputs

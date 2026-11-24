@@ -3,7 +3,7 @@
 //! package API:
 //!
 //! - it holds the authoring contract as a first-party policy pack (kind
-//!   `policy`, a markdown `entry.policy`, version `2026.11.0`, both agent
+//!   `policy`, a markdown `entry.policy`, version `2026.11.1`, both agent
 //!   targets, a `#` title and no frontmatter, American English) and the
 //!   repository passes check-packs with it;
 //! - anything specific to the MCP transport sits under one clearly headed
@@ -19,7 +19,7 @@ use fugue::pkg::{check_policy_entry, parse_path};
 use serde_json::{json, Value};
 
 const POLICY: &str = "fugue.policy.authoring";
-const VERSION: &str = "2026.11.0";
+const VERSION: &str = "2026.11.1";
 
 fn repository() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
@@ -303,7 +303,9 @@ fn write_skill_requiring(root: &Path, requirement: &str) {
     .unwrap();
     fs::write(
         dir.join("SKILL.md"),
-        "---\nname: test-authoring-skill\ndescription: A skill that requires the authoring policy.\n---\n\n# Test authoring skill\n",
+        format!(
+            "---\nname: test-authoring-skill\ndescription: A skill that requires the authoring policy.\n---\n\n# Test authoring skill\n\nBefore writing a piece, read [authoring](policies/{POLICY}.md).\n"
+        ),
     )
     .unwrap();
 }
@@ -357,4 +359,58 @@ fn a_requirement_the_policy_cannot_satisfy_is_refused() {
         "the refusal should name {POLICY}:\n{}",
         report(&output)
     );
+}
+
+/// The text under `## heading`, up to the next `##` heading, on one line.
+fn rule(heading: &str) -> String {
+    let text = policy_text();
+    let marker = format!("\n## {heading}\n");
+    let start = text
+        .find(&marker)
+        .unwrap_or_else(|| panic!("no `## {heading}` rule"))
+        + marker.len();
+    let rest = &text[start..];
+    let body = &rest[..rest.find("\n## ").unwrap_or(rest.len())];
+    body.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+/// Structure goes through apply_edits and values through set_controls, on
+/// both hosts; apply_edits is no longer offered for retuning values.
+#[test]
+fn structure_goes_through_apply_edits_and_values_through_set_controls() {
+    let edits = rule("Targeted edits to large inventions");
+    assert!(edits.contains("On both hosts"), "{edits}");
+    assert!(
+        edits.contains("structure with apply_edits") && edits.contains("values with set_controls"),
+        "{edits}"
+    );
+    assert!(!flat_text().contains("several starting values retuned together"));
+}
+
+fn flat_text() -> String {
+    policy_text()
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+/// What a script may do in the hosted in-chat player, as the product ships
+/// it (fyug-product docs/hosted-server.md, "Scripts in the player").
+#[test]
+fn the_scripts_rule_says_what_a_script_does_in_the_player() {
+    let scripts = rule("Scripts");
+    for phrase in [
+        "scripts run, in a sandbox with no network access",
+        "runs_in_player",
+        "not in the saved, shared or downloaded piece",
+        "cannot add a script or agent module",
+        "5 s to start and 1 s per tick",
+        "overruns or throws is stopped until the piece is loaded again",
+        "64 KiB",
+        "On the hosted server an agent module does not run",
+        "load_invention names them under not_run",
+        "nor in get_invention",
+    ] {
+        assert!(scripts.contains(phrase), "should say `{phrase}`: {scripts}");
+    }
 }

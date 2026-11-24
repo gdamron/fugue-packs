@@ -333,6 +333,12 @@ fn the_split_policies_do_not_restate_the_authoring_policy() {
         "reload_invention",
         "show_view",
         "list_developments",
+        // The player names the edit ops it takes and the modules its answers
+        // leave out; the authoring policy names them for other reasons.
+        "add_module",
+        "remove_module",
+        "ttl_ms",
+        "not_run",
     ]
     .into_iter()
     .chain(PLAYER_TOOLS)
