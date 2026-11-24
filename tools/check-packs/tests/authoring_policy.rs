@@ -410,7 +410,6 @@ fn the_scripts_rule_says_what_a_script_does_in_the_player() {
         "On the hosted server an agent module does not run",
         "load_invention names them under not_run",
         "nor in get_invention",
-        "1,000 graph calls a second and 256 structural edits per hook",
     ] {
         assert!(scripts.contains(phrase), "should say `{phrase}`: {scripts}");
     }

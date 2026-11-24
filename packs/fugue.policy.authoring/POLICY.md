@@ -172,8 +172,7 @@ downloaded piece, nor in get_invention. A script cannot add a script or
 agent module. A script has 5 s to start and 1 s per tick (each hook), and
 one that overruns or throws is stopped until the piece is loaded again. A
 script's additions count toward the piece's 64 KiB; past it they are
-refused, and so are your own adds until the piece is loaded again. A script
-makes at most 1,000 graph calls a second and 256 structural edits per hook.
+refused, and so are your own adds until the piece is loaded again.
 
 ## MCP transport
 
