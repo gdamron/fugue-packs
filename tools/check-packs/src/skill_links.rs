@@ -23,7 +23,7 @@ pub fn problems(text: &str, required: &[String]) -> Vec<String> {
         while let Some(found) = rest.find(LINK) {
             let at = offset + found;
             let after = &block[at + LINK.len()..];
-            let Some(id) = after.split_once(".md)").map(|(id, _)| id.to_string()) else {
+            let Some(id) = link_id(after) else {
                 problems.push(format!(
                     "a policy link is not closed: `{}`",
                     excerpt(&block)
@@ -57,9 +57,17 @@ pub fn problems(text: &str, required: &[String]) -> Vec<String> {
     problems
 }
 
-/// The text's paragraphs and list items outside its frontmatter and fenced
-/// code, each with its line breaks and indents collapsed to single spaces
-/// and its list marker removed.
+/// The policy id of a link target, given the text after `](policies/`: up
+/// to the link's closing `)`, without a title, an `#anchor` or `.md`.
+fn link_id(after: &str) -> Option<String> {
+    let (target, _) = after.split_once(')')?;
+    let target = target.split([' ', '#']).next().unwrap_or_default();
+    target.strip_suffix(".md").map(str::to_string)
+}
+
+/// The text's headings, paragraphs and list items outside its frontmatter
+/// and fenced code, each with its line breaks and indents collapsed to single
+/// spaces and its list or heading marker removed.
 fn blocks(text: &str) -> Vec<String> {
     let body = text
         .strip_prefix("---\n")
@@ -70,13 +78,18 @@ fn blocks(text: &str) -> Vec<String> {
     let mut fenced = false;
     for line in body.lines() {
         let trimmed = line.trim();
-        if trimmed.starts_with("```") {
+        if trimmed.starts_with("```") || trimmed.starts_with("~~~") {
             fenced = !fenced;
             blocks.extend(current.take());
             continue;
         }
-        if fenced || trimmed.is_empty() || trimmed.starts_with('#') {
+        if fenced || trimmed.is_empty() {
             blocks.extend(current.take());
+            continue;
+        }
+        if trimmed.starts_with('#') {
+            blocks.extend(current.take());
+            blocks.push(trimmed.trim_start_matches('#').trim().to_string());
             continue;
         }
         match list_item(trimmed) {
@@ -191,6 +204,24 @@ mod tests {
     fn rejects_a_required_policy_the_skill_never_links() {
         let found = problems(FRONT, &required(&["fugue.test.x"]));
         assert_eq!(found, ["requires fugue.test.x but never links it"]);
+    }
+
+    #[test]
+    fn reads_the_id_past_an_anchor_or_a_title() {
+        let text = format!(
+            "{FRONT}- Before playing, read [a](policies/fugue.test.a.md#keep).\n\
+             - When it ends, read [b](policies/fugue.test.b.md \"Rules\").\n"
+        );
+        let found = problems(&text, &required(&["fugue.test.a", "fugue.test.b"]));
+        assert!(found.is_empty(), "{found:?}");
+    }
+
+    #[test]
+    fn checks_a_link_in_a_heading() {
+        let text = format!("{FRONT}## [Rules](policies/fugue.test.x.md)\n");
+        let found = problems(&text, &required(&["fugue.test.x"]));
+        assert_eq!(found.len(), 1, "{found:?}");
+        assert!(found[0].contains("without saying when"), "{found:?}");
     }
 
     #[test]

@@ -31,7 +31,7 @@ right on their own.
 
 - What to package: a description, or modules of a piece that is playing.
 - Where it will be dropped in: the kind of piece and the part it plays.
-- Your tools. With the local ones (`install_package` among them) it lives
+- Your tools. With the local ones (`reload_invention` among them) it lives
   in a file beside its pieces, or a package. With only the hosted ones
   (`check_invention`, no `install_package`), in the piece's document.
 
@@ -95,6 +95,6 @@ Stop, say why, and say what the user can do next.
   the old name or to release it under a new package id.
 - **It is not clean at its defaults.** Do not package what peaks or clicks
   in the trial; say what you heard and what you will change.
-- **It cannot be installed here.** The local tools lack `install_package`,
-  or the user declines: hand over the document to import by `path`. With
+- **It cannot be installed here.** No `install_package` is offered, or the
+  user declines: hand over the document to import by `path`. With
   only the hosted tools this is no stop: it stays in the piece.

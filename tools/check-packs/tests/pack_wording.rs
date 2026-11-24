@@ -74,17 +74,26 @@ fn the_retuned_together_example_is_gone_from_every_pack() {
     }
 }
 
+/// The text's paragraphs and list items, each on one line.
+fn blocks(text: &str) -> Vec<String> {
+    text.split("\n\n")
+        .flat_map(|paragraph| paragraph.split("\n- "))
+        .map(flat)
+        .collect()
+}
+
 #[test]
 fn no_pack_claims_get_notes_has_a_default_number_of_bars() {
     for (path, text) in all_pack_text() {
-        for sentence in sentences(&text) {
-            let sentence = sentence.to_lowercase();
-            assert!(
-                !(sentence.contains("get_notes")
-                    && sentence.contains("default")
-                    && sentence.contains("bar")),
-                "{path} claims a default for get_notes: {sentence}"
-            );
+        for block in blocks(&text).iter().filter(|b| b.contains("get_notes")) {
+            for sentence in sentences(block) {
+                let sentence = sentence.to_lowercase();
+                assert!(
+                    !(sentence.contains("default")
+                        && (sentence.contains("bar") || sentence.contains("get_notes"))),
+                    "{path} claims a default for get_notes: {sentence}"
+                );
+            }
         }
     }
 }

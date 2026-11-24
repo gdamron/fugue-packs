@@ -33,10 +33,17 @@ you were about to do and point to the same control in the player. Tell the
 person once that they can set the connector's tools to always allow in the
 app. Do not retry unless they ask.
 
+## Edit its structure
+
+The player's apply_edits takes only add_module, remove_module, connect and
+disconnect, with no `when` or `ttl_ms`: an edit lands as soon as it is sent.
+Change values through set_controls.
+
 ## Read the notes
 
 Call get_notes with `bars`, how many bars to list (1 to 64; 4 is a good
 first look), and start_bar to begin later than bar 0. A part with random
 modules lists one possible playing (chance). Script and agent modules' notes
-are not listed; the answer names those modules under not_run. When the answer is cut short, pass
-its cursor with the same arguments for the rest.
+are not listed; the answer names those modules under not_run, though a script
+the player runs can still change what plays. When the answer is cut short,
+pass its cursor with the same arguments for the rest.

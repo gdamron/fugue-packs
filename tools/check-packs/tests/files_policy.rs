@@ -52,9 +52,9 @@ fn the_files_policy_is_a_small_external_agent_policy_pack() {
 fn a_piece_is_kept_by_its_two_downloads_or_a_share_link_never_posted() {
     let section = section(&policy_text(POLICY), "Keep a piece");
     for phrase in [
-        "Download piece where the player shows it (a file on disk",
+        "where it shows them: Download piece (a file on disk",
         "Download recording",
-        "Share link otherwise",
+        "Point to Share link otherwise",
         "anyone with the link has the piece",
         "Never post a share link yourself",
         "bundled samples has no Share link",

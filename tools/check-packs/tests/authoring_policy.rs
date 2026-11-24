@@ -407,7 +407,9 @@ fn the_scripts_rule_says_what_a_script_does_in_the_player() {
         "5 s to start and 1 s per tick",
         "overruns or throws is stopped until the piece is loaded again",
         "64 KiB",
-        "Agent modules do not run on the hosted server",
+        "nor does an agent module: load_invention names them under not_run",
+        "nor in get_invention",
+        "1,000 graph calls a second and 256 structural edits per hook",
     ] {
         assert!(scripts.contains(phrase), "should say `{phrase}`: {scripts}");
     }

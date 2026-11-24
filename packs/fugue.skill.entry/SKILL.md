@@ -19,8 +19,8 @@ will play, and play it that way.
   to find your surface and its route.
 - Before opening the in-chat player, read
   [the player](policies/fugue.policy.player.md).
-- Before opening, keeping or sharing a piece or a .fyug file, read
-  [files](policies/fugue.policy.files.md).
+- Before opening a .fyug file, or when asked how to keep or share a piece,
+  read [files](policies/fugue.policy.files.md).
 - Before writing or changing a piece, or adding or editing a script module,
   read [authoring](policies/fugue.policy.authoring.md).
 - Before choosing sounds, levels or changes, read
@@ -64,7 +64,7 @@ will play, and play it that way.
    - **Plain chat:** the preview file, when the host can run this skill's
      script and show an HTML file. Save the piece, then run
      `python3 scripts/write_preview.py --player fyug-player.html --modules fyug-player-modules.json --invention piece.json --out piece-preview.html`
-     from this skill's folder, where the player and module list come with it.
+     from this skill's folder.
      Hand the user the file: say it is a limited preview that may drop out,
      tapping Play starts it, and link the desktop install,
      https://github.com/Ilusiv-media/fyug#install. Never retype, edit or
