@@ -41,9 +41,9 @@ checker's unit tests, formatting, and Clippy.
 
 ## Registry stub
 
-`index.json` intentionally contains an empty `packages` array. FUG-100 owns
-publishing package versions, git references, and integrity hashes after the
-installer can address individual packages in this monorepo.
+`index.json` intentionally contains an empty `packages` array. Package
+versions, git references, and integrity hashes will be published there once
+the installer can address individual packages in this monorepo.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a pack and
 [LICENSING.md](LICENSING.md) for the repository's licensing model.
