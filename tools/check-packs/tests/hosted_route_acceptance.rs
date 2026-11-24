@@ -7,7 +7,8 @@
 //! hosted one by the tools only one of them has; it lists what the hosted
 //! server leaves to the desktop app and when to suggest it; it says how to keep
 //! a piece, what a phone changes, and what to do when a call is not approved.
-//! The packs that changed carry the new version.
+//! The packs that changed carry a version at least the release that
+//! rewrote them.
 //!
 //! Checks look for key nouns and tool names, never whole sentences, so the
 //! wording can change without touching them.
@@ -34,6 +35,8 @@ const CHANGED: [&str; 4] = [
     "fugue.invention.author",
     "fugue.review.listener",
 ];
+/// The release that rewrote them. Later follow-ups raise a pack again, so a
+/// changed pack is at least this version, compared as a version.
 const NEW_VERSION: &str = "2026.11.1";
 
 fn repository() -> PathBuf {
@@ -178,12 +181,14 @@ fn the_plugin_set_holds_the_surfaces_policy_and_every_pack_exists() {
     }
 }
 
-/// The packs that changed carry the new version, and every range that points
-/// at a pack is still met by the version it has.
+/// The packs that changed carry at least the new version, and every range
+/// that points at a pack is still met by the version it has.
 #[test]
 fn changed_packs_carry_the_new_version_and_every_range_is_met() {
+    let new = Version::parse(NEW_VERSION).unwrap();
     for id in CHANGED {
-        assert_eq!(manifest(id)["version"], NEW_VERSION, "{id}");
+        let have = Version::parse(manifest(id)["version"].as_str().unwrap()).unwrap();
+        assert!(have >= new, "{id} is {have}, older than {new}");
     }
     for skill in PLUGIN_SKILLS {
         for entry in manifest(skill)["policies"].as_array().into_iter().flatten() {
