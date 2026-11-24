@@ -218,3 +218,32 @@ pub fn assert_names_exist(skill: &Skill, others: &[&str]) {
     let british = british_spellings(&skill.body, &[]);
     assert!(british.is_empty(), "British spelling: {british:?}");
 }
+
+/// The words a policy pointer opens with, each naming when to read it.
+pub const TRIGGER_WORDS: [&str; 7] = ["Before", "When", "While", "Whenever", "After", "Once", "If"];
+
+/// The item of `## Required policies` that links `policy`, on one line: it
+/// opens with when to read the policy.
+pub fn pointer(skill: &Skill, policy: &str) -> String {
+    let items = section(&skill.body, "Required policies");
+    let item = items
+        .split("\n- ")
+        .find(|item| item.contains(&format!("](policies/{policy}.md)")))
+        .unwrap_or_else(|| panic!("no pointer to {policy}"));
+    let item = item.trim_start_matches("- ").trim_start_matches('\n');
+    let item = item.strip_prefix("- ").unwrap_or(item);
+    let flat = item.split_whitespace().collect::<Vec<_>>().join(" ");
+    let first = flat.split([' ', ',']).next().unwrap_or_default();
+    assert!(
+        TRIGGER_WORDS.contains(&first),
+        "the pointer to {policy} does not say when to read it: {flat}"
+    );
+    flat
+}
+
+/// Every policy the skill requires has a pointer that says when to read it.
+pub fn assert_pointers_say_when(skill: &Skill) {
+    for policy in &skill.policies {
+        pointer(skill, policy);
+    }
+}

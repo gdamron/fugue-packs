@@ -16,11 +16,12 @@ use skill_support::{
 };
 
 const SKILL: &str = "fugue.review.listener";
-const POLICIES: [&str; 4] = [
+const POLICIES: [&str; 5] = [
     "fugue.policy.listening",
     "fugue.policy.musical-intent",
     "fugue.policy.clean-audio",
     "fugue.policy.surfaces",
+    "fugue.policy.player",
 ];
 
 /// A local server tool, as the product lists it.
@@ -77,11 +78,13 @@ fn the_listener_is_a_first_party_skill_for_external_agents() {
     assert!(!printed.contains(SKILL), "check-packs warns:\n{printed}");
 }
 
-/// The four policies are required and linked, and none is restated.
+/// The policies are required and linked, each by a pointer that says when
+/// to read it, and none is restated.
 #[test]
 fn the_listener_requires_its_policies_without_restating_them() {
     let skill = skill(SKILL);
     assert_requires_policies(&skill, &POLICIES);
+    skill_support::assert_pointers_say_when(&skill);
     assert_restates_no_policy(&skill);
 }
 

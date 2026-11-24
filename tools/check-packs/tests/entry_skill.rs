@@ -1,7 +1,7 @@
 //! The entry skill, `fugue.skill.entry`, checked against the repository's
 //! real `packs/`: the `/fugue` skill that recognizes the surface, names the
 //! route, has the piece authored and plays it through that route, leaving
-//! every rule to the four policies it requires.
+//! every rule to the policies it requires, each read when its task comes up.
 
 mod policy_support;
 mod skill_support;
@@ -10,16 +10,18 @@ use std::process::Command;
 
 use policy_support::{code_spans, flat, pack, policy_text, repository};
 use skill_support::{
-    assert_body_fits, assert_first_party_skill, assert_names_exist, assert_requires_policies,
-    assert_restates_no_policy, assert_thin_shape, section, skill, HOSTED_TOOLS, INSTALL_URL,
-    LOCAL_TOOLS,
+    assert_body_fits, assert_first_party_skill, assert_names_exist, assert_pointers_say_when,
+    assert_requires_policies, assert_restates_no_policy, assert_thin_shape, pointer, section,
+    skill, HOSTED_TOOLS, INSTALL_URL, LOCAL_TOOLS,
 };
 
 const SKILL: &str = "fugue.skill.entry";
 const SURFACES: &str = "fugue.policy.surfaces";
-const POLICIES: [&str; 4] = [
+const POLICIES: [&str; 6] = [
     "fugue.policy.authoring",
     SURFACES,
+    "fugue.policy.player",
+    "fugue.policy.files",
     "fugue.policy.clean-audio",
     "fugue.policy.musical-intent",
 ];
@@ -63,12 +65,22 @@ fn the_entry_skill_is_a_first_party_skill_named_fugue() {
     assert!(!printed.contains(SKILL), "check-packs warns:\n{printed}");
 }
 
-/// The four policies are required and linked, and none is restated.
+/// The policies are required and linked, each by a pointer that says when
+/// to read it, and none is restated.
 #[test]
 fn the_entry_skill_requires_its_policies_without_restating_them() {
     let skill = skill(SKILL);
     assert_requires_policies(&skill, &POLICIES);
+    assert_pointers_say_when(&skill);
     assert_restates_no_policy(&skill);
+    assert!(pointer(&skill, SURFACES).starts_with("Before anything else"));
+    let files = pointer(&skill, "fugue.policy.files");
+    assert!(files.contains(".fyug"), "{files}");
+    let authoring = pointer(&skill, "fugue.policy.authoring");
+    assert!(
+        authoring.contains("adding or editing a script module"),
+        "{authoring}"
+    );
 }
 
 /// Thin shape, within the issue's size limit, naming only real things.
@@ -152,12 +164,12 @@ fn each_surface_in_the_surfaces_policy_has_its_step() {
     let spans = code_spans(&hosted);
     assert_eq!(spans, ["check_invention", "load_invention"]);
     assert!(spans.iter().all(|s| HOSTED_TOOLS.contains(&s.as_str())));
-    assert!(hosted.contains("in-chat player, as the surfaces policy says"));
+    assert!(hosted.contains("in-chat player, as the player policy says"));
     assert!(hosted.contains("player's own tools"));
     for words in [
         "On a phone they may come a message or more later",
         "say levels are unread, and never call them missing",
-        "Asked how to keep it, point to Download piece",
+        "Asked how to keep it, point to Download piece or Download recording",
         "else Share link where there is one",
         "Offer the desktop app only for something the player lacks",
         "name what it lacks",

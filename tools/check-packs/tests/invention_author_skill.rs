@@ -14,20 +14,23 @@ use fugue::pkg::parse_path;
 use fugue::RenderEngine;
 use policy_support::{flat, pack, repository, SR};
 use skill_support::{
-    assert_body_fits, assert_first_party_skill, assert_names_exist, assert_requires_policies,
-    assert_restates_no_policy, assert_thin_shape, section, skill, LOCAL_TOOLS, MAX_BODY_CHARACTERS,
+    assert_body_fits, assert_first_party_skill, assert_names_exist, assert_pointers_say_when,
+    assert_requires_policies, assert_restates_no_policy, assert_thin_shape, pointer, section,
+    skill, LOCAL_TOOLS, MAX_BODY_CHARACTERS,
 };
 
 const SKILL: &str = "fugue.invention.author";
 const EXAMPLE: &str = "examples/dorian-evening.invention.json";
-/// Read only when the task calls for them.
+/// Read only when the request names what they cover.
 const MUSIC_POLICIES: [&str; 3] = [
     "fugue.policy.theory",
     "fugue.policy.harmony",
     "fugue.policy.rhythm",
 ];
-const POLICIES: [&str; 7] = [
+const POLICIES: [&str; 9] = [
     "fugue.policy.authoring",
+    "fugue.policy.player",
+    "fugue.policy.files",
     "fugue.policy.clean-audio",
     "fugue.policy.musical-intent",
     "fugue.policy.listening",
@@ -64,25 +67,25 @@ fn the_authoring_skill_is_a_first_party_skill_for_both_agents() {
     assert!(!printed.contains(SKILL), "check-packs warns:\n{printed}");
 }
 
-/// All seven policies are required and linked, none is restated, and the
-/// three music references are read only when the task calls for them.
+/// All nine policies are required and linked, none is restated, and each
+/// link says when to open it: the music references only when the request
+/// names what they cover, files at a .fyug file, authoring before a script.
 #[test]
-fn the_authoring_skill_requires_seven_policies_without_restating_them() {
+fn the_authoring_skill_requires_nine_policies_and_says_when_to_open_each() {
     let skill = skill(SKILL);
     assert_requires_policies(&skill, &POLICIES);
     assert_restates_no_policy(&skill);
+    assert_pointers_say_when(&skill);
 
-    let required = flat(section(&skill.body, "Required policies"));
-    let when = required
-        .find("only when the task calls for them")
-        .expect("the music policies are read only when needed");
-    for policy in POLICIES {
-        let link = required
-            .find(&format!("](policies/{policy}.md)"))
-            .unwrap_or_else(|| panic!("{policy} is not linked"));
-        let conditional = MUSIC_POLICIES.contains(&policy);
-        assert_eq!(link > when, conditional, "{policy} is in the wrong place");
+    for policy in MUSIC_POLICIES {
+        assert!(
+            pointer(&skill, policy).starts_with("When the request names"),
+            "{policy} should be read only when the request names it"
+        );
     }
+    assert!(pointer(&skill, "fugue.policy.files").contains(".fyug"));
+    assert!(pointer(&skill, "fugue.policy.player").contains("in-chat player"));
+    assert!(pointer(&skill, "fugue.policy.authoring").contains("adding or editing a script module"));
 }
 
 /// Thin shape, within the shared size limit, naming only real things.
@@ -118,13 +121,13 @@ fn the_procedure_plans_authors_loads_listens_and_refines() {
     for tool in ["load_invention", "reload_invention"] {
         assert!(LOCAL_TOOLS.contains(&tool), "{tool} is a local tool");
     }
-    // In the in-chat player: a few controls at load, the notes with the
-    // levels, and a structural change through the player's apply_edits,
-    // since it has no reload_invention.
+    // In the in-chat player: a few controls at load and the notes with the
+    // levels. On both hosts a structural change goes through apply_edits and
+    // a value through set_controls.
     for phrase in [
         "In the in-chat player, also pass the few controls most worth playing with",
         "In the in-chat player, read `get_meters` and `get_notes` once its tools are offered",
-        "(in the in-chat player, `apply_edits`)",
+        "on both hosts: a structural change through `apply_edits`, a value such as a level or a tempo through `set_controls`",
         // On a phone the tools can come turns later; the agent waits for them
         // rather than concluding the app has none.
         "on a phone, with the person's next message or a later one",
@@ -149,7 +152,7 @@ fn the_procedure_says_how_to_keep_the_piece_and_when_to_offer_the_desktop_app() 
     let procedure = flat(section(&skill.body, "Procedure"));
     for phrase in [
         "In the in-chat player, the person keeps the piece with Download piece",
-        "Download piece where the player shows it",
+        "Download piece or Download recording where the player shows them",
         "Share link otherwise (none for a piece with bundled samples)",
         "anyone with the link has it",
         "Offer the desktop app only for something the player lacks, and name what it lacks",
