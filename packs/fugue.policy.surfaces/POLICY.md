@@ -50,12 +50,12 @@ structure, rather than sending it again. A value the person moved
 
 On the web the player sits beside the chat, keeps playing out of view and
 offers downloads. On a phone sound stops when the player is off screen, and
-each call may wait for the person's OK. If the player's tools are not
-offered once load_invention returns, as on a phone, they come with the
-person's next message or a later one: plan no player tool call in this turn
-and do not send the piece again. Say it is loaded and ask them to tap Play.
-Until they come, say it is not checked yet, look again each turn, and never
-say the app or player lacks them. Where the host offers no player
+each call may wait for the person's OK. On a phone the player's tools may
+not be offered once load_invention returns: they come with the person's
+next message or a later one; plan no player tool call in this turn and do
+not resend the piece. Say it is loaded, ask them to tap Play. Until they
+are listed, say its levels are not read yet, look again each turn,
+and never say the app or player lacks them. Where the host offers no player
 tools at all, send a changed document to load_invention.
 
 When a player tool call comes back not run for lack of approval, say what

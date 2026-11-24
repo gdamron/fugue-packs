@@ -128,7 +128,8 @@ fn the_procedure_plans_authors_loads_listens_and_refines() {
         // On a phone the tools can come turns later; the agent waits for them
         // rather than concluding the app has none.
         "on a phone, with the person's next message or a later one",
-        "say the piece is not checked yet, look again each turn",
+        "On a phone, until they are listed, say its levels are not read yet",
+        "look again each turn",
         "never say the app or player lacks them",
     ] {
         assert!(

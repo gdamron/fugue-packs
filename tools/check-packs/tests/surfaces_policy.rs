@@ -283,7 +283,7 @@ fn the_in_chat_player_is_loaded_read_and_changed_through_its_tools() {
 }
 
 /// The phone: no player tool in the opening turn; the tools may come with the
-/// next message or a later one, and until then the piece is unchecked and the
+/// next message or a later one, and until then its levels are unread and the
 /// tools are looked for again, never called missing; and a call not approved
 /// is explained once and not retried.
 #[test]
@@ -293,10 +293,10 @@ fn a_phone_waits_for_the_next_message_and_an_unapproved_call_is_not_retried() {
     for phrase in [
         "On the web the player sits beside the chat",
         "offers downloads",
-        "If the player's tools are not offered once load_invention returns, as on a phone, they come with the person's next message or a later one",
-        "plan no player tool call in this turn and do not send the piece again",
+        "On a phone the player's tools may not be offered once load_invention returns: they come with the person's next message or a later one",
+        "plan no player tool call in this turn and do not resend the piece",
         "ask them to tap Play",
-        "Until they come, say it is not checked yet, look again each turn, and never say the app or player lacks them",
+        "Until they are listed, say its levels are not read yet, look again each turn, and never say the app or player lacks them",
         "On a phone sound stops when the player is off screen",
         "say what you were about to do",
         "point to the same control in the player",

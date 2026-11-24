@@ -155,8 +155,8 @@ fn each_surface_in_the_surfaces_policy_has_its_step() {
     assert!(hosted.contains("in-chat player, as the surfaces policy says"));
     assert!(hosted.contains("player's own tools"));
     for words in [
-        "On a phone the tools can come turns later",
-        "say it is unchecked, and never call them missing",
+        "On a phone they may come a message or more later",
+        "say levels are unread, and never call them missing",
         "Asked how to keep it, point to Download piece",
         "else Share link where there is one",
         "Offer the desktop app only for something the player lacks",
