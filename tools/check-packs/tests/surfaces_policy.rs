@@ -266,7 +266,7 @@ fn the_in_chat_player_is_loaded_read_and_changed_through_its_tools() {
         "silence, clipping, a part out of range",
         "set_controls for values and apply_edits",
         "rather than sending it again",
-        "offers no player tools even then, send a changed document to load_invention",
+        "offers no player tools at all, send a changed document to load_invention",
         "list_changed_controls",
     ] {
         assert!(section.contains(phrase), "should say `{phrase}`: {section}");
@@ -282,9 +282,10 @@ fn the_in_chat_player_is_loaded_read_and_changed_through_its_tools() {
     }
 }
 
-/// The phone: no player tool in the opening turn, the levels and notes after
-/// the next message, never "checked" early; and a call not approved is
-/// explained once and not retried.
+/// The phone: no player tool in the opening turn; the tools may come with the
+/// next message or a later one, and until then the piece is unchecked and the
+/// tools are looked for again, never called missing; and a call not approved
+/// is explained once and not retried.
 #[test]
 fn a_phone_waits_for_the_next_message_and_an_unapproved_call_is_not_retried() {
     let text = rules(POLICY);
@@ -292,10 +293,10 @@ fn a_phone_waits_for_the_next_message_and_an_unapproved_call_is_not_retried() {
     for phrase in [
         "On the web the player sits beside the chat",
         "offers downloads",
-        "If the player's tools are not offered once load_invention returns, as on a phone, they come with the person's next message",
+        "If the player's tools are not offered once load_invention returns, as on a phone, they come with the person's next message or a later one",
         "plan no player tool call in this turn and do not send the piece again",
         "ask them to tap Play",
-        "Never call it checked before you have read them",
+        "Until they come, say it is not checked yet, look again each turn, and never say the app or player lacks them",
         "On a phone sound stops when the player is off screen",
         "say what you were about to do",
         "point to the same control in the player",

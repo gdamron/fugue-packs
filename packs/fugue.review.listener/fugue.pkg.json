@@ -1,6 +1,6 @@
 {
   "id": "fugue.review.listener",
-  "version": "2026.11.1",
+  "version": "2026.11.2",
   "kind": "skill",
   "license": "MIT",
   "authors": [
@@ -16,7 +16,7 @@
     "fugue.policy.listening@^2026.11.0",
     "fugue.policy.musical-intent@^2026.11.0",
     "fugue.policy.clean-audio@^2026.11.0",
-    "fugue.policy.surfaces@^2026.11.1"
+    "fugue.policy.surfaces@^2026.11.2"
   ],
   "entry": {
     "skill": "SKILL.md"
