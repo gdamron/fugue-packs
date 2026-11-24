@@ -11,6 +11,7 @@ use serde_json::{json, Value};
 use tempfile::TempDir;
 
 const POLICY: &str = "fugue.test.listed-policy";
+const OTHER_POLICY: &str = "fugue.test.unlisted-policy";
 const MINIMAL_INVENTION: &str = r#"{"modules": [], "connections": []}"#;
 
 struct Run {
@@ -273,9 +274,73 @@ fn a_bad_skill_fails_the_run_even_when_other_packs_are_fine() {
 }
 
 // ---------------------------------------------------------------------------
-// A listed policy link prints no warning (skill_policy_links.rs covers the
-// links that fail the run).
+// Policy links: each names a required policy and says when to open it.
 // ---------------------------------------------------------------------------
+
+#[test]
+fn a_link_to_an_unlisted_policy_fails_the_run_naming_it() {
+    let repo = repository();
+    policy_pack(repo.path(), POLICY);
+    let skill = skill_text(
+        "name: pack-skill",
+        "description: Shapes a phrase.",
+        &format!(
+            "Before shaping a phrase, read the [rules](policies/{POLICY}.md). \
+             Before ending it, read the [others](policies/{OTHER_POLICY}.md)."
+        ),
+    );
+    write_pack(
+        repo.path(),
+        SKILL_ID,
+        &skill_manifest(
+            SKILL_ID,
+            json!({ "policies": [format!("{POLICY}@^0.1.0")] }),
+        ),
+        &[("SKILL.md", &skill)],
+    );
+    let run = check(repo.path());
+    assert!(
+        !run.success,
+        "an unlisted policy link passed: {}",
+        run.output
+    );
+    assert!(
+        run.output.contains(OTHER_POLICY) && run.output.contains("does not require"),
+        "the failure names the link, but the output is: {}",
+        run.output
+    );
+}
+
+#[test]
+fn a_policy_link_that_does_not_say_when_to_open_it_fails_the_run() {
+    let repo = repository();
+    policy_pack(repo.path(), POLICY);
+    let skill = skill_text(
+        "name: pack-skill",
+        "description: Shapes a phrase.",
+        &format!("- [Rules](policies/{POLICY}.md): how a phrase is shaped."),
+    );
+    write_pack(
+        repo.path(),
+        SKILL_ID,
+        &skill_manifest(
+            SKILL_ID,
+            json!({ "policies": [format!("{POLICY}@^0.1.0")] }),
+        ),
+        &[("SKILL.md", &skill)],
+    );
+    let run = check(repo.path());
+    assert!(
+        !run.success,
+        "a pointer with no moment passed: {}",
+        run.output
+    );
+    assert!(
+        run.output.contains(POLICY) && run.output.contains("without saying when"),
+        "the failure names the policy, but the output is: {}",
+        run.output
+    );
+}
 
 #[test]
 fn a_link_to_a_listed_policy_prints_no_warning() {

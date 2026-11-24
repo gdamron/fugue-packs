@@ -29,7 +29,7 @@ will play, and play it that way.
 
 ## Inputs
 
-- The user's request, in their words, and the piece playing or named.
+- The user's request and the piece playing or named.
 - The tools and shell you can see: they decide the surface.
 
 ## Outputs
@@ -64,7 +64,7 @@ will play, and play it that way.
    - **Plain chat:** the preview file, when the host can run this skill's
      script and show an HTML file. Save the piece, then run
      `python3 scripts/write_preview.py --player fyug-player.html --modules fyug-player-modules.json --invention piece.json --out piece-preview.html`
-     from this skill's folder.
+     from this skill's folder, where the player and module list come with it.
      Hand the user the file: say it is a limited preview that may drop out,
      tapping Play starts it, and link the desktop install,
      https://github.com/Ilusiv-media/fyug#install. Never retype, edit or

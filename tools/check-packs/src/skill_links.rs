@@ -24,10 +24,12 @@ pub fn problems(text: &str, required: &[String]) -> Vec<String> {
             let at = offset + found;
             let after = &block[at + LINK.len()..];
             let Some(id) = link_id(after) else {
-                problems.push(format!(
-                    "a policy link is not closed: `{}`",
-                    excerpt(&block)
-                ));
+                let what = if after.contains(')') {
+                    "does not end in .md"
+                } else {
+                    "is not closed"
+                };
+                problems.push(format!("a policy link {what}: `{}`", excerpt(&block)));
                 break;
             };
             if !required.contains(&id) {
@@ -222,6 +224,13 @@ mod tests {
         let found = problems(&text, &required(&["fugue.test.x"]));
         assert_eq!(found.len(), 1, "{found:?}");
         assert!(found[0].contains("without saying when"), "{found:?}");
+    }
+
+    #[test]
+    fn names_a_link_that_does_not_end_in_md() {
+        let text = format!("{FRONT}- Before playing, read [x](policies/fugue.test.x).\n");
+        let found = problems(&text, &required(&["fugue.test.x"]));
+        assert!(found[0].contains("does not end in .md"), "{found:?}");
     }
 
     #[test]

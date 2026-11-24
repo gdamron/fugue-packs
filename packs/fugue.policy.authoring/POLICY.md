@@ -81,8 +81,9 @@ On both hosts, the local tools and the hosted in-chat player alike (once it
 offers its tools), change a playing piece's structure with apply_edits (a new
 voice wired into a mixer, a filter inserted into a chain) and its values with
 set_controls; the player policy says which edits the player takes. Its edits
-apply in order, and the batch commits whole, in one revision, or not at all. A control write that does not take after the batch commits is listed
-in controls_failed: repair only those against the new revision rather than
+apply in order, and the batch commits whole, in one revision, or not at all.
+A control write that does not take after the batch commits is listed in
+controls_failed: repair only those against the new revision rather than
 resending the batch. Chain each call on the previous result's revision. On
 the local tools, reload_invention stays the default when you hold the whole
 document and are rewriting it.
@@ -164,15 +165,15 @@ integrity_mismatch.
 
 In the hosted in-chat player a piece's scripts run, in a sandbox with no
 network access: read load_invention's runs_in_player for the ones it runs
-rather than assuming. On the hosted server an agent module does not run,
-nor does a script inside a development: load_invention names them under
-not_run. What a script changes while it runs is not in the saved, shared or
-downloaded piece, nor in get_invention. A script cannot add a script or agent module. A script has 5 s
-to start and 1 s per tick (each hook), and one that overruns or throws is
-stopped until the piece is loaded again. A script's additions count toward
-the piece's 64 KiB; past it they are refused, and so are your own adds until
-the piece is loaded again. A script makes at most 1,000 graph calls a second
-and 256 structural edits per hook.
+rather than assuming. On the hosted server an agent module does not run, nor
+does a script inside a development: load_invention names them under not_run.
+What a script changes while it runs is not in the saved, shared or
+downloaded piece, nor in get_invention. A script cannot add a script or
+agent module. A script has 5 s to start and 1 s per tick (each hook), and
+one that overruns or throws is stopped until the piece is loaded again. A
+script's additions count toward the piece's 64 KiB; past it they are
+refused, and so are your own adds until the piece is loaded again. A script
+makes at most 1,000 graph calls a second and 256 structural edits per hook.
 
 ## MCP transport
 
