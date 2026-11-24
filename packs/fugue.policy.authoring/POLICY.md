@@ -77,9 +77,10 @@ restarts state, happens only when nothing is running.
 
 ## Targeted edits to large inventions
 
-On both hosts, the local tools and the hosted in-chat player alike, change a
-playing piece's structure with apply_edits (a new voice wired into a mixer, a
-filter inserted into a chain) and its values with set_controls. apply_edits'
+On both hosts, the local tools and the hosted in-chat player alike (once it
+offers its tools), change a playing piece's structure with apply_edits (a new
+voice wired into a mixer, a filter inserted into a chain) and its values with
+set_controls. apply_edits'
 edits apply in order, and the batch commits whole, in one revision, or not
 at all. A control write that does not take after the batch commits is listed
 in controls_failed: repair only those against the new revision rather than
