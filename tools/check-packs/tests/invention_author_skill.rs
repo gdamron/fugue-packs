@@ -125,6 +125,12 @@ fn the_procedure_plans_authors_loads_listens_and_refines() {
         "In the in-chat player, also pass the few controls most worth playing with",
         "In the in-chat player, read `get_meters` and `get_notes` once its tools are offered",
         "(in the in-chat player, `apply_edits`)",
+        // On a phone the tools can come turns later; the agent waits for them
+        // rather than concluding the app has none.
+        "on a phone, with the person's next message or a later one",
+        "On a phone, until they are listed, say its levels are not read yet",
+        "look again each turn",
+        "never say the app or player lacks them",
     ] {
         assert!(
             procedure.contains(phrase),

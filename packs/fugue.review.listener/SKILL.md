@@ -69,7 +69,8 @@ Stop, say why, and say what the user can do next.
   policy decides, and says what the user's surface offers instead.
 - **Nothing is loaded.** `show_view` refuses, or no player is open; ask
   which piece to hear, and in the hosted route open it in the player. On a
-  phone its tools come with the person's next message.
+  phone its tools come with the person's next message or a later one; until
+  then say it is not measured yet, and never that the tools are missing.
 - **The piece cannot be rendered offline.** `show_view` says why (it records
   or streams, say). Critique from the meters and scope alone, and say so.
 - **Any other preview refusal.** Say the reason `show_view` gives, and

@@ -78,7 +78,9 @@ user meant: plan it, write it whole, load it, listen, then refine it.
    app only for something the player lacks, and name what it lacks.
 4. **Listen** with `get_meters` while it plays, as the listening policy
    says. In the in-chat player, read `get_meters` and `get_notes` once its
-   tools are offered (on a phone, after the person's next message).
+   tools are offered (on a phone, with the person's next message or a later
+   one). On a phone, until they are listed, say its levels are not read yet,
+   look again each turn, and never say the app or player lacks them.
 5. **Refine** as the musical-intent policy paces it: a structural change
    through `reload_invention` (in the in-chat player, `apply_edits`), a
    level or a tempo through `set_controls`. Listen again after each, and

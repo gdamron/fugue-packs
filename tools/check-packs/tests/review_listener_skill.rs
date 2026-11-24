@@ -155,6 +155,8 @@ fn the_stop_conditions_cover_a_missing_preview_and_an_unheard_one() {
         ),
         ("Any other preview refusal.", "Say the reason"),
         ("Nothing is loaded.", "open it in the player"),
+        ("Nothing is loaded.", "next message or a later one"),
+        ("Nothing is loaded.", "never that the tools are missing"),
         (
             "The piece cannot be rendered offline.",
             "Critique from the meters and scope alone",
