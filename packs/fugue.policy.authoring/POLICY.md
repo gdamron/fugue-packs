@@ -164,10 +164,10 @@ integrity_mismatch.
 
 In the hosted in-chat player a piece's scripts run, in a sandbox with no
 network access: read load_invention's runs_in_player for the ones it runs
-rather than assuming. A script inside a development does not run there, nor
-does an agent module: load_invention names them under not_run. What a script
-changes while it runs is not in the saved, shared or downloaded piece, nor in
-get_invention. A script cannot add a script or agent module. A script has 5 s
+rather than assuming. On the hosted server an agent module does not run,
+nor does a script inside a development: load_invention names them under
+not_run. What a script changes while it runs is not in the saved, shared or
+downloaded piece, nor in get_invention. A script cannot add a script or agent module. A script has 5 s
 to start and 1 s per tick (each hook), and one that overruns or throws is
 stopped until the piece is loaded again. A script's additions count toward
 the piece's 64 KiB; past it they are refused, and so are your own adds until
