@@ -14,7 +14,7 @@
     "in-graph-agent"
   ],
   "policies": [
-    "fugue.policy.authoring@^2026.11.0",
+    "fugue.policy.authoring@^2026.11.1",
     "fugue.policy.player@^2026.11.0",
     "fugue.policy.files@^2026.11.0",
     "fugue.policy.clean-audio@^2026.11.0",

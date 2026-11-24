@@ -219,7 +219,8 @@ pub fn assert_names_exist(skill: &Skill, others: &[&str]) {
     assert!(british.is_empty(), "British spelling: {british:?}");
 }
 
-/// The words a policy pointer opens with, each naming when to read it.
+/// The words a policy pointer opens with, each naming when to read it; the
+/// checker (`src/skill_links.rs`) holds the same list.
 pub const TRIGGER_WORDS: [&str; 7] = ["Before", "When", "While", "Whenever", "After", "Once", "If"];
 
 /// The item of `## Required policies` that links `policy`, on one line: it

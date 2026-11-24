@@ -8,6 +8,8 @@ use fugue::pkg::{self, sample_pack, EntrySpec, PackageManifest, PackageProvider}
 use semver::Version;
 use serde_json::Value;
 
+mod skill_links;
+
 fn main() {
     let mut args = env::args_os().skip(1);
     let root = args.next().map(PathBuf::from).unwrap_or_else(|| ".".into());
@@ -213,6 +215,7 @@ fn check_entry(pack_root: &Path, manifest: &PackageManifest) -> Result<Vec<Strin
     if matches!(manifest.entry, EntrySpec::Skill { .. }) {
         let checked = pkg::check_skill_package(pack_root, manifest)
             .map_err(|error| format!("{}: {error}", manifest.id))?;
+        check_policy_links(&checked.entry, manifest)?;
         return Ok(checked
             .warnings
             .iter()
@@ -220,6 +223,24 @@ fn check_entry(pack_root: &Path, manifest: &PackageManifest) -> Result<Vec<Strin
             .collect());
     }
     Ok(Vec::new())
+}
+
+/// A skill links each policy its manifest requires, and no other, each in a
+/// sentence that says when to open it (see `skill_links`).
+fn check_policy_links(entry: &Path, manifest: &PackageManifest) -> Result<(), String> {
+    let text = fs::read_to_string(entry)
+        .map_err(|error| format!("cannot read {}: {error}", entry.display()))?;
+    let required: Vec<String> = manifest
+        .policies
+        .iter()
+        .flatten()
+        .map(|policy| policy.split('@').next().unwrap_or_default().to_string())
+        .collect();
+    let problems = skill_links::problems(&text, &required);
+    if problems.is_empty() {
+        return Ok(());
+    }
+    Err(format!("{}: {}", manifest.id, problems.join("; ")))
 }
 
 fn check_sample_pack_entry(
@@ -283,19 +304,23 @@ mod tests {
             "targets": ["external-agent"],
             "entry": {"skill": entry}
         });
+        let mut text =
+            "---\nname: test-skill\ndescription: A test skill.\n---\n# Test skill\n".to_string();
         if let Some(policies) = policies {
             manifest["policies"] = json!(policies);
+            for policy in policies {
+                let id = policy.split('@').next().unwrap_or(policy);
+                text.push_str(&format!(
+                    "\n- Before playing, read [it](policies/{id}.md).\n"
+                ));
+            }
         }
         fs::write(
             pack.join("fugue.pkg.json"),
             serde_json::to_vec_pretty(&manifest).expect("manifest JSON"),
         )
         .expect("manifest");
-        fs::write(
-            pack.join(entry),
-            "---\nname: test-skill\ndescription: A test skill.\n---\n# Test skill\n",
-        )
-        .expect("entry");
+        fs::write(pack.join(entry), text).expect("entry");
     }
 
     fn write_policy(root: &Path, id: &str, entry: &str, text: &str) {
@@ -401,7 +426,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             agent.dependencies[2..],
-            ["fugue.demo.pulse-skill@0.1.0"],
+            ["fugue.demo.pulse-skill@0.1.1"],
             "the agent composes the pulse skill"
         );
     }

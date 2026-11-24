@@ -274,18 +274,20 @@ fn a_bad_skill_fails_the_run_even_when_other_packs_are_fine() {
 }
 
 // ---------------------------------------------------------------------------
-// Warnings are printed and the run still succeeds.
+// Policy links: each names a required policy and says when to open it.
 // ---------------------------------------------------------------------------
 
 #[test]
-fn a_link_to_an_unlisted_policy_is_printed_as_a_warning_and_the_run_succeeds() {
+fn a_link_to_an_unlisted_policy_fails_the_run_naming_it() {
     let repo = repository();
     policy_pack(repo.path(), POLICY);
-    let link = format!("policies/{OTHER_POLICY}.md");
     let skill = skill_text(
         "name: pack-skill",
         "description: Shapes a phrase.",
-        &format!("Follow the [rules]({link})."),
+        &format!(
+            "Before shaping a phrase, read the [rules](policies/{POLICY}.md). \
+             Before ending it, read the [others](policies/{OTHER_POLICY}.md)."
+        ),
     );
     write_pack(
         repo.path(),
@@ -298,13 +300,44 @@ fn a_link_to_an_unlisted_policy_is_printed_as_a_warning_and_the_run_succeeds() {
     );
     let run = check(repo.path());
     assert!(
-        run.success,
-        "a warning does not fail the run: {}",
+        !run.success,
+        "an unlisted policy link passed: {}",
         run.output
     );
     assert!(
-        run.output.contains(&link),
-        "the warning names the link, but the output is: {}",
+        run.output.contains(OTHER_POLICY) && run.output.contains("does not require"),
+        "the failure names the link, but the output is: {}",
+        run.output
+    );
+}
+
+#[test]
+fn a_policy_link_that_does_not_say_when_to_open_it_fails_the_run() {
+    let repo = repository();
+    policy_pack(repo.path(), POLICY);
+    let skill = skill_text(
+        "name: pack-skill",
+        "description: Shapes a phrase.",
+        &format!("- [Rules](policies/{POLICY}.md): how a phrase is shaped."),
+    );
+    write_pack(
+        repo.path(),
+        SKILL_ID,
+        &skill_manifest(
+            SKILL_ID,
+            json!({ "policies": [format!("{POLICY}@^0.1.0")] }),
+        ),
+        &[("SKILL.md", &skill)],
+    );
+    let run = check(repo.path());
+    assert!(
+        !run.success,
+        "a pointer with no moment passed: {}",
+        run.output
+    );
+    assert!(
+        run.output.contains(POLICY) && run.output.contains("without saying when"),
+        "the failure names the policy, but the output is: {}",
         run.output
     );
 }
@@ -317,7 +350,7 @@ fn a_link_to_a_listed_policy_prints_no_warning() {
     let skill = skill_text(
         "name: pack-skill",
         "description: Shapes a phrase.",
-        &format!("Follow the [rules]({link})."),
+        &format!("Before shaping a phrase, read the [rules]({link})."),
     );
     write_pack(
         repo.path(),

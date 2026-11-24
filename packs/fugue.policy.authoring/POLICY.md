@@ -77,14 +77,15 @@ restarts state, happens only when nothing is running.
 
 ## Targeted edits to large inventions
 
-When resending the whole document costs more than the change (a new voice
-wired into a mixer, a filter inserted into a chain, several starting values
-retuned together), use apply_edits: its edits apply in order, and the batch
-commits whole, in one revision, or not at all. A control write that does not
-take after the batch commits is listed in controls_failed: repair only those
-against the new revision rather than resending the batch. Chain each call on
-the previous result's revision. reload_invention stays the default when you
-hold the document.
+On both hosts, the local tools and the hosted in-chat player alike, change a
+playing piece's structure with apply_edits (a new voice wired into a mixer, a
+filter inserted into a chain) and its values with set_controls. apply_edits'
+edits apply in order, and the batch commits whole, in one revision, or not
+at all. A control write that does not take after the batch commits is listed
+in controls_failed: repair only those against the new revision rather than
+resending the batch. Chain each call on the previous result's revision. On
+the local tools, reload_invention stays the default when you hold the whole
+document and are rewriting it.
 
 ## Read before retrying
 
@@ -158,6 +159,17 @@ install_package installs one, with its dependencies, from a local directory,
 GitHub or a registry. Installed versions never change: an identical repeat
 reports already_installed, and other bytes under the same version fail with
 integrity_mismatch.
+
+## Scripts
+
+In the hosted in-chat player a piece's scripts run, in a sandbox with no
+network access: read load_invention's runs_in_player for the ones it runs
+rather than assuming. What a script changes while it runs is not in the
+saved, shared or downloaded piece. A script cannot add a script or agent
+module. A script has 5 s to start and 1 s per tick, and one that
+overruns or throws is stopped until the piece is loaded again. The piece
+with a script's additions stays within 64 KiB. Agent modules do not run on
+the hosted server. Other limits are in the product's documentation.
 
 ## MCP transport
 

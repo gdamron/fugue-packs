@@ -1,6 +1,6 @@
 {
   "id": "fugue.policy.authoring",
-  "version": "2026.11.0",
+  "version": "2026.11.1",
   "kind": "policy",
   "license": "MIT",
   "authors": [
@@ -8,7 +8,7 @@
       "name": "Grant Damron"
     }
   ],
-  "description": "How an agent creates, edits and conducts a Fugue invention: document-first authoring, config keys named after controls, revision-checked reloads, targeted edits, recovery after a lost reply, and timed changes.",
+  "description": "How an agent creates, edits and conducts a Fugue invention: document-first authoring, config keys named after controls, revision-checked reloads, targeted edits, recovery after a lost reply, timed changes, and scripts in the hosted in-chat player.",
   "targets": [
     "external-agent",
     "in-graph-agent"

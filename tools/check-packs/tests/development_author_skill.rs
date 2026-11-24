@@ -14,13 +14,19 @@ use fugue::{Invention, RenderEngine};
 use policy_support::{flat, pack, repository, SR};
 use serde_json::{json, Value};
 use skill_support::{
-    assert_body_fits, assert_first_party_skill, assert_names_exist, assert_requires_policies,
-    assert_restates_no_policy, assert_thin_shape, format_fields, interface_names, section, skill,
-    DEVELOPMENT_TOOLS, MAX_BODY_CHARACTERS,
+    assert_body_fits, assert_first_party_skill, assert_names_exist, assert_pointers_say_when,
+    assert_requires_policies, assert_restates_no_policy, assert_thin_shape, format_fields,
+    interface_names, pointer, section, skill, DEVELOPMENT_TOOLS, HOSTED_TOOLS, MAX_BODY_CHARACTERS,
+    PLAYER_TOOLS,
 };
 
 const SKILL: &str = "fugue.development.author";
-const POLICIES: [&str; 2] = ["fugue.policy.authoring", "fugue.policy.clean-audio"];
+const POLICIES: [&str; 4] = [
+    "fugue.policy.authoring",
+    "fugue.policy.clean-audio",
+    "fugue.policy.player",
+    "fugue.policy.files",
+];
 const DEVELOPMENT: &str = "examples/glass-mallet.development.json";
 const TRIAL: &str = "examples/glass-mallet-trial.json";
 /// The bundled developments whose interface the skill tells authors to share.
@@ -70,12 +76,62 @@ fn the_development_author_is_a_first_party_skill() {
     assert!(!printed.contains(SKILL), "check-packs warns:\n{printed}");
 }
 
-/// Both policies are required and linked, and neither is restated.
+/// The four policies are required and linked, none is restated, and each
+/// link says when to open it.
 #[test]
 fn the_development_author_requires_its_policies_without_restating_them() {
     let skill = skill(SKILL);
     assert_requires_policies(&skill, &POLICIES);
     assert_restates_no_policy(&skill);
+    assert_pointers_say_when(&skill);
+    assert!(pointer(&skill, "fugue.policy.authoring").contains("adding or editing a script module"));
+    assert!(pointer(&skill, "fugue.policy.files").contains(".fyug"));
+}
+
+/// The code spans of `sentence`, without the ones it says are missing
+/// (``no `install_package` ``).
+fn spans_present(sentence: &str) -> Vec<&str> {
+    sentence
+        .split('`')
+        .enumerate()
+        .filter(|(i, _)| i % 2 == 1)
+        .zip(sentence.split('`').step_by(2))
+        .filter(|(_, before)| !before.ends_with("no "))
+        .map(|((_, span), _)| span)
+        .collect()
+}
+
+/// With only the hosted tools the development lives inside the piece that
+/// uses it, written there as a `definition`; the skill says plainly that it
+/// lives only in that piece, brings up the desktop app only when the person
+/// asks to reuse it, and names only tools the hosted server and the player
+/// have. The local path still installs a package.
+#[test]
+fn with_only_the_hosted_tools_the_development_lives_in_the_piece() {
+    let skill = skill(SKILL);
+    let body = flat(&skill.body);
+    let hosted: Vec<&str> = body
+        .split(". ")
+        .filter(|sentence| sentence.contains("only the hosted"))
+        .collect();
+    assert!(hosted.len() >= 3, "{hosted:?}");
+    for sentence in &hosted {
+        for span in spans_present(sentence) {
+            let tool = span.contains('_') && !span.contains('.');
+            assert!(
+                !tool || HOSTED_TOOLS.contains(&span) || PLAYER_TOOLS.contains(&span),
+                "`{span}` is not a hosted tool: {sentence}"
+            );
+        }
+    }
+    for phrase in [
+        "write it inline as a `definition` in the piece's own `developments`",
+        "say plainly that the instrument lives only in that piece",
+        "Mention the desktop app only when the person asks to reuse it in other pieces",
+        "Install it with `install_package`",
+    ] {
+        assert!(body.contains(phrase), "should say `{phrase}`: {body}");
+    }
 }
 
 /// Thin shape and size, and every span is a real tool, module type, control,

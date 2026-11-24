@@ -1,6 +1,6 @@
 {
   "id": "fugue.development.author",
-  "version": "2026.11.0",
+  "version": "2026.11.1",
   "kind": "skill",
   "license": "MIT",
   "authors": [
@@ -8,14 +8,16 @@
       "name": "Grant Damron"
     }
   ],
-  "description": "Packages a reusable voice or subgraph as a development: its exposed ports and controls, names, version, and defaults that stay clean wherever it is dropped in.",
+  "description": "Packages a reusable voice or subgraph as a development: its exposed ports and controls, names, version, and defaults that stay clean wherever it is dropped in. With only the hosted tools, it defines the instrument inside the piece's own document.",
   "targets": [
     "external-agent",
     "in-graph-agent"
   ],
   "policies": [
-    "fugue.policy.authoring@^2026.11.0",
-    "fugue.policy.clean-audio@^2026.11.0"
+    "fugue.policy.authoring@^2026.11.1",
+    "fugue.policy.clean-audio@^2026.11.0",
+    "fugue.policy.player@^2026.11.0",
+    "fugue.policy.files@^2026.11.0"
   ],
   "examples": [
     "examples/glass-mallet.development.json",

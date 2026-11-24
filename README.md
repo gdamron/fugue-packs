@@ -65,7 +65,9 @@ they are on, which route plays a piece there, and what the hosted server leaves
 to the desktop app. `fugue.policy.player` is how the hosted server's in-chat
 player is used on the web and on a phone, its notes read included.
 `fugue.policy.files` is how a piece is kept (its downloads and share link) and
-how a downloaded `.fyug` file is opened.
+how a downloaded `.fyug` file is opened. A skill links each policy it requires
+in a sentence that says when to open it ("Before opening the in-chat player,
+read ..."), and check-packs fails a link without one.
 `fugue.policy.theory` is the theory reference: choosing a mode, spelling a scale
 for the sequencers, keeping `chance` and `melody` in key, and changing key while
 a piece plays.
