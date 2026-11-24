@@ -16,18 +16,22 @@ user meant: plan it, write it whole, load it, listen, then refine it.
 
 ## Required policies
 
-- [Authoring](policies/fugue.policy.authoring.md): the document, loading and
-  editing.
-- [Clean audio](policies/fugue.policy.clean-audio.md): levels, envelopes and
-  changes that do not click.
-- [Musical intent](policies/fugue.policy.musical-intent.md): what to change
-  and when.
-- [Listening](policies/fugue.policy.listening.md): what counts as heard.
-- Read these only when the task calls for them:
-  [theory](policies/fugue.policy.theory.md) for a key, scale or mode,
-  [harmony](policies/fugue.policy.harmony.md) for chords or a progression,
-  and [rhythm](policies/fugue.policy.rhythm.md) for a meter, triplets, swing
-  or a groove.
+- Before writing, loading or changing the piece, or adding or editing a
+  script module, read [authoring](policies/fugue.policy.authoring.md).
+- Before loading it in the in-chat player (the hosted tools), read
+  [the player](policies/fugue.policy.player.md).
+- Before opening a .fyug file, or when asked how to keep the piece, read
+  [files](policies/fugue.policy.files.md).
+- Before setting levels or envelopes, read
+  [clean audio](policies/fugue.policy.clean-audio.md).
+- Before choosing what to change and when, read
+  [musical intent](policies/fugue.policy.musical-intent.md).
+- Before saying how it sounds, read
+  [listening](policies/fugue.policy.listening.md).
+- When the request names a key, scale or mode, read
+  [theory](policies/fugue.policy.theory.md); chords or a progression,
+  [harmony](policies/fugue.policy.harmony.md); a meter, triplets, swing or
+  a groove, [rhythm](policies/fugue.policy.rhythm.md).
 
 ## Inputs
 
@@ -68,23 +72,23 @@ user meant: plan it, write it whole, load it, listen, then refine it.
      and keeps only the last module.
    - Ports differ by type: `noise` has `noise.white` and `noise.pink`, not
      an audio port. Check names with `describe_module` before you guess.
-3. **Load it** with `load_invention`. A refused load names the unknown
-   type, port, config key or module id, and lists the ports or keys the
-   module does take: fix that in the document and load again. In the
+3. **Load it** with `load_invention`. A refused load names what is wrong
+   and what the module takes: fix the document and load again. In the
    in-chat player, also pass the few controls most worth playing with.
    In the in-chat player, the person keeps the piece with Download piece
-   where the player shows it, and Share link otherwise (none for a piece
-   with bundled samples); anyone with the link has it. Offer the desktop
-   app only for something the player lacks, and name what it lacks.
+   or Download recording where the player shows them, and Share link
+   otherwise (none for a piece with bundled samples); anyone with the link
+   has it. Offer the desktop app only for something the player lacks, and
+   name what it lacks.
 4. **Listen** with `get_meters` while it plays, as the listening policy
    says. In the in-chat player, read `get_meters` and `get_notes` once its
    tools are offered (on a phone, with the person's next message or a later
    one). On a phone, until they are listed, say its levels are not read yet,
    look again each turn, and never say the app or player lacks them.
-5. **Refine** as the musical-intent policy paces it: a structural change
-   through `reload_invention` (in the in-chat player, `apply_edits`), a
-   level or a tempo through `set_controls`. Listen again after each, and
-   stop when it matches the plan.
+5. **Refine** as the musical-intent policy paces it, on both hosts: a
+   structural change through `apply_edits`, a value such as a level or a
+   tempo through `set_controls`. Listen again after each, and stop when it
+   matches the plan.
 
 ## Stop conditions
 

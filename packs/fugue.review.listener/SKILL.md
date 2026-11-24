@@ -15,14 +15,16 @@ you heard against what the music is meant to do, and propose one change.
 
 ## Required policies
 
-- [Surfaces](policies/fugue.policy.surfaces.md): whether this surface has
-  the audio preview.
-- [Listening](policies/fugue.policy.listening.md): what to measure and how
-  to read it.
-- [Musical intent](policies/fugue.policy.musical-intent.md): the bar the
-  feedback is judged against.
-- [Clean audio](policies/fugue.policy.clean-audio.md): for diagnosing
-  clipping, clicks and masking.
+- Before anything else, read [surfaces](policies/fugue.policy.surfaces.md):
+  whether this surface has the audio preview.
+- Before measuring a piece in the in-chat player, read
+  [the player](policies/fugue.policy.player.md).
+- Before measuring anything, read
+  [listening](policies/fugue.policy.listening.md).
+- Before judging the piece against its intent, read
+  [musical intent](policies/fugue.policy.musical-intent.md).
+- When diagnosing clipping, clicks or masking, read
+  [clean audio](policies/fugue.policy.clean-audio.md).
 
 ## Inputs
 

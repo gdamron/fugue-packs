@@ -1,10 +1,11 @@
 //! The surfaces policy, `fugue.policy.surfaces`, checked against the
 //! repository's real `packs/`: a first-party policy pack for external agents
 //! that says how to recognize the surface, which route plays a piece there,
-//! how the hosted server's in-chat player is used on the web and on a phone,
-//! what the hosted server leaves to the desktop app, how a piece is kept, and
-//! to name the route in use. It stays prompt-sized and leaves the authoring
-//! contract to `fugue.policy.authoring`.
+//! what the hosted server leaves to the desktop app, and to name the route in
+//! use. How the in-chat player is used is `fugue.policy.player`'s, and how a
+//! piece is kept or opened is `fugue.policy.files`'s: the three were one
+//! policy, split so an agent opens only the one its task calls for. It stays
+//! prompt-sized and leaves the authoring contract to `fugue.policy.authoring`.
 
 use std::collections::BTreeSet;
 use std::fs;
@@ -16,9 +17,20 @@ use serde_json::Value;
 
 const POLICY: &str = "fugue.policy.surfaces";
 const AUTHORING: &str = "fugue.policy.authoring";
-/// Room for the hosted route: the in-chat player, its web and phone
-/// differences, approvals, keeping a piece and what is left to the desktop
-/// app. It was 3,000 when the hosted route was a one-line preview.
+/// The policies the surfaces policy was split into, itself among them.
+const SPLIT: [&str; 3] = [POLICY, "fugue.policy.player", "fugue.policy.files"];
+/// The surfaces policy's `##` rules before the split, each now in exactly one
+/// of `SPLIT`.
+const RULES_BEFORE_THE_SPLIT: [&str; 6] = [
+    "Recognize your surface",
+    "Take the route for your surface",
+    "The in-chat player",
+    "What the hosted server leaves to the desktop app",
+    "Keep a piece",
+    "Say where you are",
+];
+/// The limit from before the split, not raised; the surfaces policy now
+/// holds far less.
 const MAX_CHARACTERS: usize = 4_600;
 
 /// The in-chat player's tools: the hosted server's `load_invention` opens a
@@ -241,71 +253,11 @@ fn each_surface_has_one_route() {
     assert!(cloud.contains("fyug render") && cloud.contains("preview artifact"));
 
     let hosted = bullet("Hosted");
-    assert!(hosted.contains("in-chat player"));
+    assert!(hosted.contains("in-chat player") && hosted.contains("fugue.policy.player"));
 
     let chat = bullet("Plain chat");
     assert!(chat.contains("preview artifact") && chat.contains("entry skill's script"));
     assert!(chat.contains("say what to connect"));
-}
-
-/// The player: check, then load with bundled instruments and a few controls;
-/// read the levels and notes before calling it ready; change it through its
-/// tools, with a full document only where none are offered; the person's
-/// values stay. Every tool it names is the hosted server's or the player's.
-#[test]
-fn the_in_chat_player_is_loaded_read_and_changed_through_its_tools() {
-    let text = rules(POLICY);
-    let section = flat(section(&text, "The in-chat player"));
-    assert!(position(&section, "check_invention") < position(&section, "load_invention"));
-    for phrase in [
-        "bundled instruments (list_developments)",
-        "two to six values",
-        "get_meters",
-        "get_notes",
-        "before calling it ready",
-        "silence, clipping, a part out of range",
-        "set_controls for values and apply_edits",
-        "rather than sending it again",
-        "offers no player tools at all, send a changed document to load_invention",
-        "list_changed_controls",
-    ] {
-        assert!(section.contains(phrase), "should say `{phrase}`: {section}");
-    }
-    let hosted_own = ["check_invention", "load_invention", "list_developments"];
-    for word in section.split(|c: char| !(c.is_ascii_alphanumeric() || c == '_')) {
-        if word.contains('_') {
-            assert!(
-                hosted_own.contains(&word) || PLAYER_TOOLS.contains(&word),
-                "`{word}` is not the hosted server's or the player's"
-            );
-        }
-    }
-}
-
-/// The phone: no player tool in the opening turn; the tools may come with the
-/// next message or a later one, and until then its levels are unread and the
-/// tools are looked for again, never called missing; and a call not approved
-/// is explained once and not retried.
-#[test]
-fn a_phone_waits_for_the_next_message_and_an_unapproved_call_is_not_retried() {
-    let text = rules(POLICY);
-    let section = flat(section(&text, "The in-chat player"));
-    for phrase in [
-        "On the web the player sits beside the chat",
-        "offers downloads",
-        "On a phone the player's tools may not be offered once load_invention returns: they come with the person's next message or a later one",
-        "plan no player tool call in this turn and do not resend the piece",
-        "ask them to tap Play",
-        "Until they are listed, say its levels are not read yet, look again each turn, and never say the app or player lacks them",
-        "On a phone sound stops when the player is off screen",
-        "say what you were about to do",
-        "point to the same control in the player",
-        "Tell the person once",
-        "always allow",
-        "Do not retry unless they ask",
-    ] {
-        assert!(section.contains(phrase), "should say `{phrase}`: {section}");
-    }
 }
 
 /// What the hosted server leaves to the desktop app is listed, and the app is
@@ -342,26 +294,6 @@ fn what_the_hosted_server_leaves_to_the_desktop_app_is_listed() {
     assert!(!section.contains("saving"));
 }
 
-/// A piece is kept by its download where there is one, its share link
-/// otherwise; the agent never posts the link; a phone piece with samples
-/// cannot be kept, and the policy says so.
-#[test]
-fn a_piece_is_kept_by_download_or_share_link_never_posted() {
-    let text = rules(POLICY);
-    let section = flat(section(&text, "Keep a piece"));
-    for phrase in [
-        "Download piece where the player shows it",
-        "Download piece where the player shows it (a file on disk)",
-        "Share link otherwise",
-        "anyone with the link has the piece",
-        "Never post a share link yourself",
-        "bundled samples has no Share link",
-        "cannot be kept",
-    ] {
-        assert!(section.contains(phrase), "should say `{phrase}`: {section}");
-    }
-}
-
 /// The preview is called limited, the route is named, the native route is
 /// offered and a change of route is never silent.
 #[test]
@@ -381,13 +313,12 @@ fn the_agent_names_its_route_and_never_changes_it_silently() {
     }
 }
 
-/// A rule has one home: the surfaces policy names a tool the authoring
-/// policy owns only to route to it (the local tools that tell the surface,
-/// and the player's tools the hosted route uses, which share the local
-/// names), and copies no sentence from it.
+/// A rule has one home: the surfaces policy and the two split from it name a
+/// tool the authoring policy owns only to route to it (the local tools that
+/// tell the surface, and the player's tools the hosted route uses, which
+/// share the local names), and copy no sentence from it.
 #[test]
-fn the_surfaces_policy_does_not_restate_the_authoring_policy() {
-    let surfaces = rules(POLICY);
+fn the_split_policies_do_not_restate_the_authoring_policy() {
     let authoring = rules(AUTHORING);
     let words = |text: &str| -> BTreeSet<String> {
         text.split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
@@ -407,17 +338,6 @@ fn the_surfaces_policy_does_not_restate_the_authoring_policy() {
     .chain(PLAYER_TOOLS)
     .map(String::from)
     .collect();
-    let shared: BTreeSet<String> = words(&surfaces)
-        .intersection(&words(&authoring))
-        .cloned()
-        .collect();
-    let unrouted: Vec<&String> = shared.difference(&routed).collect();
-    assert!(
-        unrouted.is_empty(),
-        "tools it shares with the authoring policy: {unrouted:?}"
-    );
-
-    let surfaces = flat(&surfaces);
     // Headings are dropped first, or one would stay glued to the front of the
     // first sentence under it and hide a copy of that sentence.
     let prose: String = authoring
@@ -425,9 +345,22 @@ fn the_surfaces_policy_does_not_restate_the_authoring_policy() {
         .filter(|line| !line.starts_with('#'))
         .collect::<Vec<_>>()
         .join("\n");
-    for sentence in flat(&prose).split(". ") {
-        if sentence.split(' ').count() >= 6 {
-            assert!(!surfaces.contains(sentence), "restates: {sentence}");
+    for id in SPLIT {
+        let text = rules(id);
+        let shared: BTreeSet<String> = words(&text)
+            .intersection(&words(&authoring))
+            .cloned()
+            .collect();
+        let unrouted: Vec<&String> = shared.difference(&routed).collect();
+        assert!(
+            unrouted.is_empty(),
+            "{id} shares tools with the authoring policy: {unrouted:?}"
+        );
+        let text = flat(&text);
+        for sentence in flat(&prose).split(". ") {
+            if sentence.split(' ').count() >= 6 {
+                assert!(!text.contains(sentence), "{id} restates: {sentence}");
+            }
         }
     }
 }
@@ -436,5 +369,28 @@ fn the_surfaces_policy_does_not_restate_the_authoring_policy() {
 #[test]
 fn the_readme_lists_the_surfaces_policy() {
     let readme = fs::read_to_string(repository().join("README.md")).unwrap();
-    assert!(readme.contains(POLICY));
+    for id in SPLIT {
+        assert!(readme.contains(id), "the README omits {id}");
+    }
+}
+
+/// Each rule of the policy before the split is in exactly one of the
+/// policies it was split into, and each of those is a pack under its limit.
+#[test]
+fn each_rule_from_before_the_split_has_one_home() {
+    let texts: Vec<String> = SPLIT.iter().map(|id| rules(id)).collect();
+    for rule in RULES_BEFORE_THE_SPLIT {
+        let heading = format!("\n## {rule}\n");
+        let homes: Vec<&str> = SPLIT
+            .iter()
+            .zip(&texts)
+            .filter(|(_, text)| text.contains(&heading))
+            .map(|(id, _)| *id)
+            .collect();
+        assert_eq!(homes.len(), 1, "`{rule}` is in {homes:?}");
+    }
+    for (id, text) in SPLIT.iter().zip(&texts) {
+        let count = text.chars().count();
+        assert!(count <= MAX_CHARACTERS, "{id}: {count} characters");
+    }
 }

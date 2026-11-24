@@ -1,6 +1,8 @@
 # Surfaces
 
 Surfaces play a piece differently. Work out which one you are on first.
+How the in-chat player is used is in `fugue.policy.player`; how a piece is
+kept or opened, in `fugue.policy.files`.
 
 ## Recognize your surface
 
@@ -28,40 +30,12 @@ ask.
 - **Shell in a cloud session:** do not install for playback. Render offline
   with fyug render where fyug is already present, or use the preview artifact
   where the host shows one. If neither applies, say what is missing.
-- **Hosted:** play in the in-chat player, below.
+- **Hosted:** play in the in-chat player, as `fugue.policy.player`
+  says.
 - **Plain chat:** use the preview artifact where the host can run the entry
   skill's script and show an HTML file. It plays with no controls and no
   tools. Otherwise say what to connect (the hosted connector,
   https://mcp.fyug.fm/mcp) or install.
-
-## The in-chat player
-
-Check the document with check_invention and fix what it reports, then open
-it with load_invention. Prefer bundled instruments (list_developments), and
-pass as controls the two to six values most worth playing with. The person
-taps Play.
-
-While it is open, the player offers tools for the piece it holds.
-Read its levels (get_meters) and notes (get_notes) before calling it ready,
-and name what you find: silence, clipping, a part out of range. Change the
-loaded piece through them, set_controls for values and apply_edits for its
-structure, rather than sending it again. A value the person moved
-(list_changed_controls) stays as they left it.
-
-On the web the player sits beside the chat, keeps playing out of view and
-offers downloads. On a phone sound stops when the player is off screen, and
-each call may wait for the person's OK. On a phone the player's tools may
-not be offered once load_invention returns: they come with the person's
-next message or a later one; plan no player tool call in this turn and do
-not resend the piece. Say it is loaded, ask them to tap Play. Until they
-are listed, say its levels are not read yet, look again each turn,
-and never say the app or player lacks them. Where the host offers no player
-tools at all, send a changed document to load_invention.
-
-When a player tool call comes back not run for lack of approval, say what
-you were about to do and point to the same control in the player. Tell the
-person once that they can set the connector's tools to always allow in the
-app. Do not retry unless they ask.
 
 ## What the hosted server leaves to the desktop app
 
@@ -77,15 +51,6 @@ it, or when the player fails:
 - an agent working on a piece with no player open
 
 Otherwise do not raise it on this route. get_status gives the install URL.
-
-## Keep a piece
-
-Asked how to keep a piece or send it to a friend, point to Download piece
-where the player shows it (a file on disk), and to Share link otherwise. Say
-that anyone with the link has the piece. Never post a share link yourself:
-the person decides who gets it. A piece with bundled samples has no Share
-link, so on a phone it cannot be kept: say so, and point to the web or the
-desktop app.
 
 ## Say where you are
 
