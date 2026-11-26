@@ -113,8 +113,8 @@ then). intent "perform" plays a value without saving it into the document.
 ## Land changes on the beat
 
 Pass when, such as {"kind":"next_bar"}, to land a control write, apply_edits
-or reload_invention in musical time, and give it ttl_ms to let
-it expire instead of landing late. Nothing changes until it lands. A timed
+or reload_invention in musical time, and give it ttl_ms to let it expire
+instead of landing late. Nothing changes until it lands. A timed
 edit returns a request: follow it with get_request or poll_events
 (request_changed). A timed control write's ack is pending with its landing,
 the control reads its old value until then, and a control_request_settled
@@ -134,10 +134,10 @@ edit.
 apply_edits is the tool for any surgical change, in a large piece or a small
 one: a module added (with full supported config) or removed, a connection
 made or broken. Its swap_module edit replaces one module's type in place,
-keeping the connections the new type has ports for. To read the
-structure, inspect_invention's overview lists the modules and its value
-selection at /connections lists the connections. create_invention makes an
-empty canvas with a DAC. stop_invention unloads the piece; pause_invention
+keeping the connections the new type has ports for. To read the structure,
+inspect_invention's overview lists the modules and its value selection at
+/connections lists the connections. create_invention makes an empty canvas
+with a DAC. stop_invention unloads the piece; pause_invention
 silences it with position and values held, and edits still apply, until
 resume_invention. save_invention writes the document, references intact, on
 the daemon's filesystem.
