@@ -27,7 +27,8 @@ load, reload, swap or removal.
 
 For a new piece, write one complete invention document (version, modules with
 supported configs, connections) and load it with load_invention. A document's
-modules use id, type and config; add_module takes id, module_type and config.
+modules use id, type and config; an apply_edits add_module edit takes id,
+module_type and config.
 Put intended starting values in config instead of setting each in a separate
 call, and check them with describe_module.
 
@@ -60,12 +61,12 @@ the ref unchanged to load_invention to start one.
 
 For a structural edit, retrieve the current document with get_invention, make
 the intended change to the complete document, and send it with
-reload_invention. Never reconstruct a document from list_modules or
-list_connections. Pass the snapshot's source_path and revision as
-expected_revision: a stale revision is refused, so retrieve again and rebase
-the edit. A reload without expected_revision is unconditional. A snapshot is
-a point in time, not a synchronized copy. reload_invention has no ref:
-references name catalog content, not documents to edit.
+reload_invention. Never rebuild a document from the running graph. Pass the
+snapshot's source_path and revision as expected_revision: a stale revision is
+refused, so retrieve again and rebase the edit. A reload without
+expected_revision is unconditional. A snapshot is a point in time, not a
+synchronized copy. reload_invention has no ref: references name catalog
+content, not documents to edit.
 
 ## Reload keeps what did not change
 
@@ -130,17 +131,20 @@ edit.
 
 ## Surgical tools for surgical changes
 
-Keep add_module (with full supported config), remove_module, swap_module,
-connect and disconnect for small changes. create_invention makes an empty
-canvas with a DAC. stop_invention unloads the piece; pause_invention silences
-it with position and values held, and edits still apply, until
+apply_edits is the tool for any surgical change, in a large piece or a small
+one: a module added (with full supported config) or removed, a connection
+made or broken. swap_module replaces one module's type in place. To read the
+structure, inspect_invention's overview lists the modules and its value
+selection at /connections lists the connections. create_invention makes an
+empty canvas with a DAC. stop_invention unloads the piece; pause_invention
+silences it with position and values held, and edits still apply, until
 resume_invention. save_invention writes the document, references intact, on
 the daemon's filesystem.
 
 ## Listen to the result
 
-Check what plays with get_meters (peak and RMS levels) or show_scope (one
-module's waveform).
+Check what plays with get_meters (peak and RMS levels) or show_view's scope
+(one module's waveform).
 
 ## The person plays too
 

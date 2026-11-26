@@ -21,9 +21,9 @@ produced NaN or infinity: find it before judging anything else.
 
 ## A scope shows one module
 
-show_scope shows the signal of the module you name, ahead of the output
-stage, so its clipping line is a warning. Confirm with get_meters, because
-the sum is what the speakers receive.
+show_view's scope (view "scope") shows the signal of the module you name,
+ahead of the output stage, so its clipping line is a warning. Confirm with
+get_meters, because the sum is what the speakers receive.
 
 ## Measure after the change lands
 

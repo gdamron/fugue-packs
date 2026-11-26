@@ -77,7 +77,12 @@ fn each_core_policy_states_its_rules_in_a_prompt_sized_document() {
 fn the_core_policies_do_not_restate_each_others_rules() {
     for id in [CLEAN_AUDIO, MUSICAL_INTENT] {
         let text = rules(id).to_lowercase();
-        for owned in ["get_meters", "show_scope", "pre-clamp"] {
+        for owned in [
+            "get_meters",
+            "show_view's scope",
+            "view \"scope\"",
+            "pre-clamp",
+        ] {
             assert!(!text.contains(owned), "{id} should not restate `{owned}`");
         }
     }

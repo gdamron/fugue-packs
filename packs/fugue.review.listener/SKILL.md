@@ -44,9 +44,9 @@ you heard against what the music is meant to do, and propose one change.
    the local server's. In the in-chat player, read `get_meters` and
    `get_notes` from the player instead, once its tools are offered, skip to
    step 4 and say the piece was measured, not heard. On any other route, stop.
-2. Read `get_meters` for the whole output and `show_scope` on the voice in
-   question, as the listening policy says. A paused piece has nothing to
-   measure yet; carry on to the preview.
+2. Read `get_meters` for the whole output and `show_view` with view "scope"
+   on the voice in question, as the listening policy says. A paused piece has
+   nothing to measure yet; carry on to the preview.
 3. Get the bounded audio preview. It renders only a paused piece, from its
    start, as its document stands, without live control changes. If the piece
    is playing, ask before pausing it, then call `pause_invention`. Call
