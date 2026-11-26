@@ -159,7 +159,10 @@ fn the_players_edits_set_values_by_the_local_rule() {
         "set to the nearer limit and reported clamped",
         "one refused write changes nothing",
     ] {
-        assert!(edits.contains(phrase), "the edit section omits {phrase:?}: {edits}");
+        assert!(
+            edits.contains(phrase),
+            "the edit section omits {phrase:?}: {edits}"
+        );
     }
     assert!(!edits.contains("takes only"), "{edits}");
 }
