@@ -101,8 +101,10 @@ retrying. Live gestures are never resent.
 ## Conduct with set_controls
 
 Read live keys and ranges first (list_controls). Use set_controls for a
-gesture that moves several controls and set_control for one. A batch runs in
-order without rollback: earlier writes stay if a later one fails. Each write's
+gesture that moves several controls and set_control for one. A batch is all
+or none: if any write is refused, nothing is written and the error names that
+write's index and reason. A number past a control's range is set to the
+nearer limit and reported clamped. Each write's
 ack is applied (with its value) or pending (with a request that
 control_changed names when it applies, and list_pending_requests lists until
 then). intent "perform" plays a value without saving it into the document.
