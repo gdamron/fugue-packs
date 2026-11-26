@@ -61,11 +61,12 @@ the ref unchanged to load_invention to start one.
 
 For a structural edit, retrieve the current document with get_invention, make
 the intended change to the complete document, and send it with
-reload_invention. Never rebuild a document from the running graph. Pass the snapshot's source_path and revision as
-expected_revision: a stale revision is refused, so retrieve again and rebase
-the edit. A reload without expected_revision is unconditional. A snapshot is
-a point in time, not a synchronized copy. reload_invention has no ref:
-references name catalog content, not documents to edit.
+reload_invention. Never rebuild a document from the running graph. Pass the
+snapshot's source_path and revision as expected_revision: a stale revision is
+refused, so retrieve again and rebase the edit. A reload without
+expected_revision is unconditional. A snapshot is a point in time, not a
+synchronized copy. reload_invention has no ref: references name catalog
+content, not documents to edit.
 
 ## Reload keeps what did not change
 

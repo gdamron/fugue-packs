@@ -26,7 +26,7 @@ const REMOVED_TOOLS: &[&str] = &[
 const EDIT_OPS: &[&str] = &["add_module", "remove_module", "connect", "disconnect"];
 
 /// Words that are English as well as tool names: these count only as code,
-/// in backticks or called, as in `connect` or connect(...).
+/// in backticks, quoted or called, as in `connect`, "connect" or connect(...).
 const ENGLISH: &[&str] = &["connect", "disconnect"];
 
 /// Every text file under `packs/`, as (path relative to `packs/`, text).
@@ -49,18 +49,21 @@ fn all_pack_text() -> Vec<(String, String)> {
 }
 
 /// Whether `paragraph` names `tool`: as a whole word, or, for a word that is
-/// English too, only as code.
+/// English too, only as code. A host's prefix ending in `__`, as in
+/// `mcp__fugue__list_modules`, still names the tool.
 fn names(paragraph: &str, tool: &str) -> bool {
     let bytes = paragraph.as_bytes();
     let is_word = |b: u8| b.is_ascii_alphanumeric() || b == b'_';
     paragraph.match_indices(tool).any(|(at, _)| {
         let end = at + tool.len();
+        let prefixed = paragraph[..at].ends_with("__");
         let before = at.checked_sub(1).map(|i| bytes[i]);
         let after = bytes.get(end).copied();
-        if before.is_some_and(is_word) || after.is_some_and(is_word) {
+        if (!prefixed && before.is_some_and(is_word)) || after.is_some_and(is_word) {
             return false;
         }
-        !ENGLISH.contains(&tool) || before == Some(b'`') || after == Some(b'(')
+        let quoted = matches!(before, Some(b'`' | b'"' | b'\''));
+        !ENGLISH.contains(&tool) || prefixed || quoted || after == Some(b'(')
     })
 }
 
@@ -68,6 +71,7 @@ fn names(paragraph: &str, tool: &str) -> bool {
 /// names `apply_edits` may name its ops.
 fn removed_tools_named(text: &str) -> Vec<&'static str> {
     let mut found = Vec::new();
+    let text = text.replace("\r\n", "\n");
     for paragraph in text.split("\n\n") {
         let ops_allowed = names(paragraph, "apply_edits");
         for tool in REMOVED_TOOLS {
@@ -107,6 +111,15 @@ fn the_check_finds_a_removed_tool_and_only_a_removed_tool() {
     );
     assert_eq!(removed_tools_named("Call `connect` first."), ["connect"]);
     assert_eq!(removed_tools_named("Then disconnect(a, b)."), ["disconnect"]);
+    assert_eq!(removed_tools_named("Call \"connect\" first."), ["connect"]);
+    assert_eq!(
+        removed_tools_named("Call mcp__fugue__list_modules or fugue.show_scope."),
+        ["list_modules", "show_scope"]
+    );
+    assert_eq!(
+        removed_tools_named("apply_edits edits.\r\n\r\nThen add_module."),
+        ["add_module"]
+    );
     // Ops in a paragraph that names apply_edits, English words and longer
     // names are not the tools.
     assert!(removed_tools_named("apply_edits takes add_module and `connect` edits.").is_empty());
