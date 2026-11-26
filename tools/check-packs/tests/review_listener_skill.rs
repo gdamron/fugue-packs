@@ -119,7 +119,7 @@ fn the_procedure_measures_previews_judges_and_proposes_one_change() {
         steps.windows(2).all(|pair| pair[0] < pair[1]),
         "{procedure}"
     );
-    assert!(procedure.contains("`show_scope`"));
+    assert!(procedure.contains("`show_view` with view `scope`"));
     // The preview is `show_view` with view "audio", which renders only a
     // paused piece: pause, render, resume.
     let preview = [
