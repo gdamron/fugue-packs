@@ -110,7 +110,10 @@ fn the_check_finds_a_removed_tool_and_only_a_removed_tool() {
         ["list_connections", "show_scope"]
     );
     assert_eq!(removed_tools_named("Call `connect` first."), ["connect"]);
-    assert_eq!(removed_tools_named("Then disconnect(a, b)."), ["disconnect"]);
+    assert_eq!(
+        removed_tools_named("Then disconnect(a, b)."),
+        ["disconnect"]
+    );
     assert_eq!(removed_tools_named("Call \"connect\" first."), ["connect"]);
     assert_eq!(
         removed_tools_named("Call mcp__fugue__list_modules or fugue.show_scope."),
