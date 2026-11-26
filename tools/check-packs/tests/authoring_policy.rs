@@ -3,7 +3,7 @@
 //! package API:
 //!
 //! - it holds the authoring contract as a first-party policy pack (kind
-//!   `policy`, a markdown `entry.policy`, version `2026.11.1`, both agent
+//!   `policy`, a markdown `entry.policy`, version `2026.11.2`, both agent
 //!   targets, a `#` title and no frontmatter, American English) and the
 //!   repository passes check-packs with it;
 //! - anything specific to the MCP transport sits under one clearly headed
@@ -19,7 +19,7 @@ use fugue::pkg::{check_policy_entry, parse_path};
 use serde_json::{json, Value};
 
 const POLICY: &str = "fugue.policy.authoring";
-const VERSION: &str = "2026.11.1";
+const VERSION: &str = "2026.11.2";
 
 fn repository() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
@@ -85,7 +85,7 @@ fn headings(text: &str) -> Vec<(usize, usize, String)> {
 
 /// the pack is a first-party policy pack with the shared
 /// content rules: kind `policy`, `entry: { "policy": "<file>.md" }`, date
-/// version 2026.11.0, both targets, and an entry the core's policy check
+/// version 2026.11.2, both targets, and an entry the core's policy check
 /// accepts.
 #[test]
 fn the_authoring_policy_is_a_first_party_policy_pack() {
