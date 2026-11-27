@@ -36,7 +36,7 @@ fn in_the_in_chat_player_the_critique_is_measured_not_heard() {
     let skill = skill(SKILL);
     let procedure = flat(section(&skill.body, "Procedure"));
     for phrase in [
-        "In the in-chat player, read `get_meters` and `get_notes` from the player instead",
+        "In the in-chat player, read `get_meters` and `preview_notes` from the player instead",
         "skip to step 4",
         "measured, not heard",
         "On any other route, stop",
@@ -46,7 +46,7 @@ fn in_the_in_chat_player_the_critique_is_measured_not_heard() {
             "should say `{phrase}`: {procedure}"
         );
     }
-    for tool in ["get_meters", "get_notes"] {
+    for tool in ["get_meters", "preview_notes"] {
         assert!(PLAYER_TOOLS.contains(&tool), "{tool} is a player tool");
     }
     assert!(!skill.description.contains("local Fyug tools are missing"));

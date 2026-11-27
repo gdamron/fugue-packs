@@ -17,13 +17,14 @@ const MAX_CHARACTERS: usize = 3_000;
 /// The in-chat player's tools: the hosted server's `load_invention` opens a
 /// page that offers them, with the local tools' names (`crates/hosted/src/
 /// player/tools.js` in fyug-product at 5990afad).
-const PLAYER_TOOLS: [&str; 11] = [
+const PLAYER_TOOLS: [&str; 12] = [
     "list_controls",
     "get_control",
     "set_control",
     "set_controls",
     "list_changed_controls",
     "get_notes",
+    "preview_notes",
     "get_meters",
     "apply_edits",
     "get_invention",
@@ -73,7 +74,7 @@ fn the_in_chat_player_is_loaded_read_and_changed_through_its_tools() {
         "bundled instruments (list_developments)",
         "two to six values",
         "get_meters",
-        "get_notes",
+        "preview_notes",
         "before calling it ready",
         "silence, clipping, a part out of range",
         "set_controls for values and apply_edits",
@@ -119,13 +120,13 @@ fn a_phone_waits_for_the_next_message_and_an_unapproved_call_is_not_retried() {
     }
 }
 
-/// The player's get_notes needs `bars` (its schema requires it), and this
-/// policy is the one place that says so, so a default shipping later is a
-/// one-line change here.
+/// The player's preview_notes is called with `bars`, and this policy is the
+/// one place that says how, so a change to the range is a one-line change
+/// here.
 #[test]
-fn get_notes_is_called_with_bars_and_only_this_policy_says_how() {
+fn preview_notes_is_called_with_bars_and_only_this_policy_says_how() {
     let notes = section(&policy_text(POLICY), "Read the notes");
-    for phrase in ["get_notes with `bars`", "1 to 64", "cursor"] {
+    for phrase in ["preview_notes with `bars`", "1 to 64", "cursor"] {
         assert!(notes.contains(phrase), "should say `{phrase}`: {notes}");
     }
     let packs = fs::read_dir(repository().join("packs")).unwrap();
@@ -140,8 +141,8 @@ fn get_notes_is_called_with_bars_and_only_this_policy_says_how() {
             };
             let text = flat(&text);
             assert!(
-                !text.contains("`bars`") && !text.contains("get_notes with"),
-                "{id} says how to call get_notes; only {POLICY} does"
+                !text.contains("`bars`") && !text.contains("preview_notes with"),
+                "{id} says how to call preview_notes; only {POLICY} does"
             );
         }
     }

@@ -81,7 +81,7 @@ user meant: plan it, write it whole, load it, listen, then refine it.
    has it. Offer the desktop app only for something the player lacks, and
    name what it lacks.
 4. **Listen** with `get_meters` while it plays, as the listening policy
-   says. In the in-chat player, read `get_meters` and `get_notes` once its
+   says. In the in-chat player, read `get_meters` and `preview_notes` once its
    tools are offered (on a phone, with the person's next message or a later
    one). On a phone, until they are listed, say its levels are not read yet,
    look again each turn, and never say the app or player lacks them.

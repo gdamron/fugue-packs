@@ -42,7 +42,7 @@ you heard against what the music is meant to do, and propose one change.
 
 1. Recognize the surface as the surfaces policy says. The audio preview is
    the local server's. In the in-chat player, read `get_meters` and
-   `get_notes` from the player instead, once its tools are offered, skip to
+   `preview_notes` from the player instead, once its tools are offered, skip to
    step 4 and say the piece was measured, not heard. On any other route, stop.
 2. Read `get_meters` for the whole output and `show_view` with view "scope"
    on the voice in question, as the listening policy says. A paused piece has

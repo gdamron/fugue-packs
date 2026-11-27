@@ -36,13 +36,14 @@ const MAX_CHARACTERS: usize = 4_600;
 /// The in-chat player's tools: the hosted server's `load_invention` opens a
 /// page that offers them, with the local tools' names (`crates/hosted/src/
 /// player/tools.js` in fyug-product at d10777d1).
-const PLAYER_TOOLS: [&str; 11] = [
+const PLAYER_TOOLS: [&str; 12] = [
     "list_controls",
     "get_control",
     "set_control",
     "set_controls",
     "list_changed_controls",
     "get_notes",
+    "preview_notes",
     "get_meters",
     "apply_edits",
     "get_invention",
