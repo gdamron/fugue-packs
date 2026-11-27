@@ -1,7 +1,7 @@
 //! No pack names a local tool that left the listing because `apply_edits`,
 //! `inspect_invention` and `show_view` cover it, checked across every file
-//! under `packs/`. The four single-step edits are also `apply_edits` ops, so a
-//! paragraph that names `apply_edits` may name them as ops.
+//! under `packs/`. The single-step edits and the swap are also `apply_edits`
+//! ops, so a paragraph that names `apply_edits` may name them as ops.
 
 mod policy_support;
 
@@ -16,6 +16,7 @@ const REMOVED_TOOLS: &[&str] = &[
     "remove_module",
     "connect",
     "disconnect",
+    "swap_module",
     "list_modules",
     "list_connections",
     "show_scope",
@@ -23,7 +24,13 @@ const REMOVED_TOOLS: &[&str] = &[
 ];
 
 /// The removed tools that are also `apply_edits` ops.
-const EDIT_OPS: &[&str] = &["add_module", "remove_module", "connect", "disconnect"];
+const EDIT_OPS: &[&str] = &[
+    "add_module",
+    "remove_module",
+    "connect",
+    "disconnect",
+    "swap_module",
+];
 
 /// Words that are English as well as tool names: these count only as code,
 /// in backticks, quoted or called, as in `connect`, "connect" or connect(...).
@@ -106,6 +113,10 @@ fn the_check_finds_a_removed_tool_and_only_a_removed_tool() {
         ["add_module", "remove_module"]
     );
     assert_eq!(
+        removed_tools_named("swap_module replaces one module's type in place."),
+        ["swap_module"]
+    );
+    assert_eq!(
         removed_tools_named("Read it with list_connections.\n\nOr `show_scope`."),
         ["list_connections", "show_scope"]
     );
@@ -126,6 +137,7 @@ fn the_check_finds_a_removed_tool_and_only_a_removed_tool() {
     // Ops in a paragraph that names apply_edits, English words and longer
     // names are not the tools.
     assert!(removed_tools_named("apply_edits takes add_module and `connect` edits.").is_empty());
+    assert!(removed_tools_named("Its swap_module edit, in apply_edits.").is_empty());
     assert!(removed_tools_named("Say what to connect or install.").is_empty());
     assert!(removed_tools_named("Use list_modules_by_type or my_show_scope.").is_empty());
     // An op outside an apply_edits paragraph still counts.
