@@ -146,3 +146,23 @@ fn get_notes_is_called_with_bars_and_only_this_policy_says_how() {
         }
     }
 }
+
+/// The player's apply_edits: its ops, set_control among them, land at once;
+/// a value it or set_controls writes is held as the local tools hold one.
+#[test]
+fn the_players_edits_set_values_by_the_local_rule() {
+    let edits = section(&policy_text(POLICY), "Edit its structure");
+    for phrase in [
+        "add_module, remove_module, connect, disconnect and set_control",
+        "no `when` or `ttl_ms`",
+        "play values through set_controls",
+        "set to the nearer limit and reported clamped",
+        "one refused write changes nothing",
+    ] {
+        assert!(
+            edits.contains(phrase),
+            "the edit section omits {phrase:?}: {edits}"
+        );
+    }
+    assert!(!edits.contains("takes only"), "{edits}");
+}
