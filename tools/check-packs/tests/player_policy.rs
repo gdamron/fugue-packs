@@ -147,13 +147,18 @@ fn get_notes_is_called_with_bars_and_only_this_policy_says_how() {
     }
 }
 
-/// The player's apply_edits: its ops, set_control among them, land at once;
-/// a value it or set_controls writes is held as the local tools hold one.
+/// The player's apply_edits: its ops, swap_module and set_control among
+/// them, land at once; a swap keeps the wires the new type has ports for and
+/// reports the rest; a value it or set_controls writes is held as the local
+/// tools hold one.
 #[test]
 fn the_players_edits_set_values_by_the_local_rule() {
     let edits = section(&policy_text(POLICY), "Edit its structure");
     for phrase in [
-        "add_module, remove_module, connect, disconnect and set_control",
+        "add_module, remove_module, swap_module, connect, disconnect and set_control",
+        "the wires the new type has ports for",
+        "`swapped` lists the wires it removed",
+        "(none when left out)",
         "no `when` or `ttl_ms`",
         "play values through set_controls",
         "set to the nearer limit and reported clamped",

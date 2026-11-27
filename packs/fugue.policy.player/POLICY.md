@@ -35,13 +35,15 @@ app. Do not retry unless they ask.
 
 ## Edit its structure
 
-The player's apply_edits takes add_module, remove_module, connect,
-disconnect and set_control, with no `when` or `ttl_ms`: an edit lands as
-soon as it is sent. Its set_control sets a value the document keeps, such
-as a new module's starting level; play values through set_controls. Both
-hold a value as the local tools do: a number outside its control's range is
-set to the nearer limit and reported clamped, and one refused write changes
-nothing.
+The player's apply_edits takes add_module, remove_module, swap_module,
+connect, disconnect and set_control, with no `when` or `ttl_ms`: an edit
+lands as soon as it is sent. A swap keeps the module's id, name and the
+wires the new type has ports for, takes the config you give (none when
+left out), and `swapped` lists the wires it removed. Its set_control sets
+a value the document keeps, such as a new module's starting level; play
+values through set_controls. Both hold a value as the local tools do: a
+number outside its control's range is set to the nearer limit and reported
+clamped, and one refused write changes nothing.
 
 ## Read the notes
 
