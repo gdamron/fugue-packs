@@ -12,7 +12,7 @@ pass as controls the two to six values most worth playing with. The person
 taps Play.
 
 While it is open, the player offers tools for the piece it holds.
-Read its levels (get_meters) and notes (get_notes) before calling it ready,
+Read its levels (get_meters) and notes (preview_notes) before calling it ready,
 and name what you find: silence, clipping, a part out of range. Change the
 loaded piece through them, set_controls for values and apply_edits for its
 structure, rather than sending it again. A value the person moved
@@ -47,7 +47,7 @@ clamped, and one refused write changes nothing.
 
 ## Read the notes
 
-Call get_notes with `bars`, how many bars to list (1 to 64; 4 is a good
+Call preview_notes with `bars`, how many bars to list (1 to 64; 4 is a good
 first look), and start_bar to begin later than bar 0. A part with random
 modules lists one possible playing (chance). Script and agent modules' notes
 are not listed; the answer names those modules under not_run, though a script

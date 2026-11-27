@@ -23,6 +23,7 @@ pub const PLAYER_TOOLS: &[&str] = &[
     "set_controls",
     "list_changed_controls",
     "get_notes",
+    "preview_notes",
     "get_meters",
     "apply_edits",
     "get_invention",
@@ -49,14 +50,15 @@ pub const DEVELOPMENT_TOOLS: &[&str] = &[
     "describe_development",
 ];
 
-/// Local server tools a listening skill names: `get_meters` and `get_notes`
-/// in their own `crates/mcp/src/tools/<tool>.rs`, `pause_invention` and
-/// `resume_invention` both in `pause_invention.rs`. The audio preview and the
+/// Local server tools a listening skill names: `get_meters`, `get_notes` and
+/// `preview_notes` in their own `crates/mcp/src/tools/<tool>.rs`,
+/// `pause_invention` and `resume_invention` both in `pause_invention.rs`. The audio preview and the
 /// scope are `show_view` with view "audio" and "scope" (`audio_view.rs`,
 /// `scope_view.rs`), already in `LOCAL_TOOLS`.
 pub const LISTENING_TOOLS: &[&str] = &[
     "get_meters",
     "get_notes",
+    "preview_notes",
     "pause_invention",
     "resume_invention",
 ];

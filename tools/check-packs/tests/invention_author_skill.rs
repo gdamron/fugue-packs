@@ -126,7 +126,7 @@ fn the_procedure_plans_authors_loads_listens_and_refines() {
     // a value through set_controls.
     for phrase in [
         "In the in-chat player, also pass the few controls most worth playing with",
-        "In the in-chat player, read `get_meters` and `get_notes` once its tools are offered",
+        "In the in-chat player, read `get_meters` and `preview_notes` once its tools are offered",
         "on both hosts: a structural change through `apply_edits`, a value such as a level or a tempo through `set_controls`",
         // On a phone the tools can come turns later; the agent waits for them
         // rather than concluding the app has none.
