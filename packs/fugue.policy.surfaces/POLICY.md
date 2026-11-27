@@ -7,7 +7,9 @@ kept or opened, in `fugue.policy.files`.
 ## Recognize your surface
 
 Go by what you see; stop at the first match. A host may prefix tool
-names.
+names. Each side lists every tool, including ones it lacks: a tool whose
+description begins "Not available here:" only says what to use instead.
+Do not call it, and do not count it below.
 
 1. The local Fyug tools are present (reload_invention, show_view): local.
    When both sets of tools are present, this one wins.
