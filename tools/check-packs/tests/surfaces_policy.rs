@@ -337,6 +337,7 @@ fn the_split_policies_do_not_restate_the_authoring_policy() {
         // leave out; the authoring policy names them for other reasons.
         "add_module",
         "remove_module",
+        "swap_module",
         "ttl_ms",
         "not_run",
     ]
