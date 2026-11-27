@@ -32,8 +32,9 @@ right on their own.
 - What to package: a description, or modules of a piece that is playing.
 - Where it will be dropped in: the kind of piece and the part it plays.
 - Your tools. With the local ones (`reload_invention` among them) it lives
-  in a file beside its pieces, or a package. With only the hosted ones (where
-  `reload_invention` only says it is not available), in the piece's document.
+  in a file beside its pieces, or a package. With only the hosted ones (no
+  `reload_invention`: its entry says it is not available), in the piece's
+  document.
 
 ## Outputs
 

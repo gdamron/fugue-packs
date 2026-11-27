@@ -13,8 +13,8 @@ Do not call it, and do not count it below.
 
 1. The local Fyug tools are present (reload_invention, show_view): local.
    When both sets of tools are present, this one wins.
-2. Fyug tools are present, but not the local ones: hosted. Its
-   load_invention opens an in-chat player.
+2. The hosted tools are present (check_invention) without the local ones:
+   hosted. Its load_invention opens an in-chat player.
 3. A shell is present, but no Fyug tools: shell.
 4. None of these: plain chat.
 
